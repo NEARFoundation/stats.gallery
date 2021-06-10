@@ -1,3 +1,3 @@
 module.exports = {
-  outputDir: "docs",
+  outputDir: 'docs',
 };

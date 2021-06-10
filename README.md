@@ -1,4 +1,4 @@
-# my-near-stats
+# My NEAR Stats
 
 ## Project setup
 ```
