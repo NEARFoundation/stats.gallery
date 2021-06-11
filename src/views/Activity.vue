@@ -21,29 +21,33 @@
     Request Access Keys
   </button>
   <p v-if="requestInFlight">Requesting...</p>
-  <pre v-if="!requestInFlight && data !== null">{{ data }}</pre>
+  <pre v-if="!requestInFlight && msg !== null">{{ msg }}</pre>
 </template>
 
 <script lang="ts">
-import { networkConfigurations, NetworkDatabase } from '@/services';
+import { configurations, RestDatabaseClient } from '@/services/restdb';
+import { ref } from '@vue/reactivity';
 
-const db = new NetworkDatabase(networkConfigurations.mainnet);
+const db = new RestDatabaseClient(configurations.mainnet);
 
 export default {
-  data() {
-    return {
-      requestInFlight: false,
-      data: null as null | string,
-    };
-  },
-  methods: {
-    async run() {
-      this.data = null;
-      this.requestInFlight = true;
+  setup() {
+    const msg = ref(null as null | string);
+    const requestInFlight = ref(false);
+
+    const run = async () => {
+      msg.value = null;
+      requestInFlight.value = true;
       const accessKeys = await db.getAccessKeys('hatchet.near');
-      this.data = accessKeys.map(key => key.public_key).join('\n');
-      this.requestInFlight = false;
-    },
+      msg.value = accessKeys.map(key => key.public_key).join('\n');
+      requestInFlight.value = false;
+    };
+
+    return {
+      msg,
+      requestInFlight,
+      run,
+    };
   },
 };
 </script>

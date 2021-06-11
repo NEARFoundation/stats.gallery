@@ -1,11 +1,11 @@
-export interface INetworkConfiguration {
+export interface IRestDatabaseConfiguration {
   name: string;
   endpoint: string;
 }
 
-export const networkConfigurations: Record<
+export const configurations: Record<
   'mainnet' | 'testnet',
-  INetworkConfiguration
+  IRestDatabaseConfiguration
 > = {
   mainnet: {
     name: 'mainnet',

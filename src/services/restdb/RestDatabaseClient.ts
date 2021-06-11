@@ -1,13 +1,12 @@
 import postgrester from 'postgrester';
-export { networkConfigurations } from './networks.config';
-import { INetworkConfiguration } from './networks.config';
+import { IRestDatabaseConfiguration } from './networks.config';
 import { PostgresterInstance } from 'postgrester/dist/types';
 import { IAccessKey } from './types';
 
-export class NetworkDatabase {
+export class RestDatabaseClient {
   private client: PostgresterInstance;
 
-  public constructor(configuration: INetworkConfiguration) {
+  public constructor(configuration: IRestDatabaseConfiguration) {
     this.client = postgrester.create({
       axiosConfig: {
         baseURL: configuration.endpoint,
