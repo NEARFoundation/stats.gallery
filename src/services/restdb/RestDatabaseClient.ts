@@ -1,5 +1,5 @@
 import postgrester from 'postgrester';
-import { IRestDatabaseConfiguration } from './networks.config';
+import { IRestDatabaseConfiguration } from './networks';
 import { PostgresterInstance } from 'postgrester/dist/types';
 import { IAccessKey } from './types';
 

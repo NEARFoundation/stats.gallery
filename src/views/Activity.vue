@@ -25,12 +25,13 @@
 </template>
 
 <script lang="ts">
-import { configurations, RestDatabaseClient } from '@/services/restdb';
+import { networks, RestDatabaseClient } from '@/services/restdb';
 import { ref } from '@vue/reactivity';
+import { defineComponent } from '@vue/runtime-core';
 
-const db = new RestDatabaseClient(configurations.mainnet);
+const db = new RestDatabaseClient(networks.mainnet);
 
-export default {
+export default defineComponent({
   setup() {
     const msg = ref(null as null | string);
     const requestInFlight = ref(false);
@@ -49,5 +50,5 @@ export default {
       run,
     };
   },
-};
+});
 </script>

@@ -3,7 +3,7 @@
     <div>
       <!-- Network selector button -->
       <MenuButton class="network-selector__button">
-        mainnet
+        {{ selectedNetwork }}
         <ChevronDownIcon class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
       </MenuButton>
     </div>
@@ -19,28 +19,24 @@
     >
       <MenuItems class="network-selector__menu">
         <div class="py-1">
-          <MenuItem v-slot="{ active }">
+          <MenuItem
+            v-for="networkKey in networkKeys"
+            :key="networkKey"
+            v-slot="{ active }"
+          >
             <a
               href="#"
+              @click.prevent="switchNetwork(networks[networkKey])"
               :class="[
                 active
                   ? 'network-selector__option--active'
                   : 'network-selector__option--inactive',
+                selectedNetwork === networkKey
+                  ? 'network-selector__option--selected'
+                  : '',
                 'network-selector__option',
               ]"
-              >mainnet</a
-            >
-          </MenuItem>
-          <MenuItem v-slot="{ active }">
-            <a
-              href="#"
-              :class="[
-                active
-                  ? 'network-selector__option--active'
-                  : 'network-selector__option--inactive',
-                'network-selector__option',
-              ]"
-              >testnet</a
+              >{{ networkKey }}</a
             >
           </MenuItem>
         </div>
@@ -88,6 +84,10 @@
     &--active {
       @apply bg-gray-100 text-gray-900;
     }
+
+    &--selected {
+      @apply bg-indigo-500 text-white font-medium;
+    }
   }
 }
 </style>
@@ -95,8 +95,14 @@
 <script lang="ts">
 import { Menu, MenuItem, MenuItems, MenuButton } from '@headlessui/vue';
 import { ChevronDownIcon } from 'heroicons-vue3/outline';
+import {
+  IRestDatabaseConfiguration,
+  Network,
+  networks,
+} from '@/services/restdb';
+import { defineComponent } from '@vue/runtime-core';
 
-export default {
+export default defineComponent({
   components: {
     Menu,
     MenuItem,
@@ -104,5 +110,25 @@ export default {
     MenuButton,
     ChevronDownIcon,
   },
-};
+  props: {
+    selectedNetwork: {
+      required: true,
+      type: String,
+    },
+  },
+  emits: ['networkChanged'],
+  setup(_, { emit }) {
+    const networkKeys: Network[] = [Network.MAINNET, Network.TESTNET];
+
+    const switchNetwork = (newNetwork: IRestDatabaseConfiguration) => {
+      emit('networkChanged', newNetwork.name);
+    };
+
+    return {
+      networks,
+      networkKeys,
+      switchNetwork,
+    };
+  },
+});
 </script>

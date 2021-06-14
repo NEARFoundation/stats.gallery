@@ -49,7 +49,10 @@
         </div>
 
         <!-- Network selector -->
-        <NetworkSelector />
+        <NetworkSelector
+          :selectedNetwork="selectedNetwork"
+          @networkChanged="setSelectedNetwork"
+        />
       </div>
 
       <!-- Mobile menu button-->
@@ -139,7 +142,7 @@
     @apply relative
       flex-grow
       text-indigo-200
-      focus-within:text-gray-400;
+      focus-within:text-white;
   }
 
   &__icon {
@@ -164,11 +167,11 @@
       bg-indigo-400 bg-opacity-25
       text-indigo-100
       placeholder-indigo-200
+      hover:bg-indigo-500 hover:bg-opacity-25 hover:text-white
+      focus:bg-indigo-500 focus:bg-opacity-25 focus:text-white
       focus:outline-none
-      focus:bg-white
       focus:ring-0
-      focus:placeholder-gray-400
-      focus:text-gray-900
+      focus:placeholder-white
       sm:text-sm;
   }
 }
@@ -199,6 +202,7 @@ import { ref } from 'vue';
 import NetworkSelector from './NetworkSelector.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, XIcon, SearchIcon } from 'heroicons-vue3/outline';
+import { Network } from '@/services/restdb';
 
 const navigation = [
   { name: 'Activity', href: '#', current: true },
@@ -216,11 +220,17 @@ export default {
     XIcon,
     SearchIcon,
   },
-  setup(): unknown {
+  setup() {
     const open = ref(false);
+    const selectedNetwork = ref(Network.MAINNET);
+    const setSelectedNetwork = (network: Network) => {
+      selectedNetwork.value = network;
+    };
 
     return {
       navigation,
+      selectedNetwork,
+      setSelectedNetwork,
       open,
     };
   },

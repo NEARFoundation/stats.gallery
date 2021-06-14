@@ -1,12 +1,14 @@
+export const enum Network {
+  MAINNET = 'mainnet',
+  TESTNET = 'testnet',
+}
+
 export interface IRestDatabaseConfiguration {
   name: string;
   endpoint: string;
 }
 
-export const configurations: Record<
-  'mainnet' | 'testnet',
-  IRestDatabaseConfiguration
-> = {
+export const networks: Record<Network, IRestDatabaseConfiguration> = {
   mainnet: {
     name: 'mainnet',
     endpoint: 'https://near-mainnet-postgrest.onrender.com/',
