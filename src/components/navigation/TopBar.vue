@@ -7,7 +7,7 @@
         <div class="nav__brand">
           <img
             class="nav__image"
-            src="../assets/near_icon_wht.svg"
+            src="@/assets/near_icon_wht.svg"
             alt="NEAR Edu"
           />
         </div>
