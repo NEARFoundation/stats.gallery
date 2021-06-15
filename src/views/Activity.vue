@@ -1,8 +1,6 @@
 <template>
-  <small class="text-xl font-bold text-indigo-200"
-    >NEAR Stats {{ network }}</small
-  >
-  <h2 class="text-4xl font-bold leading-3">account.near</h2>
+  <small class="text-xl font-bold text-indigo-200">NEAR Stats</small>
+  <h2 class="text-4xl font-bold">{{ account }}</h2>
   <!-- Large stats display -->
   <dl
     class="
@@ -58,6 +56,7 @@
 
 <script lang="ts">
 import { client, network } from '@/services/restdb/useNetwork';
+import { account } from '@/services/useAccount';
 import { ref } from '@vue/reactivity';
 import { defineComponent } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
@@ -72,7 +71,7 @@ export default defineComponent({
       requestInFlight.value = true;
 
       const transactions = await client.getTransactions({
-        account: 'hatchet.near',
+        account: account.value,
         sinceBlockTimestamp:
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
       });
@@ -86,6 +85,7 @@ export default defineComponent({
       requestInFlight,
       run,
       network,
+      account,
     };
   },
 });

@@ -43,8 +43,9 @@
             id="search"
             name="search"
             class="search__input"
-            placeholder="account.near&hellip;"
+            placeholder="my-account.near&hellip;"
             type="search"
+            v-model="account"
           />
         </div>
 
@@ -142,7 +143,7 @@
     @apply relative
       flex-grow
       text-indigo-200
-      focus-within:text-white;
+      focus-within:text-gray-400;
   }
 
   &__icon {
@@ -168,10 +169,10 @@
       text-indigo-100
       placeholder-indigo-200
       hover:bg-indigo-500 hover:bg-opacity-25 hover:text-white
-      focus:bg-indigo-500 focus:bg-opacity-25 focus:text-white
+      focus:bg-white focus:bg-opacity-100 focus:text-gray-900
       focus:outline-none
       focus:ring-0
-      focus:placeholder-white
+      focus:placeholder-gray-400
       sm:text-sm;
   }
 }
@@ -203,6 +204,7 @@ import NetworkSelector from './NetworkSelector.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, XIcon, SearchIcon } from 'heroicons-vue3/outline';
 import { Network } from '@/services/restdb';
+import { account } from '@/services/useAccount';
 
 const navigation = [
   { name: 'Activity', href: '#', current: true },
@@ -232,6 +234,7 @@ export default {
       selectedNetwork,
       setSelectedNetwork,
       open,
+      account,
     };
   },
 };

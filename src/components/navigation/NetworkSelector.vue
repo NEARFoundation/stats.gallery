@@ -66,7 +66,7 @@
       text-indigo-100
       placeholder-indigo-200
       hover:bg-indigo-500 hover:bg-opacity-25 hover:text-white
-      focus:bg-indigo-500 focus:bg-opacity-25 focus:text-white
+      focus:bg-white focus:bg-opacity-100 focus:text-gray-900 ring-0 outline-none
       sm:text-sm;
   }
 
