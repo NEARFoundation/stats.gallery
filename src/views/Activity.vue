@@ -1,5 +1,7 @@
 <template>
-  <small class="text-xl font-bold text-gray-300">NEAR Stats</small>
+  <small class="text-xl font-bold text-indigo-200"
+    >NEAR Stats {{ network }}</small
+  >
   <h2 class="text-4xl font-bold leading-3">account.near</h2>
   <!-- Large stats display -->
   <dl
@@ -10,19 +12,19 @@
     "
   >
     <div class="flex flex-col">
-      <dt class="order-2 mt-2 text-lg leading-6 font-medium text-gray-600">
+      <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
         Pepperoni
       </dt>
       <dd class="order-1 text-5xl font-extrabold text-gray-800">100%</dd>
     </div>
     <div class="flex flex-col mt-10 sm:mt-0">
-      <dt class="order-2 mt-2 text-lg leading-6 font-medium text-gray-600">
+      <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
         Delivery
       </dt>
       <dd class="order-1 text-5xl font-extrabold text-gray-800">24/7</dd>
     </div>
     <div class="flex flex-col mt-10 sm:mt-0">
-      <dt class="order-2 mt-2 text-lg leading-6 font-medium text-gray-600">
+      <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
         Calories
       </dt>
       <dd class="order-1 text-5xl font-extrabold text-gray-800">100k+</dd>
@@ -48,18 +50,17 @@
       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
     "
   >
-    Request Access Keys
+    Run
   </button>
   <p v-if="requestInFlight">Requesting...</p>
   <pre v-if="!requestInFlight && msg !== null">{{ msg }}</pre>
 </template>
 
 <script lang="ts">
-import { networks, RestDatabaseClient } from '@/services/restdb';
+import { client, network } from '@/services/restdb/useNetwork';
 import { ref } from '@vue/reactivity';
 import { defineComponent } from '@vue/runtime-core';
-
-const db = new RestDatabaseClient(networks.mainnet);
+import { DateTime } from 'luxon';
 
 export default defineComponent({
   setup() {
@@ -69,8 +70,14 @@ export default defineComponent({
     const run = async () => {
       msg.value = null;
       requestInFlight.value = true;
-      const accessKeys = await db.getAccessKeys('hatchet.near');
-      msg.value = accessKeys.map(key => key.public_key).join('\n');
+
+      const transactions = await client.getTransactions({
+        account: 'hatchet.near',
+        sinceBlockTimestamp:
+          DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
+      });
+      msg.value = JSON.stringify(transactions, null, 2);
+
       requestInFlight.value = false;
     };
 
@@ -78,6 +85,7 @@ export default defineComponent({
       msg,
       requestInFlight,
       run,
+      network,
     };
   },
 });

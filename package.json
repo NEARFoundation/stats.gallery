@@ -9,14 +9,16 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.2.0",
+    "@supabase/postgrest-js": "^0.31.1",
     "core-js": "^3.6.5",
     "heroicons-vue3": "^1.0.1",
-    "postgrester": "^1.5.0",
+    "luxon": "^1.27.0",
     "vue": "~3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/luxon": "^1.27.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "^5.0.0-beta",

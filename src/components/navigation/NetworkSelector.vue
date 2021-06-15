@@ -3,7 +3,7 @@
     <div>
       <!-- Network selector button -->
       <MenuButton class="network-selector__button">
-        {{ selectedNetwork }}
+        {{ network }}
         <ChevronDownIcon class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
       </MenuButton>
     </div>
@@ -26,12 +26,12 @@
           >
             <a
               href="#"
-              @click.prevent="switchNetwork(networks[networkKey])"
+              @click.prevent="network = networkKey"
               :class="[
                 active
                   ? 'network-selector__option--active'
                   : 'network-selector__option--inactive',
-                selectedNetwork === networkKey
+                network === networkKey
                   ? 'network-selector__option--selected'
                   : '',
                 'network-selector__option',
@@ -101,6 +101,7 @@ import {
   networks,
 } from '@/services/restdb';
 import { defineComponent } from '@vue/runtime-core';
+import { network } from '@/services/restdb/useNetwork';
 
 export default defineComponent({
   components: {
@@ -110,24 +111,14 @@ export default defineComponent({
     MenuButton,
     ChevronDownIcon,
   },
-  props: {
-    selectedNetwork: {
-      required: true,
-      type: String,
-    },
-  },
-  emits: ['networkChanged'],
-  setup(_, { emit }) {
+  setup() {
     const networkKeys: Network[] = [Network.MAINNET, Network.TESTNET];
-
-    const switchNetwork = (newNetwork: IRestDatabaseConfiguration) => {
-      emit('networkChanged', newNetwork.name);
-    };
+    console.log(network);
 
     return {
+      network,
       networks,
       networkKeys,
-      switchNetwork,
     };
   },
 });

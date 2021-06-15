@@ -4,17 +4,17 @@ export const enum Network {
 }
 
 export interface IRestDatabaseConfiguration {
-  name: string;
+  name: Network;
   endpoint: string;
 }
 
 export const networks: Record<Network, IRestDatabaseConfiguration> = {
   mainnet: {
-    name: 'mainnet',
-    endpoint: 'https://near-mainnet-postgrest.onrender.com/',
+    name: Network.MAINNET,
+    endpoint: 'https://near-mainnet-postgrest.onrender.com',
   },
   testnet: {
-    name: 'testnet',
-    endpoint: 'https://near-testnet-postgrest.onrender.com/',
+    name: Network.TESTNET,
+    endpoint: 'https://near-testnet-postgrest.onrender.com',
   },
 };
