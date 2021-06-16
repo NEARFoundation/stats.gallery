@@ -55,8 +55,8 @@
 </template>
 
 <script lang="ts">
-import { client, network } from '@/services/restdb/useNetwork';
-import { account } from '@/services/useAccount';
+import { client, network } from '@/services/near/useNetwork';
+import { account } from '@/services/near/useAccount';
 import { ref } from '@vue/reactivity';
 import { defineComponent } from '@vue/runtime-core';
 import { DateTime } from 'luxon';

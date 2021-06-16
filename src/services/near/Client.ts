@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { Network, networks } from './networks';
 import { IAccessKey, ITransaction } from './types';
 
-export class RestDatabaseClient {
+export class Client {
   private client: PostgrestClient;
   private _network: Network;
   public get network(): Network {

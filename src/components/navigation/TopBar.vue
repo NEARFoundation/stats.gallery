@@ -199,12 +199,12 @@
 </style>
 
 <script lang="ts">
-import { ref } from 'vue';
-import NetworkSelector from './NetworkSelector.vue';
+import { Network } from '@/services/near/networks';
+import { account } from '@/services/near/useAccount';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { MenuIcon, XIcon, SearchIcon } from 'heroicons-vue3/outline';
-import { Network } from '@/services/restdb';
-import { account } from '@/services/useAccount';
+import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
+import { defineComponent, ref } from 'vue';
+import NetworkSelector from './NetworkSelector.vue';
 
 const navigation = [
   { name: 'Activity', href: '#', current: true },
@@ -212,7 +212,7 @@ const navigation = [
   { name: 'Help', href: '#', current: false },
 ];
 
-export default {
+export default defineComponent({
   components: {
     NetworkSelector,
     Disclosure,
@@ -237,5 +237,5 @@ export default {
       account,
     };
   },
-};
+});
 </script>

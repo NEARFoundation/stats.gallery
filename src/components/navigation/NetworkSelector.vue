@@ -93,15 +93,11 @@
 </style>
 
 <script lang="ts">
-import { Menu, MenuItem, MenuItems, MenuButton } from '@headlessui/vue';
-import { ChevronDownIcon } from 'heroicons-vue3/outline';
-import {
-  IRestDatabaseConfiguration,
-  Network,
-  networks,
-} from '@/services/restdb';
+import { Network, networks } from '@/services/near/networks';
+import { network } from '@/services/near/useNetwork';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';
-import { network } from '@/services/restdb/useNetwork';
+import { ChevronDownIcon } from 'heroicons-vue3/outline';
 
 export default defineComponent({
   components: {
@@ -113,7 +109,6 @@ export default defineComponent({
   },
   setup() {
     const networkKeys: Network[] = [Network.MAINNET, Network.TESTNET];
-    console.log(network);
 
     return {
       network,
