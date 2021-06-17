@@ -1,0 +1,22 @@
+version: "3"
+services:
+  prest_mainnet:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PREST_PG_HOST=104.199.89.51
+      - PREST_PG_PORT=5432
+      - PREST_PG_USER=public_readonly
+      - PREST_PG_PASS=nearprotocol
+      - PREST_PG_DATABASE=mainnet_explorer
+  prest_testnet:
+    build: .
+    ports:
+      - "3001:3000"
+    environment:
+      - PREST_PG_HOST=35.184.214.98
+      - PREST_PG_PORT=5432
+      - PREST_PG_USER=public_readonly
+      - PREST_PG_PASS=nearprotocol
+      - PREST_PG_DATABASE=testnet_explorer
