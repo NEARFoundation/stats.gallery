@@ -55,8 +55,8 @@
 </template>
 
 <script lang="ts">
-import { client, network } from '@/services/near/useNetwork';
 import { account } from '@/services/near/useAccount';
+import { client, network } from '@/services/near/useNetwork';
 import { ref } from '@vue/reactivity';
 import { defineComponent } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
@@ -74,6 +74,7 @@ export default defineComponent({
         account: account.value,
         sinceBlockTimestamp:
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
+        limit: 3,
       });
       msg.value = JSON.stringify(transactions, null, 2);
 

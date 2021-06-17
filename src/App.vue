@@ -11,10 +11,24 @@
 
 <script lang="ts">
 import TopBar from '@/components/navigation/TopBar.vue';
+import { defineComponent, provide, reactive, ref, watch } from 'vue';
+import { NearClient } from './services/near/NearClient';
+import { Network } from './services/near/networks';
 
-export default {
+export default defineComponent({
   components: {
     TopBar,
   },
-};
+  setup() {
+    provide('account', ref(''));
+    const network = ref(Network.MAINNET);
+    provide('network', network);
+    const client = reactive(new NearClient(network.value));
+    provide('near', client);
+
+    watch(network, newNetwork => {
+      client.network = newNetwork;
+    });
+  },
+});
 </script>

@@ -1,31 +1,41 @@
 import { PostgrestClient } from '@supabase/postgrest-js';
 import { DateTime } from 'luxon';
 import { Network, networks } from './networks';
+import { IPrestRequest, prestRequest } from './prestRequest';
 import { IAccessKey, ITransaction } from './types';
 
-export class Client {
-  private client: PostgrestClient;
+export class NearClient {
+  private restClient: PostgrestClient;
   private _network: Network;
   public get network(): Network {
     return this._network;
   }
   public set network(network: Network) {
-    this.client.url = networks[network].endpoint;
+    this.restClient = new PostgrestClient(networks[network].restEndpoint);
     this._network = network;
+  }
+
+  private get prestEndpoint() {
+    return networks[this.network].prestEndpoint;
   }
 
   public constructor(network: Network) {
-    this.client = new PostgrestClient(networks[network].endpoint);
+    this.restClient = new PostgrestClient(networks[network].restEndpoint);
     this._network = network;
   }
 
+  private async fetchRequest<T>(request: IPrestRequest<T>): Promise<T[]> {
+    return (await fetch(prestRequest<T>(this.prestEndpoint, request))).json();
+  }
+
   public async getAccessKeys(account: string): Promise<IAccessKey[]> {
-    return (
-      await this.client
-        .from('access_keys')
-        .select('*')
-        .eq('account_id', account)
-    ).data as IAccessKey[];
+    return this.fetchRequest<IAccessKey>({
+      table: 'access_keys',
+      select: '*',
+      where: {
+        account_id: account,
+      },
+    });
   }
 
   public async getTransactions<
@@ -56,17 +66,23 @@ export class Client {
       'included_in_chunk_hash',
       'receiver_account_id',
     ];
-
-    return (
-      await this.client
-        .from('transactions')
-        .select(columns.join(','))
-        .eq('signer_account_id', account)
-        .gte('block_timestamp', sinceBlockTimestamp)
-        .order('block_timestamp', {
-          ascending: false,
-        })
-        .limit(limit)
-    ).data as K[];
+    return this.fetchRequest({
+      table: 'transactions',
+      select: columns,
+      where: {
+        signer_account_id: account,
+        block_timestamp: {
+          op: 'gte',
+          value: sinceBlockTimestamp,
+        },
+      },
+      order: [
+        {
+          field: 'block_timestamp',
+          desc: true,
+        },
+      ],
+      limit,
+    });
   }
 }

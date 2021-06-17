@@ -10,9 +10,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.2.0",
     "@supabase/postgrest-js": "^0.31.1",
-    "@urql/vue": "^0.4.0",
     "core-js": "^3.6.5",
-    "graphql": "^15.5.0",
     "heroicons-vue3": "^1.0.1",
     "luxon": "^1.27.0",
     "vue": "~3.0.0",
