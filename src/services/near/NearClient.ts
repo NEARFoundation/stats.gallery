@@ -31,6 +31,12 @@ export class NearClient {
     this._network = network;
   }
 
+  private async fetchCountRequest<T>(
+    request: IPrestRequest<T>,
+  ): Promise<{ count: number }> {
+    return (await fetch(prestRequest<T>(this.prestEndpoint, request))).json();
+  }
+
   private async fetchRequest<T, W>(request: IPrestRequest<T>): Promise<W[]> {
     return (await fetch(prestRequest<T>(this.prestEndpoint, request))).json();
   }
@@ -76,6 +82,35 @@ export class NearClient {
         type: 'left',
       },
     });
+  }
+
+  public async getTransactionCount({
+    account,
+    sinceBlockTimestamp = DateTime.now().minus({ days: 1 }).toMillis() *
+      1_000_000,
+    action,
+  }: {
+    account: string;
+    sinceBlockTimestamp?: number;
+    action?: ActionKind;
+  }): Promise<number> {
+    return (
+      await this.fetchCountRequest({
+        table: 'transactions',
+        select: ['transaction_hash'],
+        where: {
+          signer_account_id: account,
+          block_timestamp: sinceBlockTimestamp
+            ? {
+                op: 'gte',
+                value: sinceBlockTimestamp,
+              }
+            : undefined,
+          action_kind: action,
+        },
+        count: 'transaction_hash',
+      })
+    ).count;
   }
 
   public async getTransactions<

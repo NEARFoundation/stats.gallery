@@ -1,7 +1,17 @@
 // Import Tailwind CSS globally
+import App from '@/App.vue';
+import router from '@/router';
+import { compactNumber } from '@/utils/compactNumber';
 import 'tailwindcss/tailwind.css';
 import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
+import { nearSymbol } from '@/utils/near';
 
-createApp(App).use(router).mount('#app');
+const app = createApp(App);
+app.use(router).mount('#app');
+
+app.config.globalProperties = {
+  nearSymbol,
+  $filters: {
+    compactNumber,
+  },
+};

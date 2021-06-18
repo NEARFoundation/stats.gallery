@@ -13,19 +13,25 @@
       <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
         Gas Spent
       </dt>
-      <dd class="order-1 text-5xl font-extrabold text-gray-800">100%</dd>
+      <dd class="order-1 text-5xl font-extrabold text-gray-800">
+        {{ $filters.compactNumber(gasSpent) }}
+      </dd>
     </div>
     <div class="flex flex-col mt-10 sm:mt-0">
       <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
-        <near-symbol /> Spent on Gas
+        Spent on Gas
       </dt>
-      <dd class="order-1 text-5xl font-extrabold text-gray-800">24/7</dd>
+      <dd class="order-1 text-5xl font-extrabold text-gray-800">
+        {{ nearSymbol }} {{ $filters.compactNumber(tokensSpentOnGas) }}
+      </dd>
     </div>
     <div class="flex flex-col mt-10 sm:mt-0">
       <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
-        Calories
+        Transactions
       </dt>
-      <dd class="order-1 text-5xl font-extrabold text-gray-800">100k+</dd>
+      <dd class="order-1 text-5xl font-extrabold text-gray-800">
+        {{ txCount }}
+      </dd>
     </div>
   </dl>
 
@@ -55,14 +61,13 @@
 </template>
 
 <script lang="ts">
-import NearSymbol from '@/components/near/NearSymbol.vue';
 import { client, network } from '@/services/near/useNetwork';
+import { toNear } from '@/utils/near';
 import { Ref, ref } from '@vue/reactivity';
 import { defineComponent, inject } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
 
 export default defineComponent({
-  components: { NearSymbol },
   setup() {
     const msg = ref(null as null | string);
     const requestInFlight = ref(false);
@@ -71,39 +76,42 @@ export default defineComponent({
 
     const gasSpent = ref(0);
     const tokensSpentOnGas = ref(0);
+    const txCount = ref(0);
 
-    const run = async () => {
-      msg.value = null;
-      requestInFlight.value = true;
-
-      // const transactions = await client.getTransactions({
-      //   account: account.value,
-      //   sinceBlockTimestamp:
-      //     DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
-      //   limit: 3,
-      // });
-      // msg.value = JSON.stringify(transactions, null, 2);
-      // const x = await client.getTransactions({
-      //   account: account.value,
-      //   sinceBlockTimestamp:
-      //     DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
-      //   limit: 10,
-      // });
-      // console.log(x);
-      const y = await client.getGasSpent({
+    const doGasSpent = async () => {
+      const gasSpentRequest = await client.getGasSpent({
         account: account.value,
         sinceBlockTimestamp:
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
       });
-      console.log(y);
-      const z = await client.getGasSpent({
+      gasSpent.value = gasSpentRequest.reduce((a, x) => x.sum + a, 0);
+    };
+
+    const doTokensSpent = async () => {
+      const tokensSpentRequest = await client.getGasSpent({
         account: account.value,
         sinceBlockTimestamp:
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
         inTokens: true,
       });
-      console.log(z);
-      msg.value = JSON.stringify(y, null, 2);
+      tokensSpentOnGas.value = toNear(
+        tokensSpentRequest.reduce((a, x) => x.sum + a, 0),
+      );
+    };
+
+    const doTxCount = async () => {
+      const txCountRequest = await client.getTransactionCount({
+        account: account.value,
+        sinceBlockTimestamp: 0,
+      });
+      txCount.value = txCountRequest;
+    };
+
+    const run = async () => {
+      msg.value = null;
+      requestInFlight.value = true;
+
+      await Promise.all([doGasSpent(), doTokensSpent(), doTxCount()]);
 
       requestInFlight.value = false;
     };
@@ -114,6 +122,9 @@ export default defineComponent({
       run,
       network,
       account,
+      gasSpent,
+      tokensSpentOnGas,
+      txCount,
     };
   },
 });

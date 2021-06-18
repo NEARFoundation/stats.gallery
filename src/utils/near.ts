@@ -4,7 +4,7 @@ const yocto = new Big('1e+24');
 
 export function toNear(value: string | number | Big): number {
   const bn = new Big(value);
-  return bn.div(yocto).toNumber();
+  return +bn.div(yocto).toString();
 }
 
-export const nearCurrencySymbol = String.fromCharCode(9411); // Ⓝ
+export const nearSymbol = String.fromCharCode(9411); // Ⓝ
