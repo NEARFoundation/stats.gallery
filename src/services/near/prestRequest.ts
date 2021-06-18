@@ -31,10 +31,17 @@ type GroupFunctionOperation<T> = Partial<Record<GroupFunction, (keyof T)[]>>;
 
 export interface IPrestRequest<T> extends GroupFunctionOperation<T> {
   table: string;
-  select: (keyof T)[] | '*';
+  select: (keyof T | '*' | string)[];
   count?: keyof T | '*';
   where?: {
     [field in keyof T]?: SimpleConstraint | ComplexConstraint;
+  };
+  join?: {
+    type?: 'inner' | 'outer' | 'left' | 'right';
+    table: string;
+    field: string;
+    on: keyof T;
+    op?: 'eq' | 'lt' | 'lte' | 'gt' | 'gte';
   };
   order?: {
     field: keyof T;
@@ -66,7 +73,7 @@ export function prestRequest<T>(
 ): string {
   const params = new URLSearchParams();
 
-  if ('limit' in request) {
+  if (request.limit) {
     params.append('_page_size', request.limit + '');
     params.append('_page', '1');
   } else if ('page' in request && 'pageSize' in request) {
@@ -92,8 +99,9 @@ export function prestRequest<T>(
   }
 
   if (request.where) {
-    Object.keys(request.where).forEach(field => {
-      const constraint = request.where![field as keyof T];
+    const { where } = request;
+    Object.keys(where).forEach(field => {
+      const constraint = where[field as keyof T];
 
       if (constraint + '' === constraint || +constraint === constraint) {
         // string, number
@@ -115,6 +123,16 @@ export function prestRequest<T>(
     });
   }
 
+  if (request.join) {
+    const type = request.join.type ?? 'inner';
+    const op = request.join.op ?? 'eq';
+    const { table, field, on } = request.join;
+    params.append(
+      '_join',
+      `${type}:${table}:${request.table}.${on}:$${op}:${table}.${field}`,
+    );
+  }
+
   const select = (
     [
       'sum',
@@ -126,9 +144,8 @@ export function prestRequest<T>(
       'variance',
     ] as GroupFunction[]
   )
-    .filter(groupFunction => groupFunction in request)
     .flatMap(groupFunction =>
-      request[groupFunction]!.map(field => groupFunction + ':' + field),
+      (request[groupFunction] ?? []).map(field => groupFunction + ':' + field),
     )
     .concat(request.select as string[])
     .join(',');

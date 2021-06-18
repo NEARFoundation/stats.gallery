@@ -70,13 +70,21 @@ export default defineComponent({
       msg.value = null;
       requestInFlight.value = true;
 
-      const transactions = await client.getTransactions({
+      // const transactions = await client.getTransactions({
+      //   account: account.value,
+      //   sinceBlockTimestamp:
+      //     DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
+      //   limit: 3,
+      // });
+      // msg.value = JSON.stringify(transactions, null, 2);
+      const x = await client.getTransactions({
         account: account.value,
         sinceBlockTimestamp:
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
-        limit: 3,
+        limit: 10,
       });
-      msg.value = JSON.stringify(transactions, null, 2);
+      console.log(x);
+      msg.value = JSON.stringify(x, null, 2);
 
       requestInFlight.value = false;
     };
