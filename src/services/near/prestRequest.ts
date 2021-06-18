@@ -27,27 +27,29 @@ type GroupFunction =
   | 'median'
   | 'stddev'
   | 'variance';
-type GroupFunctionOperation<T> = Partial<Record<GroupFunction, (keyof T)[]>>;
+type GroupFunctionOperation<T> = Partial<
+  Record<GroupFunction, keyof T | string>
+>;
 
 export interface IPrestRequest<T> extends GroupFunctionOperation<T> {
   table: string;
   select: (keyof T | '*' | string)[];
-  count?: keyof T | '*';
+  count?: keyof T | '*' | string;
   where?: {
-    [field in keyof T]?: SimpleConstraint | ComplexConstraint;
+    [field in keyof T | string]?: SimpleConstraint | ComplexConstraint;
   };
   join?: {
     type?: 'inner' | 'outer' | 'left' | 'right';
     table: string;
     field: string;
-    on: keyof T;
+    on: keyof T | string;
     op?: 'eq' | 'lt' | 'lte' | 'gt' | 'gte';
   };
   order?: {
     field: keyof T;
     desc: boolean;
   }[];
-  group?: keyof T;
+  group?: (keyof T | string)[];
   limit?: number;
   page?: number;
   pageSize?: number;
@@ -95,7 +97,7 @@ export function prestRequest<T>(
   }
 
   if (request.group) {
-    params.append('_groupby', request.group + '');
+    params.append('_groupby', request.group.join(','));
   }
 
   if (request.where) {
@@ -145,7 +147,9 @@ export function prestRequest<T>(
     ] as GroupFunction[]
   )
     .flatMap(groupFunction =>
-      (request[groupFunction] ?? []).map(field => groupFunction + ':' + field),
+      request[groupFunction]
+        ? [groupFunction + ':' + request[groupFunction]]
+        : [],
     )
     .concat(request.select as string[])
     .join(',');

@@ -31,12 +31,12 @@ export class NearClient {
     this._network = network;
   }
 
-  private async fetchRequest<T>(request: IPrestRequest<T>): Promise<T[]> {
+  private async fetchRequest<T, W>(request: IPrestRequest<T>): Promise<W[]> {
     return (await fetch(prestRequest<T>(this.prestEndpoint, request))).json();
   }
 
   public async getAccessKeys(account: string): Promise<IAccessKey[]> {
-    return this.fetchRequest<IAccessKey>({
+    return this.fetchRequest<IAccessKey, IAccessKey>({
       table: 'access_keys',
       select: ['*'],
       where: {
@@ -45,8 +45,41 @@ export class NearClient {
     });
   }
 
+  public async getGasSpent({
+    account,
+    sinceBlockTimestamp = DateTime.now().minus({ days: 1 }).toMillis() *
+      1_000_000,
+    inTokens = false,
+  }: {
+    account: string;
+    sinceBlockTimestamp: number;
+    inTokens?: boolean;
+  }): Promise<{ sum: number; action_kind: ActionKind }[]> {
+    return await this.fetchRequest({
+      table: 'transactions',
+      select: ['action_kind'],
+      where: {
+        signer_account_id: account,
+        block_timestamp: {
+          op: 'gte',
+          value: sinceBlockTimestamp,
+        },
+      },
+      sum: inTokens
+        ? 'receipt_conversion_tokens_burnt'
+        : 'receipt_conversion_gas_burnt',
+      group: ['action_kind'],
+      join: {
+        table: 'transaction_actions',
+        field: 'transaction_hash',
+        on: 'transaction_hash',
+        type: 'left',
+      },
+    });
+  }
+
   public async getTransactions<
-    K extends Pick<
+    T extends Pick<
       ITransaction & ITransactionAction<ITransferArgs>,
       | 'block_timestamp'
       | 'signer_account_id'
@@ -70,8 +103,8 @@ export class NearClient {
     sinceBlockTimestamp?: number;
     limit?: number;
     action?: ActionKind[] | ActionKind;
-  }): Promise<K[]> {
-    return this.fetchRequest<K>({
+  }): Promise<T[]> {
+    return this.fetchRequest<T, T>({
       table: 'transactions',
       select: [
         'block_timestamp',
