@@ -11,13 +11,13 @@
   >
     <div class="flex flex-col">
       <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
-        Pepperoni
+        Gas Spent
       </dt>
       <dd class="order-1 text-5xl font-extrabold text-gray-800">100%</dd>
     </div>
     <div class="flex flex-col mt-10 sm:mt-0">
       <dt class="order-2 mt-2 text-lg leading-6 font-medium text-indigo-400">
-        Delivery
+        <near-symbol /> Spent on Gas
       </dt>
       <dd class="order-1 text-5xl font-extrabold text-gray-800">24/7</dd>
     </div>
@@ -55,16 +55,22 @@
 </template>
 
 <script lang="ts">
-import { account } from '@/services/near/useAccount';
+import NearSymbol from '@/components/near/NearSymbol.vue';
 import { client, network } from '@/services/near/useNetwork';
-import { ref } from '@vue/reactivity';
-import { defineComponent } from '@vue/runtime-core';
+import { Ref, ref } from '@vue/reactivity';
+import { defineComponent, inject } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
 
 export default defineComponent({
+  components: { NearSymbol },
   setup() {
     const msg = ref(null as null | string);
     const requestInFlight = ref(false);
+
+    const account = inject<Ref<string>>('account')!;
+
+    const gasSpent = ref(0);
+    const tokensSpentOnGas = ref(0);
 
     const run = async () => {
       msg.value = null;

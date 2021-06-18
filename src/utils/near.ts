@@ -1,8 +1,10 @@
-import BN from 'bn.js';
+import Big from 'big.js';
 
-const yocto = new BN(1e24);
+const yocto = new Big('1e+24');
 
-export function toNear(value: string | number | BN): number {
-  const bn = new BN(value);
+export function toNear(value: string | number | Big): number {
+  const bn = new Big(value);
   return bn.div(yocto).toNumber();
 }
+
+export const nearCurrencySymbol = String.fromCharCode(9411); // Ⓝ

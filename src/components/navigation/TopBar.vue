@@ -200,10 +200,9 @@
 
 <script lang="ts">
 import { Network } from '@/services/near/networks';
-import { account } from '@/services/near/useAccount';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, inject, Ref, ref } from 'vue';
 import NetworkSelector from './NetworkSelector.vue';
 
 const navigation = [
@@ -224,7 +223,8 @@ export default defineComponent({
   },
   setup() {
     const open = ref(false);
-    const selectedNetwork = ref(Network.MAINNET);
+    const account = inject<Ref<string>>('account')!;
+    const selectedNetwork = inject<Ref<Network>>('network')!;
     const setSelectedNetwork = (network: Network) => {
       selectedNetwork.value = network;
     };
