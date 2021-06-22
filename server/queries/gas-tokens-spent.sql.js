@@ -8,7 +8,7 @@ module.exports = params => {
   }
 
   return sql`
-    select sum(receipt_conversion_tokens_burnt)::text as gas_tokens_spent
+    select sum(receipt_conversion_tokens_burnt)::text as result
     from transactions
     where ${sql.join(conditions, sql` and `)}
   `;

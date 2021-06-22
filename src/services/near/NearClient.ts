@@ -1,7 +1,11 @@
 import axios from 'axios';
-import { DateTime } from 'luxon';
 import { Network, networks } from './networks';
 import { IAccessKey } from './types';
+
+interface SingleParams {
+  account: string;
+  since: number;
+}
 
 export class NearClient {
   private _network: Network;
@@ -31,47 +35,29 @@ export class NearClient {
     }).then(r => r.data);
   }
 
-  public async getGasSpent({
-    account,
-    sinceBlockTimestamp = DateTime.now().minus({ days: 1 }).toMillis() *
-      1_000_000,
-    inTokens = false,
-  }: {
-    account: string;
-    sinceBlockTimestamp: number;
-    inTokens?: boolean;
-  }): Promise<number> {
+  public async getSingle(
+    url: string,
+    { account, since }: SingleParams,
+  ): Promise<any> {
     return axios({
       baseURL: this.endpoint,
-      url: inTokens ? 'gas-tokens-spent' : 'gas-spent',
+      url,
       params: {
         account_id: account,
-        since_block_timestamp: sinceBlockTimestamp,
+        since_block_timestamp: since,
       },
-    }).then(r => {
-      if (inTokens) {
-        return r.data[0].gas_tokens_spent;
-      } else {
-        return r.data[0].gas_spent;
-      }
-    });
+    }).then(r => r.data[0].result);
   }
 
-  public async getTransactionCount({
-    account,
-    sinceBlockTimestamp = DateTime.now().minus({ days: 1 }).toMillis() *
-      1_000_000,
-  }: {
-    account: string;
-    sinceBlockTimestamp?: number;
-  }): Promise<number> {
-    return axios({
-      baseURL: this.endpoint,
-      url: 'transaction-count',
-      params: {
-        account_id: account,
-        since_block_timestamp: sinceBlockTimestamp,
-      },
-    }).then(r => r.data[0].transaction_count);
+  public async getGasTokensSpent(params: SingleParams): Promise<string> {
+    return this.getSingle('gas-tokens-spent', params);
+  }
+
+  public async getGasSpent(params: SingleParams): Promise<string> {
+    return this.getSingle('gas-spent', params);
+  }
+
+  public async getTransactionCount(params: SingleParams): Promise<number> {
+    return this.getSingle('transaction-count', params);
   }
 }

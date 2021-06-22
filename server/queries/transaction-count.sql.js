@@ -8,7 +8,7 @@ module.exports = params => {
   }
 
   return sql`
-    select count(*) as transaction_count
+    select count(*) as result
     from transactions
     where ${sql.join(conditions, sql` and `)}
   `;

@@ -1,5 +1,5 @@
 const accessKeysSql = require('./queries/access-keys.sql');
-const distinctCallersSql = require('./queries/distinct-callers.sql');
+const distinctSendersSql = require('./queries/distinct-senders.sql');
 const distinctReceiversSql = require('./queries/distinct-receivers.sql');
 const gasSpentSql = require('./queries/gas-spent.sql');
 const gasTokensSpentSql = require('./queries/gas-tokens-spent.sql');
@@ -21,8 +21,8 @@ module.exports = [
     query: distinctReceiversSql,
   },
   {
-    path: 'distinct-callers',
-    query: distinctCallersSql,
+    path: 'distinct-senders',
+    query: distinctSendersSql,
   },
   {
     path: 'access-keys',
