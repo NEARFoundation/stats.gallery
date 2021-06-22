@@ -45,7 +45,9 @@
             class="search__input"
             placeholder="my-account.near&hellip;"
             type="search"
-            v-model="account"
+            v-model="displayedAccount"
+            @blur="updateAccount"
+            @keydown.enter="updateAccount"
           />
         </div>
 
@@ -224,6 +226,10 @@ export default defineComponent({
   setup() {
     const open = ref(false);
     const account = inject<Ref<string>>('account')!;
+    const displayedAccount = ref('');
+    const updateAccount = () => {
+      account.value = displayedAccount.value;
+    };
     const selectedNetwork = inject<Ref<Network>>('network')!;
     const setSelectedNetwork = (network: Network) => {
       selectedNetwork.value = network;
@@ -235,6 +241,8 @@ export default defineComponent({
       setSelectedNetwork,
       open,
       account,
+      displayedAccount,
+      updateAccount,
     };
   },
 });

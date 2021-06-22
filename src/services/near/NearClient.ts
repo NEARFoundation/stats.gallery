@@ -1,54 +1,34 @@
-import { PostgrestClient } from '@supabase/postgrest-js';
+import axios from 'axios';
 import { DateTime } from 'luxon';
 import { Network, networks } from './networks';
-import { IPrestRequest, prestRequest } from './prestRequest';
-import {
-  ActionKind,
-  IAccessKey,
-  ITransaction,
-  ITransactionAction,
-  ITransferArgs,
-  TransactionActionArgs,
-} from './types';
+import { IAccessKey } from './types';
 
 export class NearClient {
-  private restClient: PostgrestClient;
   private _network: Network;
+
   public get network(): Network {
     return this._network;
   }
   public set network(network: Network) {
-    this.restClient = new PostgrestClient(networks[network].restEndpoint);
     this._network = network;
   }
 
-  private get prestEndpoint() {
-    return networks[this.network].prestEndpoint;
+  private get endpoint() {
+    return networks[this.network].endpoint;
   }
 
   public constructor(network: Network) {
-    this.restClient = new PostgrestClient(networks[network].restEndpoint);
     this._network = network;
   }
 
-  private async fetchCountRequest<T>(
-    request: IPrestRequest<T>,
-  ): Promise<{ count: number }> {
-    return (await fetch(prestRequest<T>(this.prestEndpoint, request))).json();
-  }
-
-  private async fetchRequest<T, W>(request: IPrestRequest<T>): Promise<W[]> {
-    return (await fetch(prestRequest<T>(this.prestEndpoint, request))).json();
-  }
-
   public async getAccessKeys(account: string): Promise<IAccessKey[]> {
-    return this.fetchRequest<IAccessKey, IAccessKey>({
-      table: 'access_keys',
-      select: ['*'],
-      where: {
+    return axios({
+      baseURL: this.endpoint,
+      url: 'access-keys',
+      params: {
         account_id: account,
       },
-    });
+    }).then(r => r.data);
   }
 
   public async getGasSpent({
@@ -60,27 +40,20 @@ export class NearClient {
     account: string;
     sinceBlockTimestamp: number;
     inTokens?: boolean;
-  }): Promise<{ sum: number; action_kind: ActionKind }[]> {
-    return await this.fetchRequest({
-      table: 'transactions',
-      select: ['action_kind'],
-      where: {
-        signer_account_id: account,
-        block_timestamp: {
-          op: 'gte',
-          value: sinceBlockTimestamp,
-        },
+  }): Promise<number> {
+    return axios({
+      baseURL: this.endpoint,
+      url: inTokens ? 'gas-tokens-spent' : 'gas-spent',
+      params: {
+        account_id: account,
+        since_block_timestamp: sinceBlockTimestamp,
       },
-      sum: inTokens
-        ? 'receipt_conversion_tokens_burnt'
-        : 'receipt_conversion_gas_burnt',
-      group: ['action_kind'],
-      join: {
-        table: 'transaction_actions',
-        field: 'transaction_hash',
-        on: 'transaction_hash',
-        type: 'left',
-      },
+    }).then(r => {
+      if (inTokens) {
+        return r.data[0].gas_tokens_spent;
+      } else {
+        return r.data[0].gas_spent;
+      }
     });
   }
 
@@ -88,92 +61,17 @@ export class NearClient {
     account,
     sinceBlockTimestamp = DateTime.now().minus({ days: 1 }).toMillis() *
       1_000_000,
-    action,
   }: {
     account: string;
     sinceBlockTimestamp?: number;
-    action?: ActionKind;
   }): Promise<number> {
-    return (
-      await this.fetchCountRequest({
-        table: 'transactions',
-        select: ['transaction_hash'],
-        where: {
-          signer_account_id: account,
-          block_timestamp: sinceBlockTimestamp
-            ? {
-                op: 'gte',
-                value: sinceBlockTimestamp,
-              }
-            : undefined,
-          action_kind: action,
-        },
-        count: 'transaction_hash',
-      })
-    ).count;
-  }
-
-  public async getTransactions<
-    T extends Pick<
-      ITransaction & ITransactionAction<ITransferArgs>,
-      | 'block_timestamp'
-      | 'signer_account_id'
-      | 'transaction_hash'
-      | 'included_in_block_hash'
-      | 'receiver_account_id'
-      | 'receipt_conversion_gas_burnt'
-      | 'receipt_conversion_tokens_burnt'
-      | 'status'
-      | 'args'
-      | 'action_kind'
-    >,
-  >({
-    account,
-    sinceBlockTimestamp = DateTime.now().minus({ days: 1 }).toMillis() *
-      1_000_000,
-    limit = 20,
-    action,
-  }: {
-    account: string;
-    sinceBlockTimestamp?: number;
-    limit?: number;
-    action?: ActionKind[] | ActionKind;
-  }): Promise<T[]> {
-    return this.fetchRequest<T, T>({
-      table: 'transactions',
-      select: [
-        'block_timestamp',
-        'signer_account_id',
-        'transactions.transaction_hash',
-        'included_in_block_hash',
-        'receiver_account_id',
-        'receipt_conversion_gas_burnt',
-        'receipt_conversion_tokens_burnt',
-        'status',
-        'action_kind',
-        'args',
-      ],
-      where: {
-        signer_account_id: account,
-        block_timestamp: {
-          op: 'gte',
-          value: sinceBlockTimestamp,
-        },
-        action_kind: action,
+    return axios({
+      baseURL: this.endpoint,
+      url: 'transaction-count',
+      params: {
+        account_id: account,
+        since_block_timestamp: sinceBlockTimestamp,
       },
-      order: [
-        {
-          field: 'block_timestamp',
-          desc: true,
-        },
-      ],
-      join: {
-        table: 'transaction_actions',
-        field: 'transaction_hash',
-        on: 'transaction_hash',
-        type: 'left',
-      },
-      limit,
-    });
+    }).then(r => r.data[0].transaction_count);
   }
 }

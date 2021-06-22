@@ -30,7 +30,7 @@
         Transactions
       </dt>
       <dd class="order-1 text-5xl font-extrabold text-gray-800">
-        {{ txCount }}
+        {{ $filters.compactNumber(txCount) }}
       </dd>
     </div>
   </dl>
@@ -64,7 +64,7 @@
 import { client, network } from '@/services/near/useNetwork';
 import { toNear } from '@/utils/near';
 import { Ref, ref } from '@vue/reactivity';
-import { defineComponent, inject } from '@vue/runtime-core';
+import { defineComponent, inject, watch } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
 
 export default defineComponent({
@@ -84,7 +84,7 @@ export default defineComponent({
         sinceBlockTimestamp:
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
       });
-      gasSpent.value = gasSpentRequest.reduce((a, x) => x.sum + a, 0);
+      gasSpent.value = gasSpentRequest;
     };
 
     const doTokensSpent = async () => {
@@ -94,9 +94,7 @@ export default defineComponent({
           DateTime.now().minus({ years: 1 }).toMillis() * 1000000,
         inTokens: true,
       });
-      tokensSpentOnGas.value = toNear(
-        tokensSpentRequest.reduce((a, x) => x.sum + a, 0),
-      );
+      tokensSpentOnGas.value = toNear(tokensSpentRequest);
     };
 
     const doTxCount = async () => {
@@ -115,6 +113,8 @@ export default defineComponent({
 
       requestInFlight.value = false;
     };
+
+    watch(account, run);
 
     return {
       msg,

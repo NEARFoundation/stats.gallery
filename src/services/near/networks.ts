@@ -5,19 +5,16 @@ export const enum Network {
 
 export interface INetworkConfiguration {
   name: Network;
-  restEndpoint: string;
-  prestEndpoint: string;
+  endpoint: string;
 }
 
 export const networks: Record<Network, INetworkConfiguration> = {
   mainnet: {
     name: Network.MAINNET,
-    restEndpoint: 'https://near-mainnet-postgrest.onrender.com',
-    prestEndpoint: 'http://localhost:3000/mainnet_explorer/public/',
+    endpoint: 'http://localhost:3000/',
   },
   testnet: {
     name: Network.TESTNET,
-    restEndpoint: 'https://near-testnet-postgrest.onrender.com',
-    prestEndpoint: 'http://localhost:3001/testnet_explorer/public/',
+    endpoint: 'http://localhost:3001/',
   },
 };
