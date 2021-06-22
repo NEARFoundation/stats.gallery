@@ -34,7 +34,7 @@ routes.forEach(route => {
       });
       console.log('Response', result);
 
-      ctx.response.body = JSON.stringify(result);
+      ctx.response.body = result;
     } catch (e) {
       console.log(e);
       ctx.response.status = 500;
