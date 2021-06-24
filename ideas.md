@@ -11,3 +11,4 @@ Add new ones as issues to the repo, then add a list item and tag the issue numbe
 - [ ] Age of account/when the account was created
 - [ ] Receipts per transaction, over time, how many receipts are you generating?
 - [ ] NFT support of some form?
+- [ ] Comparative analysis among accounts in various ways ([issues / 1](https://github.com/NEAR-Edu/my-near-stats/issues/1))
