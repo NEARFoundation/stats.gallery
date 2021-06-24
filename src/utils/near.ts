@@ -1,6 +1,7 @@
 import { NearClient } from '@/services/near/NearClient';
 import { Network } from '@/services/near/networks';
 import Big from 'big.js';
+import { DateTime } from 'luxon';
 import { inject, Ref } from 'vue';
 
 const yocto = new Big('1e+24');
@@ -26,4 +27,11 @@ export function nearContext(): {
     network,
     client,
   };
+}
+
+export function nearTimestampToLocaleString(
+  timestamp: number,
+  format?: Intl.DateTimeFormatOptions,
+): string {
+  return DateTime.fromMillis(timestamp / 1000000).toLocaleString(format);
 }

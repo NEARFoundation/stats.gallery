@@ -33,7 +33,10 @@
       </div>
       <div class="text-right text-sm whitespace-nowrap text-gray-500">
         <time :datetime="transaction.block_timestamp / 1000000">{{
-          transaction.block_timestamp
+          $filters.nearTimestampToLocaleString(
+            transaction.block_timestamp,
+            DateTime.DATETIME_FULL,
+          )
         }}</time>
       </div>
     </div>
@@ -42,6 +45,7 @@
 
 <script lang="ts">
 import { UnifiedTransactionAction } from '@/services/near/types';
+import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
 import TransactionActionIcon from './TransactionActionIcon.vue';
 
@@ -56,6 +60,11 @@ export default defineComponent({
       type: String,
       require: true,
     },
+  },
+  setup() {
+    return {
+      DateTime,
+    };
   },
 });
 </script>
