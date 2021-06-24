@@ -40,31 +40,25 @@
     </ProvideSingleStat>
   </BigStats>
   <ProvideRecentTransactionActions :account="account" #default="{ results }">
-    <pre
-      v-for="result in results"
-      :key="
-        result.transaction_hash +
-        result.index_in_transaction +
-        result.block_timestamp
-      "
-      >{{ JSON.stringify(result, null, 2) }}</pre
-    >
+    <TransactionActions :transactions="results" />
   </ProvideRecentTransactionActions>
 </template>
 
 <script lang="ts">
+import TransactionActions from '@/components/activity/TransactionActions.vue';
+import BigStat from '@/components/stats/BigStat.vue';
+import BigStats from '@/components/stats/BigStats.vue';
+import ProvideRecentTransactionActions from '@/providers/ProvideRecentTransactionActions.vue';
+import ProvideSingleStat from '@/providers/ProvideSingleStat.vue';
 import { Ref } from '@vue/reactivity';
 import { defineComponent, inject } from '@vue/runtime-core';
-import BigStat from '../components/stats/BigStat.vue';
-import BigStats from '../components/stats/BigStats.vue';
-import ProvideRecentTransactionActions from '../providers/ProvideRecentTransactionActions.vue';
-import ProvideSingleStat from '../providers/ProvideSingleStat.vue';
 
 export default defineComponent({
   components: {
     BigStats,
     ProvideSingleStat,
     ProvideRecentTransactionActions,
+    TransactionActions,
     BigStat,
   },
   setup() {

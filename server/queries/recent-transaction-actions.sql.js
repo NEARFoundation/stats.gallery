@@ -2,7 +2,7 @@ const { sql } = require('slonik');
 
 module.exports = params => {
   const conditions = [
-    sql`transactions.signer_account_id = ${params.account_id}`,
+    sql`transactions.signer_account_id = ${params.account_id} or transactions.receiver_account_id = ${params.account_id}`,
   ];
 
   if (params.after_block_timestamp > 0) {
@@ -18,17 +18,16 @@ module.exports = params => {
   }
 
   return sql`
-    select
-      transaction_actions.*,
+    select transaction_actions.*,
       block_timestamp,
       signer_account_id,
       receiver_account_id
-    from transactions
-    left outer join transaction_actions
-      on transactions.transaction_hash = transaction_actions.transaction_hash
-    where
-      ${sql.join(conditions, sql` and `)}
-    order by transactions.block_timestamp desc
+    from
+      (select *
+        from transactions
+        where ${sql.join(conditions, sql` and `)}
+        order by block_timestamp desc) tx
+    left outer join transaction_actions on tx.transaction_hash = transaction_actions.transaction_hash
     limit 20
   `;
 };

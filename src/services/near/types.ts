@@ -105,3 +105,10 @@ export interface ITransactionAction<T extends TransactionActionArgs> {
   action_kind: ActionKind;
   args: T;
 }
+
+export type UnifiedTransactionAction =
+  ITransactionAction<TransactionActionArgs> &
+    Pick<
+      ITransaction,
+      'block_timestamp' | 'signer_account_id' | 'receiver_account_id'
+    >;
