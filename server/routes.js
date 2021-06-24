@@ -6,15 +6,12 @@ const gasTokensSpentSql = require('./queries/gas-tokens-spent.sql');
 const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
 const transactionCountSql = require('./queries/transaction-count.sql');
+const recentTransactionActionsSql = require('./queries/recent-transaction-actions.sql');
 
 module.exports = [
   {
-    path: 'total-sent',
-    query: totalSentSql,
-  },
-  {
-    path: 'total-received',
-    query: totalReceivedSql,
+    path: 'access-keys',
+    query: accessKeysSql,
   },
   {
     path: 'distinct-receivers',
@@ -25,16 +22,24 @@ module.exports = [
     query: distinctSendersSql,
   },
   {
-    path: 'access-keys',
-    query: accessKeysSql,
-  },
-  {
     path: 'gas-spent',
     query: gasSpentSql,
   },
   {
     path: 'gas-tokens-spent',
     query: gasTokensSpentSql,
+  },
+  {
+    path: 'recent-transaction-actions',
+    query: recentTransactionActionsSql,
+  },
+  {
+    path: 'total-received',
+    query: totalReceivedSql,
+  },
+  {
+    path: 'total-sent',
+    query: totalSentSql,
   },
   {
     path: 'transaction-count',
