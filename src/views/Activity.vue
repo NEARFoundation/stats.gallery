@@ -57,8 +57,8 @@ import { Ref } from '@vue/reactivity';
 import { defineComponent, inject } from '@vue/runtime-core';
 import BigStat from './BigStat.vue';
 import BigStats from './BigStats.vue';
-import ProvideRecentTransactionActions from './ProvideRecentTransactionActions.vue';
-import ProvideSingleStat from './ProvideSingleStat.vue';
+import ProvideRecentTransactionActions from '../providers/ProvideRecentTransactionActions.vue';
+import ProvideSingleStat from '../providers/ProvideSingleStat.vue';
 
 export default defineComponent({
   components: {
