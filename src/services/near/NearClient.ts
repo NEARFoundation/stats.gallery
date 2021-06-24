@@ -1,10 +1,16 @@
 import axios from 'axios';
 import { Network, networks } from './networks';
-import { IAccessKey } from './types';
+import {
+  IAccessKey,
+  ITransaction,
+  ITransactionAction,
+  TransactionActionArgs,
+} from './types';
 
-interface SingleParams {
+interface RequestParams {
   account: string;
-  since: number;
+  after?: number;
+  before?: number;
 }
 
 export class NearClient {
@@ -35,29 +41,55 @@ export class NearClient {
     }).then(r => r.data);
   }
 
-  public async getSingle(
+  public async getSingle<T>(
     url: string,
-    { account, since }: SingleParams,
-  ): Promise<any> {
+    { account, before, after }: RequestParams,
+  ): Promise<T> {
     return axios({
       baseURL: this.endpoint,
       url,
       params: {
         account_id: account,
-        since_block_timestamp: since,
+        after_block_timestamp: after,
+        before_block_timestamp: before,
       },
     }).then(r => r.data[0].result);
   }
 
-  public async getGasTokensSpent(params: SingleParams): Promise<string> {
+  public async getGasTokensSpent(params: RequestParams): Promise<string> {
     return this.getSingle('gas-tokens-spent', params);
   }
 
-  public async getGasSpent(params: SingleParams): Promise<string> {
+  public async getGasSpent(params: RequestParams): Promise<string> {
     return this.getSingle('gas-spent', params);
   }
 
-  public async getTransactionCount(params: SingleParams): Promise<number> {
+  public async getTransactionCount(params: RequestParams): Promise<number> {
     return this.getSingle('transaction-count', params);
+  }
+
+  public async getMultiple<T>(
+    url: string,
+    { account, before, after }: RequestParams,
+  ): Promise<T[]> {
+    return axios({
+      baseURL: this.endpoint,
+      url,
+      params: {
+        account_id: account,
+        after_block_timestamp: after,
+        before_block_timestamp: before,
+      },
+    }).then(r => r.data);
+  }
+
+  public async getRecentTransactionActions<
+    T extends Pick<
+      ITransaction,
+      'block_timestamp' | 'signer_account_id' | 'receiver_account_id'
+    > &
+      ITransactionAction<TransactionActionArgs>,
+  >(params: RequestParams): Promise<T[]> {
+    return this.getMultiple('recent-transaction-actions', params);
   }
 }

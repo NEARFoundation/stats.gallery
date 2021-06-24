@@ -1,5 +1,5 @@
 <template>
-  <slot :value="value" />
+  <slot :results="results" />
 </template>
 
 <script lang="ts">
@@ -8,33 +8,34 @@ import { defineComponent, inject, Ref, ref, watchEffect } from 'vue';
 
 export default defineComponent({
   props: {
-    stat: {
-      type: String,
-      required: true,
-    },
     account: {
       type: String,
       required: true,
     },
-    since: {
+    after: {
       type: Number,
-      required: true,
+      required: false,
+    },
+    before: {
+      type: Number,
+      required: false,
     },
   },
   setup(props) {
-    const value: Ref<any> = ref(null);
+    const results: Ref<any> = ref(null);
     const client = inject<NearClient>('near')!;
 
     const update = async () => {
-      value.value = await client.getSingle(props.stat, {
+      results.value = await client.getRecentTransactionActions({
         account: props.account,
-        since: props.since,
+        after: props.after,
+        before: props.before,
       });
     };
 
     watchEffect(update);
 
-    return { value };
+    return { results };
   },
 });
 </script>

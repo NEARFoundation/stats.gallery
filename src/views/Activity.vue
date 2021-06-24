@@ -4,44 +4,52 @@
 
   <!-- Large stats display -->
   <BigStats>
-    <ProvideStat
+    <ProvideSingleStat
       :account="account"
-      :since="0"
       stat="gas-spent"
-      #default="{ value }"
+      #default="{ result }"
     >
       <BigStat>
         <template #name>Gas Spent</template>
-        <template #value>{{ $filters.compactNumber(value) }}</template>
+        <template #value>{{ $filters.compactNumber(result) }}</template>
       </BigStat>
-    </ProvideStat>
-    <ProvideStat
+    </ProvideSingleStat>
+    <ProvideSingleStat
       :account="account"
-      :since="0"
       stat="gas-tokens-spent"
-      #default="{ value }"
+      #default="{ result }"
     >
       <BigStat>
         <template #name>Gas Tokens Spent</template>
         <template #value
           >{{ nearSymbol }}&nbsp;{{
-            $filters.compactNumber($filters.toNear(value))
+            $filters.compactNumber($filters.toNear(result))
           }}</template
         >
       </BigStat>
-    </ProvideStat>
-    <ProvideStat
+    </ProvideSingleStat>
+    <ProvideSingleStat
       :account="account"
-      :since="0"
       stat="transaction-count"
-      #default="{ value }"
+      #default="{ result }"
     >
       <BigStat>
         <template #name>Transactions</template>
-        <template #value>{{ $filters.compactNumber(value) }}</template>
+        <template #value>{{ $filters.compactNumber(result) }}</template>
       </BigStat>
-    </ProvideStat>
+    </ProvideSingleStat>
   </BigStats>
+  <ProvideRecentTransactionActions :account="account" #default="{ results }">
+    <pre
+      v-for="result in results"
+      :key="
+        result.transaction_hash +
+        result.index_in_transaction +
+        result.block_timestamp
+      "
+      >{{ JSON.stringify(result, null, 2) }}</pre
+    >
+  </ProvideRecentTransactionActions>
 </template>
 
 <script lang="ts">
@@ -49,12 +57,14 @@ import { Ref } from '@vue/reactivity';
 import { defineComponent, inject } from '@vue/runtime-core';
 import BigStat from './BigStat.vue';
 import BigStats from './BigStats.vue';
-import ProvideStat from './ProvideStat.vue';
+import ProvideRecentTransactionActions from './ProvideRecentTransactionActions.vue';
+import ProvideSingleStat from './ProvideSingleStat.vue';
 
 export default defineComponent({
   components: {
     BigStats,
-    ProvideStat,
+    ProvideSingleStat,
+    ProvideRecentTransactionActions,
     BigStat,
   },
   setup() {
