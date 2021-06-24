@@ -25,19 +25,31 @@
     <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
       <div>
         <p class="text-sm text-gray-500">
+          <button
+            class="cursor-pointer font-medium text-gray-900"
+            @click="setAccount(transaction.signer_account_id)"
+          >
+            {{ transaction.signer_account_id }}
+          </button>
           {{ transaction.action_kind }}
-          <a href="#" class="font-medium text-gray-900">{{
-            transaction.receiver_account_id
-          }}</a>
+          <button
+            class="cursor-pointer font-medium text-gray-900"
+            @click="setAccount(transaction.receiver_account_id)"
+          >
+            {{ transaction.receiver_account_id }}
+          </button>
         </p>
       </div>
       <div class="text-right text-sm whitespace-nowrap text-gray-500">
-        <time :datetime="transaction.block_timestamp / 1000000">{{
-          $filters.nearTimestampToLocaleString(
-            transaction.block_timestamp,
-            DateTime.DATETIME_FULL,
-          )
-        }}</time>
+        <time
+          :datetime="$filters.nearTimestampToISO(transaction.block_timestamp)"
+          >{{
+            $filters.nearTimestampToLocaleString(
+              transaction.block_timestamp,
+              DateTime.DATETIME_FULL,
+            )
+          }}</time
+        >
       </div>
     </div>
   </div>
@@ -45,6 +57,7 @@
 
 <script lang="ts">
 import { UnifiedTransactionAction } from '@/services/near/types';
+import { nearContext } from '@/utils/near';
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
 import TransactionActionIcon from './TransactionActionIcon.vue';
@@ -62,8 +75,15 @@ export default defineComponent({
     },
   },
   setup() {
+    const { account } = nearContext();
+
+    const setAccount = (newAccount: string) => {
+      account.value = newAccount;
+    };
+
     return {
       DateTime,
+      setAccount,
     };
   },
 });

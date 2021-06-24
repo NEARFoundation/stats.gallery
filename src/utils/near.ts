@@ -35,3 +35,7 @@ export function nearTimestampToLocaleString(
 ): string {
   return DateTime.fromMillis(timestamp / 1000000).toLocaleString(format);
 }
+
+export function nearTimestampToISO(timestamp: number): string {
+  return DateTime.fromMillis(timestamp / 1000000).toISO();
+}

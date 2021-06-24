@@ -1,7 +1,12 @@
 import App from '@/App.vue';
 import router from '@/router';
 import { compactNumber } from '@/utils/compactNumber';
-import { nearSymbol, nearTimestampToLocaleString, toNear } from '@/utils/near';
+import {
+  nearSymbol,
+  nearTimestampToISO,
+  nearTimestampToLocaleString,
+  toNear,
+} from '@/utils/near';
 import 'tailwindcss/tailwind.css';
 import { createApp } from 'vue';
 
@@ -14,5 +19,6 @@ app.config.globalProperties = {
     compactNumber,
     toNear,
     nearTimestampToLocaleString,
+    nearTimestampToISO,
   },
 };
