@@ -4,7 +4,24 @@
       <slot name="name"></slot>
     </dt>
     <dd class="order-1 text-5xl font-extrabold text-gray-800">
-      <slot name="value"></slot>
+      <BigStatLoading :isLoading="isLoading">
+        <slot name="value"></slot>
+      </BigStatLoading>
     </dd>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import BigStatLoading from './BigStatLoading.vue';
+
+export default defineComponent({
+  components: { BigStatLoading },
+  props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+});
+</script>

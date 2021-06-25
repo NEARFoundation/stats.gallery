@@ -1,5 +1,5 @@
 <template>
-  <slot :results="results" />
+  <slot :results="results" :isLoading="isLoading" />
 </template>
 
 <script lang="ts">
@@ -24,18 +24,21 @@ export default defineComponent({
   setup(props) {
     const results: Ref<any> = ref(null);
     const client = inject<NearClient>('near')!;
+    const isLoading = ref(false);
 
     const update = async () => {
+      isLoading.value = true;
       results.value = await client.getRecentTransactionActions({
         account: props.account,
         after: props.after,
         before: props.before,
       });
+      isLoading.value = false;
     };
 
     watchEffect(update);
 
-    return { results };
+    return { results, isLoading };
   },
 });
 </script>

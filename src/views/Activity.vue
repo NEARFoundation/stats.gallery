@@ -7,35 +7,39 @@
     <ProvideSingleStat
       :account="account"
       stat="gas-spent"
-      #default="{ result }"
+      #default="{ result, isLoading }"
     >
-      <BigStat>
+      <BigStat :isLoading="isLoading">
         <template #name>Gas Spent</template>
-        <template #value>{{ $filters.compactNumber(result) }}</template>
+        <template #value>
+          {{ $filters.compactNumber(result) }}
+        </template>
       </BigStat>
     </ProvideSingleStat>
     <ProvideSingleStat
       :account="account"
       stat="gas-tokens-spent"
-      #default="{ result }"
+      #default="{ result, isLoading }"
     >
-      <BigStat>
+      <BigStat :isLoading="isLoading">
         <template #name>Gas Tokens Spent</template>
-        <template #value
-          >{{ nearSymbol }}&nbsp;{{
+        <template #value>
+          {{ nearSymbol }}&nbsp;{{
             $filters.compactNumber($filters.toNear(result))
-          }}</template
-        >
+          }}
+        </template>
       </BigStat>
     </ProvideSingleStat>
     <ProvideSingleStat
       :account="account"
       stat="transaction-count"
-      #default="{ result }"
+      #default="{ result, isLoading }"
     >
-      <BigStat>
+      <BigStat :isLoading="isLoading">
         <template #name>Transactions</template>
-        <template #value>{{ $filters.compactNumber(result) }}</template>
+        <template #value>
+          {{ $filters.compactNumber(result) }}
+        </template>
       </BigStat>
     </ProvideSingleStat>
   </BigStats>
