@@ -43,8 +43,15 @@
       </BigStat>
     </ProvideSingleStat>
   </BigStats>
-  <ProvideRecentTransactionActions :account="account" #default="{ results }">
-    <TransactionActions :transactions="results" />
+  <ProvideRecentTransactionActions
+    :account="account"
+    #default="{ results, isLoading }"
+  >
+    <TransactionActions
+      class="my-8"
+      :transactions="results"
+      :isLoading="isLoading"
+    />
   </ProvideRecentTransactionActions>
 </template>
 
