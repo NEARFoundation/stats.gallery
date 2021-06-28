@@ -14,16 +14,14 @@
 
         <!-- Nav links -->
         <div class="nav__links">
-          <a
+          <router-link
             v-for="item in navigation"
+            v-slot="{ isActive }"
             :key="item.name"
-            :href="item.href"
-            :class="[
-              item.current ? 'nav__link--active' : 'nav__link--inactive',
-              'nav__link',
-            ]"
-            :aria-current="item.current ? 'page' : undefined"
-            >{{ item.name }}</a
+            :to="item.href"
+            class="nav__link"
+            :aria-current="isActive ? 'page' : undefined"
+            >{{ item.name }}</router-link
           >
         </div>
       </div>
@@ -121,11 +119,11 @@
   &__link {
     @apply px-3 py-2 rounded-md text-sm font-medium;
 
-    &--inactive {
+    &:not(.router-link-active) {
       @apply text-gray-300 hover:bg-gray-700 hover:text-white;
     }
 
-    &--active {
+    &.router-link-active {
       @apply bg-gray-900 text-white;
     }
   }
@@ -205,16 +203,18 @@ import { Network } from '@/services/near/networks';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, inject, Ref, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import NetworkSelector from './NetworkSelector.vue';
 
 const navigation = [
-  { name: 'Activity', href: '#', current: true },
-  { name: 'Charts', href: '#', current: false },
-  { name: 'Help', href: '#', current: false },
+  { name: 'Activity', href: 'activity' },
+  { name: 'Charts', href: 'charts' },
+  { name: 'Help', href: 'help' },
 ];
 
 export default defineComponent({
   components: {
+    RouterLink,
     NetworkSelector,
     Disclosure,
     DisclosureButton,

@@ -1,5 +1,7 @@
+import Activity from '@/views/Activity.vue';
+import Charts from '@/views/Charts.vue';
+import Help from '@/views/Help.vue';
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
-import Activity from '../views/Activity.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -10,6 +12,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/activity',
     name: 'activity',
     component: Activity,
+  },
+  {
+    path: '/charts',
+    name: 'charts',
+    component: Charts,
+  },
+  {
+    path: '/help',
+    name: 'help',
+    component: Help,
   },
 ];
 

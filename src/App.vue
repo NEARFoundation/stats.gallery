@@ -2,22 +2,29 @@
   <TopBar />
   <div class="relative overflow-hidden">
     <div class="relative px-4 sm:px-6 lg:px-8 mt-10 max-w-7xl sm:mx-auto">
-      <router-view />
+      <router-view v-slot="{ Component, route }">
+        <keep-alive>
+          <component
+            :is="Component"
+            :key="route.meta.usePathKey ? route.path : undefined"
+          />
+        </keep-alive>
+      </router-view>
     </div>
   </div>
 </template>
 
-<style lang="stylus"></style>
-
 <script lang="ts">
 import TopBar from '@/components/navigation/TopBar.vue';
+import { NearClient } from '@/services/near/NearClient';
+import { Network } from '@/services/near/networks';
 import { defineComponent, provide, reactive, ref, watch } from 'vue';
-import { NearClient } from './services/near/NearClient';
-import { Network } from './services/near/networks';
+import { RouterView } from 'vue-router';
 
 export default defineComponent({
   components: {
     TopBar,
+    RouterView,
   },
   setup() {
     provide('account', ref(''));
