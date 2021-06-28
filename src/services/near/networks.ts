@@ -11,10 +11,10 @@ export interface INetworkConfiguration {
 export const networks: Record<Network, INetworkConfiguration> = {
   mainnet: {
     name: Network.MAINNET,
-    endpoint: 'http://localhost:3000/mainnet',
+    endpoint: process.env['VUE_APP_ENDPOINT_MAINNET'],
   },
   testnet: {
     name: Network.TESTNET,
-    endpoint: 'http://localhost:3000/testnet',
+    endpoint: process.env['VUE_APP_ENDPOINT_TESTNET'],
   },
 };
