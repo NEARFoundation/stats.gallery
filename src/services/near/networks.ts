@@ -11,10 +11,10 @@ export interface INetworkConfiguration {
 export const networks: Record<Network, INetworkConfiguration> = {
   mainnet: {
     name: Network.MAINNET,
-    endpoint: 'http://localhost:3000/',
+    endpoint: 'http://localhost:3000/mainnet',
   },
   testnet: {
     name: Network.TESTNET,
-    endpoint: 'http://localhost:3001/',
+    endpoint: 'http://localhost:3000/testnet',
   },
 };

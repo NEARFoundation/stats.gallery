@@ -8,40 +8,52 @@ const app = new Koa();
 app.listen(process.env['PORT'] || 3000);
 app.use(cors());
 
-const router = new Router();
-
-// Testnet
-// const connection =
-//   'postgres://public_readonly:nearprotocol@35.184.214.98/testnet_explorer';
-// Mainnet
-// const connection =
-//   'postgres://public_readonly:nearprotocol@104.199.89.51/mainnet_explorer';
+const index = new Router();
 
 // Environment variable
-const connection = process.env['DB_CONNECTION'];
+const endpoints = process.env['ENDPOINT'].split(',').map(s => s.trim());
+const connections = process.env['DB_CONNECTION'].split(',').map(s => s.trim());
 
-console.log('Connection', connection);
+if (endpoints.length === 0 || endpoints.length !== connections.length) {
+  console.error('Invalid endpoint/connection configuration provided');
+  process.exit(1);
+}
 
-const pool = createPool(connection);
+endpoints.forEach((endpoint, i) => {
+  const connection = connections[i];
+  const router = new Router();
 
-routes.forEach(route => {
-  router.get('/' + route.path, async (ctx, next) => {
-    console.log('/' + route.path);
-    console.log('Request', ctx.request);
-    try {
-      const result = await pool.connect(connection => {
-        return connection.any(route.query(ctx.query));
-      });
-      console.log('Response', result);
+  console.log('Connection', connection);
 
-      ctx.response.body = result;
-    } catch (e) {
-      console.log(e);
-      ctx.response.status = 500;
-    }
+  const pool = createPool(connection);
+
+  routes.forEach(route => {
+    router.get('/' + route.path, async (ctx, next) => {
+      console.log('/' + route.path);
+      console.log('Request', ctx.request);
+      try {
+        const result = await pool.connect(connection => {
+          return connection.any(route.query(ctx.query));
+        });
+        console.log('Response', result);
+
+        ctx.response.body = result;
+      } catch (e) {
+        console.log(e);
+        ctx.response.status = 500;
+      }
+    });
   });
+
+  process.on('exit', async () => {
+    console.log('Ending pool ' + endpoint + '...');
+    await pool.end();
+    console.log('Ended pool ' + endpoint);
+  });
+
+  index.use('/' + endpoints[i], router.routes(), router.allowedMethods());
 });
 
-app.use(router.routes()).use(router.allowedMethods());
+app.use(index.routes()).use(index.allowedMethods());
 
 console.log('Waiting for requests...');
