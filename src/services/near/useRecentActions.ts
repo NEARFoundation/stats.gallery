@@ -2,7 +2,7 @@ import { inject, Ref, WatchSource } from 'vue';
 import { usePromise } from '../usePromise';
 import { NearClient } from './NearClient';
 
-export function useRecentTransactionActions({
+export function useRecentActions({
   account,
   after,
   before,

@@ -4,7 +4,7 @@
 
   <!-- Large stats display -->
   <BigStats>
-    <ProvideSingleStat
+    <SingleStatProvider
       :account="account"
       stat="gas-spent"
       #default="{ result, isLoading }"
@@ -15,8 +15,8 @@
           {{ $filters.compactNumber(result) }}
         </template>
       </BigStat>
-    </ProvideSingleStat>
-    <ProvideSingleStat
+    </SingleStatProvider>
+    <SingleStatProvider
       :account="account"
       stat="gas-tokens-spent"
       #default="{ result, isLoading }"
@@ -29,8 +29,8 @@
           }}
         </template>
       </BigStat>
-    </ProvideSingleStat>
-    <ProvideSingleStat
+    </SingleStatProvider>
+    <SingleStatProvider
       :account="account"
       stat="transaction-count"
       #default="{ result, isLoading }"
@@ -41,34 +41,31 @@
           {{ $filters.compactNumber(result) }}
         </template>
       </BigStat>
-    </ProvideSingleStat>
+    </SingleStatProvider>
   </BigStats>
-  <ProvideRecentTransactionActions
-    :account="account"
-    #default="{ actions, isLoading }"
-  >
+  <RecentActionsProvider :account="account" #default="{ actions, isLoading }">
     <TransactionActions
       class="my-8"
       :actions="actions"
       :isLoading="isLoading"
     />
-  </ProvideRecentTransactionActions>
+  </RecentActionsProvider>
 </template>
 
 <script lang="ts">
 import TransactionActions from '@/components/activity/TransactionActions.vue';
 import BigStat from '@/components/stats/BigStat.vue';
 import BigStats from '@/components/stats/BigStats.vue';
-import ProvideRecentTransactionActions from '@/providers/ProvideRecentTransactionActions.vue';
-import ProvideSingleStat from '@/providers/ProvideSingleStat.vue';
+import RecentActionsProvider from '@/providers/RecentActionsProvider.vue';
+import SingleStatProvider from '@/providers/SingleStatProvider.vue';
 import { Ref } from '@vue/reactivity';
 import { defineComponent, inject } from '@vue/runtime-core';
 
 export default defineComponent({
   components: {
     BigStats,
-    ProvideSingleStat,
-    ProvideRecentTransactionActions,
+    SingleStatProvider,
+    RecentActionsProvider,
     TransactionActions,
     BigStat,
   },

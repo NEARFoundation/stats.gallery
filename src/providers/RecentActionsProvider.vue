@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { useRecentTransactionActions } from '@/services/near/useRecentTransactionActions';
+import { useRecentActions } from '@/services/near/useRecentActions';
 import { defineComponent, toRefs } from 'vue';
 
 export default defineComponent({
@@ -22,7 +22,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    return useRecentTransactionActions(toRefs(props));
+    return useRecentActions(toRefs(props));
   },
 });
 </script>
