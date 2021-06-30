@@ -8,28 +8,22 @@
             class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
             aria-hidden="true"
           />
-          <TransactionAction
-            :account="''"
-            :transaction="{}"
-            :isLoading="true"
-          />
+          <TransactionAction :account="''" :action="{}" :isLoading="true" />
         </div>
       </li>
     </ul>
     <ul v-else class="-mb-8">
       <li
-        v-for="(transaction, i) in transactions"
-        :key="
-          transaction.transaction_hash + '-' + transaction.index_in_transaction
-        "
+        v-for="(action, i) in actions"
+        :key="action.transaction_hash + '-' + action.index_in_transaction"
       >
         <div class="relative pb-8">
           <span
-            v-if="i !== transactions.length - 1"
+            v-if="i !== actions.length - 1"
             class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
             aria-hidden="true"
           />
-          <TransactionAction :account="account" :transaction="transaction" />
+          <TransactionAction :account="account" :action="action" />
         </div>
       </li>
     </ul>
@@ -47,7 +41,7 @@ export default defineComponent({
     TransactionAction,
   },
   props: {
-    transactions: {
+    actions: {
       type: Array as () => UnifiedTransactionAction[],
       required: true,
     },

@@ -45,11 +45,11 @@
   </BigStats>
   <ProvideRecentTransactionActions
     :account="account"
-    #default="{ results, isLoading }"
+    #default="{ actions, isLoading }"
   >
     <TransactionActions
       class="my-8"
-      :transactions="results"
+      :actions="actions"
       :isLoading="isLoading"
     />
   </ProvideRecentTransactionActions>

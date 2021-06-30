@@ -1,5 +1,5 @@
 <template>
-  <slot :results="results" :isLoading="isLoading" />
+  <slot :actions="value" :isLoading="isLoading" />
 </template>
 
 <script lang="ts">
@@ -22,9 +22,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { value, isLoading } = useRecentTransactionActions(toRefs(props));
-
-    return { results: value, isLoading };
+    return useRecentTransactionActions(toRefs(props));
   },
 });
 </script>

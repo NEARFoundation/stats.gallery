@@ -11,9 +11,9 @@
     ></div>
     <TransactionActionIcon
       v-else
-      :actionKind="transaction.action_kind"
+      :actionKind="action.action_kind"
       :direction="
-        transaction.receiver_account_id === account ? 'receiver' : 'sender'
+        action.receiver_account_id === account ? 'receiver' : 'sender'
       "
       #default="{ component, color }"
     >
@@ -35,26 +35,26 @@
       <p v-else class="text-sm text-gray-500">
         <button
           class="cursor-pointer font-medium text-gray-900"
-          @click="setAccount(transaction.signer_account_id)"
+          @click="setAccount(action.signer_account_id)"
         >
-          {{ transaction.signer_account_id }}
+          {{ action.signer_account_id }}
         </button>
-        {{ transaction.action_kind }}
+        {{ action.action_kind }}
         <button
           class="cursor-pointer font-medium text-gray-900"
-          @click="setAccount(transaction.receiver_account_id)"
+          @click="setAccount(action.receiver_account_id)"
         >
-          {{ transaction.receiver_account_id }}
+          {{ action.receiver_account_id }}
         </button>
       </p>
       <div class="text-right text-sm whitespace-nowrap text-gray-500">
         <div v-if="isLoading" class="rounded-md h-4 bg-gray-200 w-36"></div>
         <time
           v-else
-          :datetime="$filters.nearTimestampToISO(transaction.block_timestamp)"
+          :datetime="$filters.nearTimestampToISO(action.block_timestamp)"
           >{{
             $filters.nearTimestampToLocaleString(
-              transaction.block_timestamp,
+              action.block_timestamp,
               DateTime.DATETIME_FULL,
             )
           }}</time
@@ -74,7 +74,7 @@ import TransactionActionIcon from './TransactionActionIcon.vue';
 export default defineComponent({
   components: { TransactionActionIcon },
   props: {
-    transaction: {
+    action: {
       type: Object as () => UnifiedTransactionAction,
       required: true,
     },
