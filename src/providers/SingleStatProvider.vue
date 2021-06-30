@@ -1,10 +1,10 @@
 <template>
-  <slot :result="result" :isLoading="isLoading" />
+  <slot :value="value" :isLoading="isLoading" />
 </template>
 
 <script lang="ts">
-import { NearClient } from '@/services/near/NearClient';
-import { defineComponent, inject, Ref, ref, watchEffect } from 'vue';
+import { useStat } from '@/services/near/useStat';
+import { defineComponent, toRefs } from 'vue';
 
 export default defineComponent({
   props: {
@@ -26,23 +26,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const result: Ref<any> = ref(null);
-    const client = inject<NearClient>('near')!;
-    const isLoading = ref(false);
+    const { value, isLoading } = useStat(props.stat, 0, toRefs(props));
 
-    const update = async () => {
-      isLoading.value = true;
-      result.value = await client.getSingle(props.stat, {
-        account: props.account,
-        after: props.after,
-        before: props.before,
-      });
-      isLoading.value = false;
-    };
-
-    watchEffect(update);
-
-    return { result, isLoading };
+    return { value, isLoading };
   },
 });
 </script>
