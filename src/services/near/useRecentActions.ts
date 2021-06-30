@@ -23,7 +23,7 @@ export function useRecentActions({
       before: before?.value,
     });
   const { value: actions, isLoading } = usePromise(
-    [account, after, before] as WatchSource[],
+    [account, after, before].filter(s => !!s) as WatchSource[],
     f,
     [],
   );
