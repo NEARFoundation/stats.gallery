@@ -18,8 +18,12 @@ export function nearContext(): {
   network: Ref<Network>;
   client: NearClient;
 } {
+  // TODO: Fallback?
+  // eslint-disable-next-line
   const account = inject<Ref<string>>('account')!;
+  // eslint-disable-next-line
   const network = inject<Ref<Network>>('network')!;
+  // eslint-disable-next-line
   const client = inject<NearClient>('near')!;
 
   return {

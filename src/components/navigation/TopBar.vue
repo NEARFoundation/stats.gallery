@@ -200,6 +200,7 @@
 
 <script lang="ts">
 import { Network } from '@/services/near/networks';
+import { nearContext } from '@/utils/near';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, inject, Ref, ref } from 'vue';
@@ -224,13 +225,13 @@ export default defineComponent({
     SearchIcon,
   },
   setup() {
+    const { account, network: selectedNetwork } = nearContext();
+
     const open = ref(false);
-    const account = inject<Ref<string>>('account')!;
     const displayedAccount = ref('');
     const updateAccount = () => {
       account.value = displayedAccount.value;
     };
-    const selectedNetwork = inject<Ref<Network>>('network')!;
     const setSelectedNetwork = (network: Network) => {
       selectedNetwork.value = network;
     };

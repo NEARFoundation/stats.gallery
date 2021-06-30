@@ -58,8 +58,8 @@ import BigStat from '@/components/stats/BigStat.vue';
 import BigStats from '@/components/stats/BigStats.vue';
 import RecentActionsProvider from '@/providers/RecentActionsProvider.vue';
 import SingleStatProvider from '@/providers/SingleStatProvider.vue';
-import { Ref } from '@vue/reactivity';
-import { defineComponent, inject } from '@vue/runtime-core';
+import { nearContext } from '@/utils/near';
+import { defineComponent } from '@vue/runtime-core';
 
 export default defineComponent({
   components: {
@@ -70,7 +70,7 @@ export default defineComponent({
     BigStat,
   },
   setup() {
-    const account = inject<Ref<string>>('account')!;
+    const { account } = nearContext();
 
     return {
       account,

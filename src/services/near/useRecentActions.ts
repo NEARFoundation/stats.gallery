@@ -1,6 +1,7 @@
-import { inject, Ref, WatchSource } from 'vue';
+import { nearContext } from '@/utils/near';
+import { Ref, WatchSource } from 'vue';
 import { usePromise } from '../usePromise';
-import { NearClient } from './NearClient';
+import { UnifiedTransactionAction } from './types';
 
 export function useRecentActions({
   account,
@@ -10,8 +11,11 @@ export function useRecentActions({
   account: Ref<string>;
   after?: Ref<number | undefined>;
   before?: Ref<number | undefined>;
-}) {
-  const client = inject<NearClient>('near')!;
+}): {
+  actions: Ref<UnifiedTransactionAction[]>;
+  isLoading: Ref<boolean>;
+} {
+  const { client } = nearContext();
   const f = () =>
     client.getRecentTransactionActions({
       account: account.value,
@@ -19,7 +23,7 @@ export function useRecentActions({
       before: before?.value,
     });
   const { value: actions, isLoading } = usePromise(
-    [account, after, before] as WatchSource<any>[],
+    [account, after, before] as WatchSource[],
     f,
     [],
   );

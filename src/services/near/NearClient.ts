@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { Network, networks } from './networks';
-import {
-  IAccessKey,
-  ITransaction,
-  ITransactionAction,
-  TransactionActionArgs,
-} from './types';
+import { IAccessKey, UnifiedTransactionAction } from './types';
 
 interface RequestParams {
   account: string;
@@ -83,13 +78,9 @@ export class NearClient {
     }).then(r => r.data);
   }
 
-  public async getRecentTransactionActions<
-    T extends Pick<
-      ITransaction,
-      'block_timestamp' | 'signer_account_id' | 'receiver_account_id'
-    > &
-      ITransactionAction<TransactionActionArgs>,
-  >(params: RequestParams): Promise<T[]> {
+  public async getRecentTransactionActions(
+    params: RequestParams,
+  ): Promise<UnifiedTransactionAction[]> {
     return this.getMultiple('recent-transaction-actions', params);
   }
 }
