@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts">
-import { NearClient } from '@/services/near/NearClient';
-import { defineComponent, inject, Ref, ref, watchEffect } from 'vue';
+import { useRecentTransactionActions } from '@/services/near/useRecentTransactionActions';
+import { defineComponent, toRefs } from 'vue';
 
 export default defineComponent({
   props: {
@@ -22,23 +22,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const results: Ref<any> = ref(null);
-    const client = inject<NearClient>('near')!;
-    const isLoading = ref(false);
+    const { value, isLoading } = useRecentTransactionActions(toRefs(props));
 
-    const update = async () => {
-      isLoading.value = true;
-      results.value = await client.getRecentTransactionActions({
-        account: props.account,
-        after: props.after,
-        before: props.before,
-      });
-      isLoading.value = false;
-    };
-
-    watchEffect(update);
-
-    return { results, isLoading };
+    return { results: value, isLoading };
   },
 });
 </script>
