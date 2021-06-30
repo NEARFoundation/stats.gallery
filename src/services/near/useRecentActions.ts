@@ -18,11 +18,11 @@ export function useRecentActions({
       after: after?.value,
       before: before?.value,
     });
-  const { value, isLoading } = usePromise(
+  const { value: actions, isLoading } = usePromise(
     [account, after, before] as WatchSource<any>[],
     f,
     [],
   );
 
-  return { value, isLoading };
+  return { actions, isLoading };
 }
