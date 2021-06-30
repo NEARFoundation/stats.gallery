@@ -12,10 +12,12 @@
     "axios": "^0.21.1",
     "big.js": "^5.2.2",
     "core-js": "^3.6.5",
+    "echarts": "^5.1.2",
     "heroicons-vue3": "^1.0.1",
     "luxon": "^1.27.0",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
+    "vue-echarts": "^6.0.0-rc.6",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
