@@ -3,12 +3,12 @@ import { ref, Ref, watch, WatchSource } from 'vue';
 export function usePromise<T, U>(
   ws: WatchSource<U> | WatchSource<U>[],
   f: () => Promise<T>,
-  defaultValue: T,
+  initialValue: T,
 ): {
   value: Ref<T>;
   isLoading: Ref<boolean>;
 } {
-  const value = ref(defaultValue) as Ref<T>;
+  const value = ref(initialValue) as Ref<T>;
   const isLoading = ref(false);
 
   const update = async () => {
@@ -16,6 +16,8 @@ export function usePromise<T, U>(
     value.value = await f();
     isLoading.value = false;
   };
+
+  update();
 
   watch(ws, update);
 
