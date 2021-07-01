@@ -203,7 +203,7 @@ import { Network } from '@/services/near/networks';
 import { nearContext } from '@/utils/near';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
-import { defineComponent, inject, Ref, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import NetworkSelector from './NetworkSelector.vue';
 
@@ -229,6 +229,9 @@ export default defineComponent({
 
     const open = ref(false);
     const displayedAccount = ref('');
+    watch(displayedAccount, () => {
+      displayedAccount.value = displayedAccount.value.toLowerCase();
+    });
     const updateAccount = () => {
       account.value = displayedAccount.value;
     };
