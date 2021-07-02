@@ -2,8 +2,12 @@ import { isString } from '@/utils/is';
 import { Ref, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-export function useAccountFromUrl(): Ref<string> {
+export function useAccountFromUrl(): {
+  account: Ref<string>;
+  exists: Ref<boolean>;
+} {
   const account = ref('');
+  const exists = ref(false);
   const route = useRoute();
 
   watch(
@@ -14,6 +18,9 @@ export function useAccountFromUrl(): Ref<string> {
         isString(currentRoute.params.account)
       ) {
         account.value = currentRoute.params.account as string;
+        exists.value = true;
+      } else {
+        exists.value = false;
       }
     },
     {
@@ -21,5 +28,5 @@ export function useAccountFromUrl(): Ref<string> {
     },
   );
 
-  return account;
+  return { account, exists };
 }

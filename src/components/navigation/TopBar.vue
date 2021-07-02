@@ -250,9 +250,11 @@ export default defineComponent({
 
     const updateAccount = () => {
       account.value = displayedAccount.value;
-      const { path } = route.matched[0];
-      if (path.includes(':account')) {
-        router.push(path.replace(':account', account.value));
+      if (route.matched[0]) {
+        const { path } = route.matched[0];
+        if (path.includes(':account')) {
+          router.push(path.replace(':account', account.value));
+        }
       }
     };
     const setSelectedNetwork = (network: Network) => {
