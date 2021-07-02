@@ -243,7 +243,7 @@
 
 <script lang="ts">
 import { Network } from '@/services/near/networks';
-import { nearContext } from '@/utils/near';
+import { useNear } from '@/services/useNear';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref, watch } from 'vue';
@@ -262,7 +262,7 @@ export default defineComponent({
     SearchIcon,
   },
   setup() {
-    const { account, network: selectedNetwork } = nearContext();
+    const { account, network: selectedNetwork } = useNear();
 
     const open = ref(false);
     const displayedAccount = ref('');

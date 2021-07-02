@@ -94,7 +94,7 @@
 
 <script lang="ts">
 import { Network, networks } from '@/services/near/networks';
-import { nearContext } from '@/utils/near';
+import { useNear } from '@/services/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';
 import { ChevronDownIcon } from 'heroicons-vue3/outline';
@@ -109,7 +109,7 @@ export default defineComponent({
   },
   setup() {
     const networkKeys: Network[] = [Network.MAINNET, Network.TESTNET];
-    const { network } = nearContext();
+    const { network } = useNear();
 
     return {
       network,

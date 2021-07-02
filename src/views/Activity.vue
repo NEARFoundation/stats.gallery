@@ -58,7 +58,7 @@ import BigStat from '@/components/stats/BigStat.vue';
 import BigStats from '@/components/stats/BigStats.vue';
 import RecentActionsProvider from '@/providers/RecentActionsProvider.vue';
 import SingleStatProvider from '@/providers/SingleStatProvider.vue';
-import { nearContext } from '@/utils/near';
+import { useNear } from '@/services/useNear';
 import { defineComponent } from '@vue/runtime-core';
 
 export default defineComponent({
@@ -70,16 +70,7 @@ export default defineComponent({
     BigStat,
   },
   setup() {
-    // const account = ref('');
-    // const route = useRoute();
-    // route.params.account;
-    const { account } = nearContext();
-
-    // watch(route, currentRoute => {
-    //   account.value = route.params.account as string;
-    // }, {
-    //   immediate: true,
-    // });
+    const { account } = useNear();
 
     return {
       account,

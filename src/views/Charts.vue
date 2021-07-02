@@ -12,7 +12,7 @@
 <script lang="ts">
 import { ActionKind } from '@/services/near/types';
 import { useRecentActions } from '@/services/near/useRecentActions';
-import { nearContext } from '@/utils/near';
+import { useNear } from '@/services/useNear';
 import { PieChart } from 'echarts/charts';
 import { TooltipComponent } from 'echarts/components';
 import { use } from 'echarts/core';
@@ -27,7 +27,7 @@ export default defineComponent({
     VChart,
   },
   setup() {
-    const { account } = nearContext();
+    const { account } = useNear();
     const { actions } = useRecentActions({ account });
 
     const pieSlice = (name: string, value: number, color: string) => ({

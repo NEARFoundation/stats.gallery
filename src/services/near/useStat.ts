@@ -1,5 +1,5 @@
-import { nearContext } from '@/utils/near';
 import { Ref, WatchSource } from 'vue';
+import { useNear } from '../useNear';
 import { usePromise } from '../usePromise';
 
 export function useStat<T>(
@@ -18,7 +18,7 @@ export function useStat<T>(
   value: Ref<T>;
   isLoading: Ref<boolean>;
 } {
-  const { client } = nearContext();
+  const { client } = useNear();
   const f = () =>
     client.getSingle<T>(stat, {
       account: account.value,

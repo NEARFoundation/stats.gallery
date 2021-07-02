@@ -1,5 +1,5 @@
-import { nearContext } from '@/utils/near';
 import { Ref, WatchSource } from 'vue';
+import { useNear } from '../useNear';
 import { usePromise } from '../usePromise';
 import { UnifiedTransactionAction } from './types';
 
@@ -15,7 +15,7 @@ export function useRecentActions({
   actions: Ref<UnifiedTransactionAction[]>;
   isLoading: Ref<boolean>;
 } {
-  const { client } = nearContext();
+  const { client } = useNear();
   const f = () =>
     client.getRecentTransactionActions({
       account: account.value,

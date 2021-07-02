@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { UnifiedTransactionAction } from '@/services/near/types';
-import { nearContext } from '@/utils/near';
+import { useNear } from '@/services/useNear';
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
 import TransactionActionIcon from './TransactionActionIcon.vue';
@@ -88,7 +88,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { account } = nearContext();
+    const { account } = useNear();
 
     const setAccount = (newAccount: string) => {
       account.value = newAccount;

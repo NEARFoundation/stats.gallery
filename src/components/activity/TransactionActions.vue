@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { UnifiedTransactionAction } from '@/services/near/types';
-import { nearContext } from '@/utils/near';
+import { useNear } from '@/services/useNear';
 import { defineComponent } from 'vue';
 import TransactionAction from './TransactionAction.vue';
 
@@ -51,7 +51,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { account } = nearContext();
+    const { account } = useNear();
 
     return {
       account,

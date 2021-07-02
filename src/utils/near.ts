@@ -1,13 +1,5 @@
-import { NearClient } from '@/services/near/NearClient';
-import { Network } from '@/services/near/networks';
-import {
-  NEAR_ACCOUNT,
-  NEAR_CLIENT,
-  NEAR_NETWORK,
-} from '@/services/provideNear';
 import Big from 'big.js';
 import { DateTime } from 'luxon';
-import { inject, Ref } from 'vue';
 
 const yocto = new Big('1e+24');
 
@@ -17,26 +9,6 @@ export function toNear(value?: string | number | Big): Big {
 }
 
 export const nearSymbol = String.fromCharCode(9411); // Ⓝ
-
-export function nearContext(): {
-  account: Ref<string>;
-  network: Ref<Network>;
-  client: NearClient;
-} {
-  // TODO: Fallback?
-  // eslint-disable-next-line
-  const account = inject<Ref<string>>(NEAR_ACCOUNT)!;
-  // eslint-disable-next-line
-  const network = inject<Ref<Network>>(NEAR_NETWORK)!;
-  // eslint-disable-next-line
-  const client = inject<NearClient>(NEAR_CLIENT)!;
-
-  return {
-    account,
-    network,
-    client,
-  };
-}
 
 export function nearTimestampToLocaleString(
   timestamp: number,
