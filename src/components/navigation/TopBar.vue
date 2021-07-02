@@ -15,25 +15,29 @@
         <!-- Nav links -->
         <div class="nav__links">
           <router-link
+            v-if="account && selectedNetwork"
             v-slot="{ isActive }"
-            :to="`/activity/${account}`"
+            :to="`/${selectedNetwork}/${account}`"
             class="nav__link"
             :aria-current="isActive ? 'page' : undefined"
             >Activity</router-link
           >
+          <span class="nav__link nav__link--disabled" v-else>Activity</span>
           <router-link
+            v-if="account && selectedNetwork"
             v-slot="{ isActive }"
-            :to="`/charts/${account}`"
+            :to="`/${selectedNetwork}/${account}/charts`"
             class="nav__link"
             :aria-current="isActive ? 'page' : undefined"
             >Charts</router-link
           >
+          <span class="nav__link nav__link--disabled" v-else>Charts</span>
           <router-link
             v-slot="{ isActive }"
-            to="/help"
+            to="/about"
             class="nav__link"
             :aria-current="isActive ? 'page' : undefined"
-            >Help</router-link
+            >About</router-link
           >
         </div>
       </div>
@@ -129,10 +133,14 @@
   }
 
   &__link {
-    @apply px-3 py-2 rounded-md text-sm font-medium;
+    @apply text-gray-300 px-3 py-2 rounded-md text-sm font-medium;
 
-    &:not(.router-link-active) {
-      @apply text-gray-300 hover:bg-gray-700 hover:text-white;
+    &--disabled {
+      @apply cursor-not-allowed;
+    }
+
+    &:not(.router-link-active):not(&--disabled) {
+      @apply hover:bg-gray-700 hover:text-white;
     }
 
     &.router-link-active {
@@ -252,8 +260,14 @@ export default defineComponent({
       account.value = displayedAccount.value;
       if (route.matched[0]) {
         const { path } = route.matched[0];
-        if (path.includes(':account')) {
-          router.push(path.replace(':account', account.value));
+        if (path.includes(':account') || path.includes(':network')) {
+          router.push(
+            path
+              .replace(':account', account.value)
+              .replace(':network', selectedNetwork.value),
+          );
+        } else {
+          router.push(`/${selectedNetwork.value}/${account.value}`);
         }
       }
     };

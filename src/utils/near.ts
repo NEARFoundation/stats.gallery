@@ -2,15 +2,12 @@ import { NearClient } from '@/services/near/NearClient';
 import { Network } from '@/services/near/networks';
 import {
   NEAR_ACCOUNT,
-  NEAR_ACCOUNT_URL,
   NEAR_CLIENT,
   NEAR_NETWORK,
 } from '@/services/provideNear';
 import Big from 'big.js';
 import { DateTime } from 'luxon';
-import { inject, ref, Ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { isString } from './is';
+import { inject, Ref } from 'vue';
 
 const yocto = new Big('1e+24');
 
@@ -23,7 +20,6 @@ export const nearSymbol = String.fromCharCode(9411); // Ⓝ
 
 export function nearContext(): {
   account: Ref<string>;
-  exists: Ref<boolean>;
   network: Ref<Network>;
   client: NearClient;
 } {
@@ -31,15 +27,12 @@ export function nearContext(): {
   // eslint-disable-next-line
   const account = inject<Ref<string>>(NEAR_ACCOUNT)!;
   // eslint-disable-next-line
-  const exists = inject<Ref<boolean>>(NEAR_ACCOUNT_URL)!;
-  // eslint-disable-next-line
   const network = inject<Ref<Network>>(NEAR_NETWORK)!;
   // eslint-disable-next-line
   const client = inject<NearClient>(NEAR_CLIENT)!;
 
   return {
     account,
-    exists,
     network,
     client,
   };
