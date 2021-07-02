@@ -20,6 +20,7 @@ import { provideNear } from '@/services/provideNear';
 import { useTitle } from '@/services/useTitle';
 import { defineComponent } from 'vue';
 import { RouterView } from 'vue-router';
+import { RouteTitleGenerator } from './router';
 
 export default defineComponent({
   components: {
@@ -29,8 +30,14 @@ export default defineComponent({
   setup() {
     provideNear();
 
+    const titleSuffix = ' - near stats.gallery';
+
     useTitle(route => {
-      return route.meta.title as string;
+      if (typeof route.meta.title === 'function') {
+        return (route.meta.title as RouteTitleGenerator)(route) + titleSuffix;
+      } else {
+        return (route.meta.title as string) + titleSuffix;
+      }
     });
   },
 });

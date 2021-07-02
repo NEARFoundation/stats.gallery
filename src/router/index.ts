@@ -1,7 +1,16 @@
 import About from '@/views/About.vue';
 import Activity from '@/views/Activity.vue';
 import Charts from '@/views/Charts.vue';
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  RouteLocationNormalizedLoaded,
+  RouteRecordRaw,
+} from 'vue-router';
+
+export type RouteTitleGenerator = (
+  route: RouteLocationNormalizedLoaded,
+) => string;
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,7 +22,9 @@ const routes: Array<RouteRecordRaw> = [
     name: 'charts',
     component: Charts,
     meta: {
-      title: 'Charts',
+      title: <RouteTitleGenerator>(
+        (route => `${route.params.account}'s ${route.params.network} charts`)
+      ),
     },
   },
   {
@@ -21,7 +32,9 @@ const routes: Array<RouteRecordRaw> = [
     name: 'activity',
     component: Activity,
     meta: {
-      title: 'Activity',
+      title: <RouteTitleGenerator>(
+        (route => `${route.params.account}'s ${route.params.network} activity`)
+      ),
     },
   },
   {
@@ -29,7 +42,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'about',
     component: About,
     meta: {
-      title: 'About',
+      title: 'about',
     },
   },
 ];
