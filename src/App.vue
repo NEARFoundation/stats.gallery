@@ -18,6 +18,7 @@
 import TopBar from '@/components/navigation/TopBar.vue';
 import { NearClient } from '@/services/near/NearClient';
 import { Network } from '@/services/near/networks';
+import { useAccountFromUrl } from '@/services/useAccountFromUrl';
 import { useTitle } from '@/services/useTitle';
 import { defineComponent, provide, reactive, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
@@ -28,7 +29,7 @@ export default defineComponent({
     RouterView,
   },
   setup() {
-    provide('account', ref(''));
+    provide('account', useAccountFromUrl());
     const network = ref(Network.MAINNET);
     provide('network', network);
     const client = reactive(new NearClient(network.value));

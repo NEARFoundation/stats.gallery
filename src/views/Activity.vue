@@ -70,7 +70,16 @@ export default defineComponent({
     BigStat,
   },
   setup() {
+    // const account = ref('');
+    // const route = useRoute();
+    // route.params.account;
     const { account } = nearContext();
+
+    // watch(route, currentRoute => {
+    //   account.value = route.params.account as string;
+    // }, {
+    //   immediate: true,
+    // });
 
     return {
       account,

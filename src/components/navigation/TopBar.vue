@@ -15,13 +15,25 @@
         <!-- Nav links -->
         <div class="nav__links">
           <router-link
-            v-for="item in navigation"
             v-slot="{ isActive }"
-            :key="item.name"
-            :to="item.href"
+            :to="`/activity/${account}`"
             class="nav__link"
             :aria-current="isActive ? 'page' : undefined"
-            >{{ item.name }}</router-link
+            >Activity</router-link
+          >
+          <router-link
+            v-slot="{ isActive }"
+            :to="`/charts/${account}`"
+            class="nav__link"
+            :aria-current="isActive ? 'page' : undefined"
+            >Charts</router-link
+          >
+          <router-link
+            v-slot="{ isActive }"
+            to="/help"
+            class="nav__link"
+            :aria-current="isActive ? 'page' : undefined"
+            >Help</router-link
           >
         </div>
       </div>
@@ -204,7 +216,7 @@ import { nearContext } from '@/utils/near';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref, watch } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import NetworkSelector from './NetworkSelector.vue';
 
 const navigation = [
@@ -232,8 +244,16 @@ export default defineComponent({
     watch(displayedAccount, () => {
       displayedAccount.value = displayedAccount.value.toLowerCase();
     });
+
+    const route = useRoute();
+    const router = useRouter();
+
     const updateAccount = () => {
       account.value = displayedAccount.value;
+      const { path } = route.matched[0];
+      if (path.includes(':account')) {
+        router.push(path.replace(':account', account.value));
+      }
     };
     const setSelectedNetwork = (network: Network) => {
       selectedNetwork.value = network;

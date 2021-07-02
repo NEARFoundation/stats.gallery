@@ -3,7 +3,7 @@ import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
 
 export type TitleGenerator = (route: RouteLocationNormalizedLoaded) => string;
 
-export function useTitle(generator: TitleGenerator) {
+export function useTitle(generator: TitleGenerator): void {
   const router = useRouter();
 
   watch(router.currentRoute, route => {
