@@ -82,18 +82,37 @@
 
     <!-- Mobile menu -->
     <DisclosurePanel class="mobile-menu">
-      <a
-        v-for="item in navigation"
-        :key="item.name"
-        :href="item.href"
-        :class="[
-          'mobile-menu__item',
-          item.current
-            ? 'mobile-menu__item--active'
-            : 'mobile-menu__item--inactive',
-        ]"
-        :aria-current="item.current ? 'page' : undefined"
-        >{{ item.name }}</a
+      <router-link
+        v-if="account && selectedNetwork"
+        v-slot="{ isActive }"
+        :to="`/${selectedNetwork}/${account}`"
+        class="mobile-menu__item"
+        active-class="mobile-menu__item--active"
+        :aria-current="isActive ? 'page' : undefined"
+        >Activity</router-link
+      >
+      <span class="mobile-menu__item mobile-menu__item--disabled" v-else
+        >Activity</span
+      >
+      <router-link
+        v-if="account && selectedNetwork"
+        v-slot="{ isActive }"
+        :to="`/${selectedNetwork}/${account}/charts`"
+        class="mobile-menu__item"
+        active-class="mobile-menu__item--active"
+        :aria-current="isActive ? 'page' : undefined"
+        >Charts</router-link
+      >
+      <span class="mobile-menu__item mobile-menu__item--disabled" v-else
+        >Charts</span
+      >
+      <router-link
+        v-slot="{ isActive }"
+        to="/about"
+        class="mobile-menu__item"
+        active-class="mobile-menu__item--active"
+        :aria-current="isActive ? 'page' : undefined"
+        >About</router-link
       >
     </DisclosurePanel>
   </Disclosure>
@@ -205,10 +224,14 @@
   @apply sm:hidden px-2 pt-2 pb-3 space-y-1;
 
   &__item {
-    @apply block px-3 py-2 rounded-md text-base font-medium;
+    @apply block px-3 py-2 rounded-md text-base text-gray-300 font-medium;
 
-    &--inactive {
-      @apply text-gray-300 hover:bg-gray-700 hover:text-white;
+    &:not(&--active):not(&--disabled) {
+      @apply hover:bg-gray-700 hover:text-white;
+    }
+
+    &--disabled {
+      @apply cursor-not-allowed;
     }
 
     &--active {
@@ -226,12 +249,6 @@ import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import NetworkSelector from './NetworkSelector.vue';
-
-const navigation = [
-  { name: 'Activity', href: 'activity' },
-  { name: 'Charts', href: 'charts' },
-  { name: 'Help', href: 'help' },
-];
 
 export default defineComponent({
   components: {
@@ -266,7 +283,7 @@ export default defineComponent({
               .replace(':account', account.value)
               .replace(':network', selectedNetwork.value),
           );
-        } else {
+        } else if (account.value) {
           router.push(`/${selectedNetwork.value}/${account.value}`);
         }
       }
@@ -276,7 +293,6 @@ export default defineComponent({
     };
 
     return {
-      navigation,
       selectedNetwork,
       setSelectedNetwork,
       open,
