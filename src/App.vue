@@ -18,6 +18,7 @@
 import TopBar from '@/components/navigation/TopBar.vue';
 import { NearClient } from '@/services/near/NearClient';
 import { Network } from '@/services/near/networks';
+import { useTitle } from '@/services/useTitle';
 import { defineComponent, provide, reactive, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
 
@@ -35,6 +36,10 @@ export default defineComponent({
 
     watch(network, newNetwork => {
       client.network = newNetwork;
+    });
+
+    useTitle(route => {
+      return route.meta.title as string;
     });
   },
 });
