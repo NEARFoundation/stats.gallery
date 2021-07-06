@@ -1,5 +1,5 @@
 <template>
-  <v-chart class="chart" theme="light" :option="option" />
+  <VChart class="chart" theme="light" :option="actionTypeOption" />
 </template>
 
 <style scoped>
@@ -10,17 +10,17 @@
 </style>
 
 <script lang="ts">
-import { ActionKind } from '@/services/near/types';
+import { useActionTypeChart } from '@/services/charts/useActionTypeChart';
 import { useRecentActions } from '@/services/near/useRecentActions';
 import { useNear } from '@/services/useNear';
-import { PieChart } from 'echarts/charts';
+import { defineComponent } from '@vue/runtime-core';
+import { BarChart, PieChart } from 'echarts/charts';
 import { TooltipComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { defineComponent, ref, watch } from 'vue';
 import VChart from 'vue-echarts';
 
-use([CanvasRenderer, PieChart, TooltipComponent]);
+use([CanvasRenderer, PieChart, BarChart, TooltipComponent]);
 
 export default defineComponent({
   components: {
@@ -29,84 +29,10 @@ export default defineComponent({
   setup() {
     const { account, network, timeframe } = useNear();
     const { actions } = useRecentActions({ account, network, timeframe });
-
-    const pieSlice = (name: string, value: number, color: string) => ({
-      name,
-      value,
-      itemStyle: { color },
-    });
-
-    const makeData = () => {
-      const groups = actions.value.reduce((acc, current) => {
-        const ak = current.action_kind;
-        if (!acc[ak]) {
-          acc[ak] = 0;
-        }
-        acc[ak]++;
-        return acc;
-      }, {} as Record<ActionKind, number>);
-
-      return [
-        pieSlice(
-          'Function Call',
-          groups[ActionKind.FUNCTION_CALL],
-          'rgb(251, 191, 36)',
-        ),
-        pieSlice('Transfer', groups[ActionKind.TRANSFER], 'rgb(31, 41, 55)'),
-        pieSlice('Add Key', groups[ActionKind.ADD_KEY], 'rgb(16, 185, 129)'),
-        pieSlice(
-          'Delete Key',
-          groups[ActionKind.DELETE_KEY],
-          'rgb(220, 38, 38)',
-        ),
-        pieSlice(
-          'Create Account',
-          groups[ActionKind.CREATE_ACCOUNT],
-          'rgb(16, 185, 129)',
-        ),
-        pieSlice(
-          'Delete Account',
-          groups[ActionKind.DELETE_ACCOUNT],
-          'rgb(220, 38, 38)',
-        ),
-        pieSlice(
-          'Deploy Contract',
-          groups[ActionKind.DEPLOY_CONTRACT],
-          'rgb(29, 78, 216)',
-        ),
-        pieSlice('Stake', groups[ActionKind.STAKE], 'rgb(109, 40, 217)'),
-      ];
-    };
-
-    const genOption = () => ({
-      tooltip: {
-        trigger: 'item',
-      },
-      series: [
-        {
-          name: 'Actions',
-          type: 'pie',
-          radius: '50%',
-          data: makeData(),
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
-        },
-      ],
-    });
-
-    const option = ref(genOption());
-
-    watch([account, actions], () => {
-      option.value = genOption();
-    });
+    const actionTypeOption = useActionTypeChart(actions);
 
     return {
-      option,
+      actionTypeOption,
     };
   },
 });
