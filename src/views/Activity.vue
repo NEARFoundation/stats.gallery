@@ -5,8 +5,10 @@
   <!-- Large stats display -->
   <BigStats>
     <SingleStatProvider
-      :account="account"
       stat="gas-spent"
+      :account="account"
+      :network="network"
+      :timeframe="timeframe"
       #default="{ value, isLoading }"
     >
       <BigStat :isLoading="isLoading">
@@ -17,12 +19,14 @@
       </BigStat>
     </SingleStatProvider>
     <SingleStatProvider
-      :account="account"
       stat="gas-tokens-spent"
+      :account="account"
+      :network="network"
+      :timeframe="timeframe"
       #default="{ value, isLoading }"
     >
       <BigStat :isLoading="isLoading">
-        <template #name>Gas Tokens Spent</template>
+        <template #name>NEAR Spent on Gas</template>
         <template #value>
           {{ nearSymbol }}&nbsp;{{
             $filters.compactNumber($filters.toNear(value))
@@ -31,8 +35,10 @@
       </BigStat>
     </SingleStatProvider>
     <SingleStatProvider
-      :account="account"
       stat="transaction-count"
+      :account="account"
+      :network="network"
+      :timeframe="timeframe"
       #default="{ value, isLoading }"
     >
       <BigStat :isLoading="isLoading">

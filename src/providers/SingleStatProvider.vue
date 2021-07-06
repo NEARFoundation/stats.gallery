@@ -3,7 +3,9 @@
 </template>
 
 <script lang="ts">
+import { Network } from '@/services/near/networks';
 import { useStat } from '@/services/near/useStat';
+import { Timeframe } from '@/services/timeframe';
 import { defineComponent, toRefs } from 'vue';
 
 export default defineComponent({
@@ -16,13 +18,13 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    after: {
-      type: Number,
-      required: false,
+    network: {
+      type: String as () => Network,
+      required: true,
     },
-    before: {
-      type: Number,
-      required: false,
+    timeframe: {
+      type: String as () => Timeframe,
+      required: true,
     },
   },
   setup(props) {
