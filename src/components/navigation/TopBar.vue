@@ -65,11 +65,11 @@
           />
         </div>
 
+        <!-- Timeframe selector -->
+        <TimeframeSelector />
+
         <!-- Network selector -->
-        <NetworkSelector
-          :selectedNetwork="selectedNetwork"
-          @networkChanged="setSelectedNetwork"
-        />
+        <NetworkSelector />
       </div>
 
       <!-- Mobile menu button-->
@@ -199,7 +199,6 @@
     @apply block
       w-full
       pl-10
-      pr-3
       py-2
       rounded-l-md
       border border-transparent
@@ -213,6 +212,13 @@
       focus:ring-0
       focus:placeholder-gray-400
       sm:text-sm;
+
+    -webkit-appearance: textfield;
+
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      -webkit-appearance: none;
+    }
   }
 }
 
@@ -242,13 +248,13 @@
 </style>
 
 <script lang="ts">
-import { Network } from '@/services/near/networks';
 import { useNear } from '@/services/useNear';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref, watch } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import NetworkSelector from './NetworkSelector.vue';
+import TimeframeSelector from './TimeframeSelector.vue';
 
 export default defineComponent({
   components: {
@@ -260,6 +266,7 @@ export default defineComponent({
     MenuIcon,
     XIcon,
     SearchIcon,
+    TimeframeSelector,
   },
   setup() {
     const { account, network: selectedNetwork } = useNear();
@@ -270,31 +277,16 @@ export default defineComponent({
       displayedAccount.value = displayedAccount.value.toLowerCase();
     });
 
-    const route = useRoute();
-    const router = useRouter();
-
     const updateAccount = () => {
-      account.value = displayedAccount.value;
-      if (route.matched[0]) {
-        const { path } = route.matched[0];
-        if (path.includes(':account') || path.includes(':network')) {
-          router.push(
-            path
-              .replace(':account', account.value)
-              .replace(':network', selectedNetwork.value),
-          );
-        } else if (account.value) {
-          router.push(`/${selectedNetwork.value}/${account.value}`);
-        }
+      if (displayedAccount.value.trim().length === 0) {
+        return;
       }
-    };
-    const setSelectedNetwork = (network: Network) => {
-      selectedNetwork.value = network;
+
+      account.value = displayedAccount.value;
     };
 
     return {
       selectedNetwork,
-      setSelectedNetwork,
       open,
       account,
       displayedAccount,

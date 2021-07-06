@@ -1,18 +1,18 @@
 <template>
-  <Menu as="div" class="network-selector">
+  <Menu as="div" class="timeframe-selector">
     <div>
-      <!-- Network selector button -->
-      <MenuButton class="network-selector__button">
-        <span class="sr-only">Network Selector</span>
+      <!-- Timeframe selector button -->
+      <MenuButton class="timeframe-selector__button">
+        <span class="sr-only">Timeframe Selector</span>
         <span class="hidden md:block">
-          {{ network }}
+          {{ timeframe }}
         </span>
-        <WifiIcon class="block md:hidden h-5 w-5" aria-hidden="true" />
+        <CalendarIcon class="block md:hidden h-5 w-5" aria-hidden="true" />
         <ChevronDownIcon class="-mr-1 ml-1 h-5 w-4" aria-hidden="true" />
       </MenuButton>
     </div>
 
-    <!-- Network selector options -->
+    <!-- Timeframe selector options -->
     <transition
       enter-active-class="transition ease-out duration-100"
       enter-from-class="transform opacity-0 scale-95"
@@ -21,26 +21,26 @@
       leave-from-class="transform opacity-100 scale-100"
       leave-to-class="transform opacity-0 scale-95"
     >
-      <MenuItems class="network-selector__menu">
+      <MenuItems class="timeframe-selector__menu">
         <div class="py-1">
           <MenuItem
-            v-for="networkKey in networkKeys"
-            :key="networkKey"
+            v-for="timeframeKey in timeframeKeys"
+            :key="timeframeKey"
             v-slot="{ active }"
           >
             <a
               href="#"
-              @click.prevent="network = networkKey"
+              @click.prevent="timeframe = timeframeKey"
               :class="[
                 active
-                  ? 'network-selector__option--active'
-                  : 'network-selector__option--inactive',
-                network === networkKey
-                  ? 'network-selector__option--selected'
+                  ? 'timeframe-selector__option--active'
+                  : 'timeframe-selector__option--inactive',
+                timeframe === timeframeKey
+                  ? 'timeframe-selector__option--selected'
                   : '',
-                'network-selector__option',
+                'timeframe-selector__option',
               ]"
-              >{{ networkKey }}</a
+              >{{ timeframeKey }}</a
             >
           </MenuItem>
         </div>
@@ -50,14 +50,13 @@
 </template>
 
 <style lang="scss" scoped>
-.network-selector {
+.timeframe-selector {
   @apply relative inline-block text-left;
 
   &__button {
     @apply inline-flex
       justify-center
       w-full
-      rounded-r-md
       shadow-sm
       p-2
       bg-transparent
@@ -96,11 +95,11 @@
 </style>
 
 <script lang="ts">
-import { Network, networks } from '@/services/near/networks';
+import { Timeframe } from '@/services/Timeframe';
 import { useNear } from '@/services/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';
-import { ChevronDownIcon, WifiIcon } from 'heroicons-vue3/outline';
+import { ChevronDownIcon, CalendarIcon } from 'heroicons-vue3/outline';
 
 export default defineComponent({
   components: {
@@ -109,16 +108,21 @@ export default defineComponent({
     MenuItems,
     MenuButton,
     ChevronDownIcon,
-    WifiIcon,
+    CalendarIcon,
   },
   setup() {
-    const networkKeys: Network[] = [Network.MAINNET, Network.TESTNET];
-    const { network } = useNear();
+    const timeframeKeys: Timeframe[] = [
+      Timeframe.DAY,
+      Timeframe.WEEK,
+      Timeframe.MONTH,
+      Timeframe.YEAR,
+      Timeframe.ALL,
+    ];
+    const { timeframe } = useNear();
 
     return {
-      network,
-      networks,
-      networkKeys,
+      timeframe,
+      timeframeKeys,
     };
   },
 });

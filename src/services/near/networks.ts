@@ -3,6 +3,10 @@ export const enum Network {
   TESTNET = 'testnet',
 }
 
+export function isNetwork(x: unknown): x is Network {
+  return x === Network.MAINNET || x === Network.TESTNET;
+}
+
 export interface INetworkConfiguration {
   name: Network;
   endpoint: string;
