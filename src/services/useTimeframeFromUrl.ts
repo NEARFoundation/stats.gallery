@@ -1,6 +1,6 @@
 import { Ref, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { isTimeframe, Timeframe } from './Timeframe';
+import { isTimeframe, Timeframe } from './timeframe';
 
 export function useTimeframeFromUrl(): Ref<Timeframe> {
   const timeframe = ref(Timeframe.MONTH);

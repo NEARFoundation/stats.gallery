@@ -43,7 +43,12 @@
       </BigStat>
     </SingleStatProvider>
   </BigStats>
-  <RecentActionsProvider :account="account" #default="{ actions, isLoading }">
+  <RecentActionsProvider
+    :account="account"
+    :network="network"
+    :timeframe="timeframe"
+    #default="{ actions, isLoading }"
+  >
     <TransactionActions
       class="my-8"
       :actions="actions"
@@ -70,10 +75,12 @@ export default defineComponent({
     BigStat,
   },
   setup() {
-    const { account } = useNear();
+    const { account, network, timeframe } = useNear();
 
     return {
       account,
+      network,
+      timeframe,
     };
   },
 });

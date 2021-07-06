@@ -27,8 +27,8 @@ export default defineComponent({
     VChart,
   },
   setup() {
-    const { account } = useNear();
-    const { actions } = useRecentActions({ account });
+    const { account, network, timeframe } = useNear();
+    const { actions } = useRecentActions({ account, network, timeframe });
 
     const pieSlice = (name: string, value: number, color: string) => ({
       name,

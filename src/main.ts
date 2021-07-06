@@ -1,5 +1,6 @@
 import App from '@/App.vue';
 import router from '@/router';
+import { timeframeToPastTimestamp } from '@/services/timeframe';
 import { compactNumber } from '@/utils/compactNumber';
 import {
   nearSymbol,
@@ -20,5 +21,6 @@ app.config.globalProperties = {
     toNear,
     nearTimestampToLocaleString,
     nearTimestampToISO,
+    timeframeToPastTimestamp,
   },
 };

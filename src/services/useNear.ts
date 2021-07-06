@@ -7,7 +7,7 @@ import {
   NEAR_NETWORK,
   NEAR_TIMEFRAME,
 } from './provideNear';
-import { Timeframe } from './Timeframe';
+import { Timeframe } from './timeframe';
 
 export function useNear(): {
   account: Ref<string>;

@@ -95,7 +95,7 @@
 </style>
 
 <script lang="ts">
-import { Timeframe } from '@/services/Timeframe';
+import { Timeframe } from '@/services/timeframe';
 import { useNear } from '@/services/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';

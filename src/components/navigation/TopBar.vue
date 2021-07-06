@@ -272,9 +272,13 @@ export default defineComponent({
     const { account, network: selectedNetwork } = useNear();
 
     const open = ref(false);
-    const displayedAccount = ref('');
+    const displayedAccount = ref(account.value);
     watch(displayedAccount, () => {
       displayedAccount.value = displayedAccount.value.toLowerCase();
+    });
+
+    watch(account, newAccount => {
+      displayedAccount.value = newAccount;
     });
 
     const updateAccount = () => {

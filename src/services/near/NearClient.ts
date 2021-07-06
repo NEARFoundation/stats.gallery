@@ -9,6 +9,10 @@ interface RequestParams {
 }
 
 export class NearClient {
+  public static from(network: Network): NearClient {
+    return new NearClient(network);
+  }
+
   private _network: Network;
 
   public get network(): Network {

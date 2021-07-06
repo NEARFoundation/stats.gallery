@@ -1,29 +1,29 @@
 import { Ref, WatchSource } from 'vue';
-import { useNear } from '../useNear';
+import { Timeframe, timeframeToPastTimestamp } from '../timeframe';
 import { usePromise } from '../usePromise';
+import { NearClient } from './NearClient';
+import { Network } from './networks';
 import { UnifiedTransactionAction } from './types';
 
 export function useRecentActions({
   account,
-  after,
-  before,
+  network,
+  timeframe,
 }: {
   account: Ref<string>;
-  after?: Ref<number | undefined>;
-  before?: Ref<number | undefined>;
+  network: Ref<Network>;
+  timeframe: Ref<Timeframe>;
 }): {
   actions: Ref<UnifiedTransactionAction[]>;
   isLoading: Ref<boolean>;
 } {
-  const { client } = useNear();
   const f = () =>
-    client.getRecentTransactionActions({
+    NearClient.from(network.value).getRecentTransactionActions({
       account: account.value,
-      after: after?.value,
-      before: before?.value,
+      after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
     });
   const { value: actions, isLoading } = usePromise(
-    [account, after, before].filter(s => !!s) as WatchSource[],
+    [account, network, timeframe] as WatchSource[],
     f,
     [],
   );
