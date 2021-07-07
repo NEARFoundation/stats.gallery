@@ -1,4 +1,4 @@
-# My NEAR Stats
+# stats.gallery
 
 ## Project setup
 ```
