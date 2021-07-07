@@ -1,4 +1,7 @@
-import { ActionKind, UnifiedTransactionAction } from '@/services/near/types';
+import {
+  ActionKind,
+  UnifiedTransactionAction,
+} from '@/services/near/indexer/types';
 import {
   ComposeOption,
   PieSeriesOption,

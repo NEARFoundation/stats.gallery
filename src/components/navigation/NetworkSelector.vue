@@ -96,7 +96,7 @@
 </style>
 
 <script lang="ts">
-import { Network, networks } from '@/services/near/networks';
+import { Network, networks } from '@/services/near/indexer/networks';
 import { useNear } from '@/services/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';

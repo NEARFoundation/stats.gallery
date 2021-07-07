@@ -1,4 +1,4 @@
-import { UnifiedTransactionAction } from '@/services/near/types';
+import { UnifiedTransactionAction } from '@/services/near/indexer/types';
 import {
   BarSeriesOption,
   ComposeOption,

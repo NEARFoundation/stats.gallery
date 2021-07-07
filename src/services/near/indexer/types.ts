@@ -23,6 +23,33 @@ export interface IAccessKey {
   last_update_block_height: number;
 }
 
+export interface IBlock {
+  block_height: number;
+  block_hash: string;
+  prev_block_hash: string;
+  block_timestamp: number;
+  total_supply: string;
+  gas_price: string;
+  author_account_id: string;
+}
+
+export const enum ReceiptKind {
+  ACTION = 'ACTION',
+  DATA = 'DATA',
+}
+
+export interface IReceipt {
+  receipt_id: string;
+  included_in_block_hash: string;
+  included_in_chunk_hash: string;
+  index_in_chunk: number;
+  included_in_block_timestamp: number;
+  predecessor_account_id: string;
+  receiver_account_id: string;
+  receipt_kind: ReceiptKind;
+  originated_from_transaction_hash: string;
+}
+
 export interface ITransaction {
   transaction_hash: string;
   included_in_block_hash: string;
@@ -110,5 +137,11 @@ export type UnifiedTransactionAction =
   ITransactionAction<TransactionActionArgs> &
     Pick<
       ITransaction,
-      'block_timestamp' | 'signer_account_id' | 'receiver_account_id'
-    >;
+      | 'block_timestamp'
+      | 'signer_account_id'
+      | 'receiver_account_id'
+      | 'included_in_block_hash'
+    > & {
+      receipt_included_in_block_hash: string;
+      receipt_included_in_block_height: number;
+    };

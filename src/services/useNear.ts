@@ -1,10 +1,12 @@
+import { IndexerClient } from '@/services/near/indexer/IndexerClient';
+import { Network } from '@/services/near/indexer/networks';
 import { inject, Ref } from 'vue';
-import { NearClient } from './near/NearClient';
-import { Network } from './near/networks';
+import { RpcClient } from './near/rpc/RpcClient';
 import {
   NEAR_ACCOUNT,
-  NEAR_CLIENT,
+  NEAR_INDEXER,
   NEAR_NETWORK,
+  NEAR_RPC,
   NEAR_TIMEFRAME,
 } from './provideNear';
 import { Timeframe } from './timeframe';
@@ -13,7 +15,8 @@ export function useNear(): {
   account: Ref<string>;
   network: Ref<Network>;
   timeframe: Ref<Timeframe>;
-  client: NearClient;
+  indexer: IndexerClient;
+  rpc: RpcClient;
 } {
   // TODO: Fallback?
   // eslint-disable-next-line
@@ -23,12 +26,15 @@ export function useNear(): {
   // eslint-disable-next-line
   const timeframe = inject<Ref<Timeframe>>(NEAR_TIMEFRAME)!;
   // eslint-disable-next-line
-  const client = inject<NearClient>(NEAR_CLIENT)!;
+  const indexer = inject<IndexerClient>(NEAR_INDEXER)!;
+  // eslint-disable-next-line
+  const rpc = inject<RpcClient>(NEAR_RPC)!;
 
   return {
     account,
     network,
     timeframe,
-    client,
+    indexer,
+    rpc,
   };
 }

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { ActionKind } from '@/services/near/types';
+import { ActionKind } from '@/services/near/indexer/types';
 import {
   ArrowDownIcon,
   ArrowUpIcon,

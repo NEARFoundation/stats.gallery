@@ -8,9 +8,9 @@ interface RequestParams {
   before?: number;
 }
 
-export class NearClient {
-  public static from(network: Network): NearClient {
-    return new NearClient(network);
+export class IndexerClient {
+  public static from(network: Network): IndexerClient {
+    return new IndexerClient(network);
   }
 
   private _network: Network;
@@ -23,7 +23,7 @@ export class NearClient {
   }
 
   private get endpoint() {
-    return networks[this.network].endpoint;
+    return networks[this.network].indexer;
   }
 
   public constructor(network: Network) {

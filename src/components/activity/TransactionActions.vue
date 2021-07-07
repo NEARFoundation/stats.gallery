@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { UnifiedTransactionAction } from '@/services/near/types';
+import { UnifiedTransactionAction } from '@/services/near/indexer/types';
 import { useNear } from '@/services/useNear';
 import { defineComponent } from 'vue';
 import TransactionAction from './TransactionAction.vue';

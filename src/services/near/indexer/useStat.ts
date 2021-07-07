@@ -1,7 +1,7 @@
 import { Ref, WatchSource } from 'vue';
-import { Timeframe, timeframeToPastTimestamp } from '../timeframe';
-import { usePromise } from '../usePromise';
-import { NearClient } from './NearClient';
+import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
+import { usePromise } from '@/services/usePromise';
+import { IndexerClient } from './IndexerClient';
 import { Network } from './networks';
 
 export function useStat<T>(
@@ -21,7 +21,7 @@ export function useStat<T>(
   isLoading: Ref<boolean>;
 } {
   const f = () =>
-    NearClient.from(network.value).getSingle<T>(stat, {
+    IndexerClient.from(network.value).getSingle<T>(stat, {
       account: account.value,
       after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
     });

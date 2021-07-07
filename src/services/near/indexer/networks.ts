@@ -9,16 +9,19 @@ export function isNetwork(x: unknown): x is Network {
 
 export interface INetworkConfiguration {
   name: Network;
-  endpoint: string;
+  indexer: string;
+  rpc: string;
 }
 
 export const networks: Record<Network, INetworkConfiguration> = {
   mainnet: {
     name: Network.MAINNET,
-    endpoint: process.env['VUE_APP_ENDPOINT_MAINNET'],
+    indexer: process.env['VUE_APP_INDEXER_MAINNET'] ?? '',
+    rpc: process.env['VUE_APP_RPC_MAINNET'] ?? '',
   },
   testnet: {
     name: Network.TESTNET,
-    endpoint: process.env['VUE_APP_ENDPOINT_TESTNET'],
+    indexer: process.env['VUE_APP_INDEXER_TESTNET'] ?? '',
+    rpc: process.env['VUE_APP_RPC_TESTNET'] ?? '',
   },
 };

@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts">
-import { Network } from '@/services/near/networks';
-import { useRecentActions } from '@/services/near/useRecentActions';
+import { Network } from '@/services/near/indexer/networks';
+import { useRecentActions } from '@/services/near/indexer/useRecentActions';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, toRefs } from 'vue';
 

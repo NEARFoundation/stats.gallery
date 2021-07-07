@@ -1,6 +1,6 @@
 import { Ref, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { isNetwork, Network } from './near/networks';
+import { isNetwork, Network } from '@/services/near/indexer/networks';
 
 export function useNetworkFromUrl(): Ref<Network> {
   const network = ref(Network.MAINNET);

@@ -1,20 +1,23 @@
+import { IndexerClient } from '@/services/near/indexer/IndexerClient';
+import { Network } from '@/services/near/indexer/networks';
+import { RpcClient } from '@/services/near/rpc/RpcClient';
+import { useAccountFromUrl } from '@/services/useAccountFromUrl';
+import { useNetworkFromUrl } from '@/services/useNetworkFromUrl';
+import { useTimeframeFromUrl } from '@/services/useTimeframeFromUrl';
 import { provide, reactive, Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { NearClient } from './near/NearClient';
-import { Network } from './near/networks';
-import { useAccountFromUrl } from './useAccountFromUrl';
-import { useNetworkFromUrl } from './useNetworkFromUrl';
-import { useTimeframeFromUrl } from './useTimeframeFromUrl';
 
 export const NEAR_ACCOUNT = Symbol('near_account');
 export const NEAR_NETWORK = Symbol('near_network');
-export const NEAR_CLIENT = Symbol('near_client');
+export const NEAR_INDEXER = Symbol('near_indexer');
+export const NEAR_RPC = Symbol('near_rpc');
 export const NEAR_TIMEFRAME = Symbol('near_timeframe');
 
 export function provideNear(): {
   account: Ref<string>;
   network: Ref<Network>;
-  client: NearClient;
+  indexer: IndexerClient;
+  rpc: RpcClient;
 } {
   const account = useAccountFromUrl();
   provide(NEAR_ACCOUNT, account);
@@ -22,11 +25,14 @@ export function provideNear(): {
   provide(NEAR_NETWORK, network);
   const timeframe = useTimeframeFromUrl();
   provide(NEAR_TIMEFRAME, timeframe);
-  const client = reactive(new NearClient(network.value)) as NearClient;
-  provide(NEAR_CLIENT, client);
+  const indexer = reactive(new IndexerClient(network.value)) as IndexerClient;
+  provide(NEAR_INDEXER, indexer);
+  const rpc = reactive(new RpcClient(network.value)) as RpcClient;
+  provide(NEAR_RPC, rpc);
 
   watch(network, newNetwork => {
-    client.network = newNetwork;
+    indexer.network = newNetwork;
+    rpc.network = newNetwork;
   });
 
   const route = useRoute();
@@ -71,6 +77,7 @@ export function provideNear(): {
   return {
     account,
     network,
-    client,
+    indexer,
+    rpc,
   };
 }

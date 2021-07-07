@@ -1,7 +1,7 @@
+import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
+import { usePromise } from '@/services/usePromise';
 import { Ref, WatchSource } from 'vue';
-import { Timeframe, timeframeToPastTimestamp } from '../timeframe';
-import { usePromise } from '../usePromise';
-import { NearClient } from './NearClient';
+import { IndexerClient } from './IndexerClient';
 import { Network } from './networks';
 import { UnifiedTransactionAction } from './types';
 
@@ -18,7 +18,7 @@ export function useRecentActions({
   isLoading: Ref<boolean>;
 } {
   const f = () =>
-    NearClient.from(network.value).getRecentTransactionActions({
+    IndexerClient.from(network.value).getRecentTransactionActions({
       account: account.value,
       after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
     });
