@@ -1,34 +1,12 @@
+import { Network, networks } from '@/services/near/indexer/networks';
 import axios from 'axios';
-import { Network, networks } from '../indexer/networks';
-
-export type RpcResponse<T extends RpcResult> = {
-  jsonrpc: '2.0';
-} & (
-  | {
-      id: string | number;
-      result: T;
-    }
-  | {
-      id: string | number | null;
-      error: {
-        code: number;
-        message: string;
-      };
-    }
-);
-
-export type RpcResult = RpcViewAccountResult;
-export type RpcViewAccountResult = {
-  amount: string;
-  locked: string;
-  code_hash: string;
-  storage_usage: number;
-  storage_paid_at: number;
-  block_height: number;
-  block_hash: string;
-};
+import { RpcResponse, RpcViewAccountResult } from './types';
 
 export class RpcClient {
+  public static from(network: Network): RpcClient {
+    return new RpcClient(network);
+  }
+
   private get endpoint(): string {
     return networks[this.network].rpc;
   }

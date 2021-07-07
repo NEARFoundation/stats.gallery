@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Network } from '@/services/near/indexer/networks';
-import { useStat } from '@/services/near/indexer/useStat';
+import { useStat } from '@/services/useStat';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, toRefs } from 'vue';
 

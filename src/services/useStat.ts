@@ -1,8 +1,8 @@
-import { Ref, WatchSource } from 'vue';
+import { IndexerClient } from '@/services/near/indexer/IndexerClient';
+import { Network } from '@/services/near/indexer/networks';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
 import { usePromise } from '@/services/usePromise';
-import { IndexerClient } from './IndexerClient';
-import { Network } from './networks';
+import { Ref, WatchSource } from 'vue';
 
 export function useStat<T>(
   stat: string,

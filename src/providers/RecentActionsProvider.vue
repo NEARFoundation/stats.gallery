@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Network } from '@/services/near/indexer/networks';
-import { useRecentActions } from '@/services/near/indexer/useRecentActions';
+import { useRecentActions } from '@/services/useRecentActions';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, toRefs } from 'vue';
 
