@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Network, networks } from './networks';
-import { IAccessKey, UnifiedTransactionAction } from './types';
+import { Action, IAccessKey, UnifiedTransactionAction } from './types';
 
 interface RequestParams {
   account: string;
@@ -86,5 +86,9 @@ export class IndexerClient {
     params: RequestParams,
   ): Promise<UnifiedTransactionAction[]> {
     return this.getMultiple('recent-transaction-actions', params);
+  }
+
+  public async getActions(params: RequestParams): Promise<Action[]> {
+    return this.getMultiple('actions', params);
   }
 }

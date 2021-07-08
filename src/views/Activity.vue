@@ -49,7 +49,7 @@
       </BigStat>
     </SingleStatProvider>
   </BigStats>
-  <RecentActionsProvider
+  <ActionsProvider
     :account="account"
     :network="network"
     :timeframe="timeframe"
@@ -60,14 +60,14 @@
       :actions="actions"
       :isLoading="isLoading"
     />
-  </RecentActionsProvider>
+  </ActionsProvider>
 </template>
 
 <script lang="ts">
 import TransactionActions from '@/components/activity/TransactionActions.vue';
 import BigStat from '@/components/stats/BigStat.vue';
 import BigStats from '@/components/stats/BigStats.vue';
-import RecentActionsProvider from '@/providers/RecentActionsProvider.vue';
+import ActionsProvider from '@/providers/ActionsProvider.vue';
 import SingleStatProvider from '@/providers/SingleStatProvider.vue';
 import { useNear } from '@/services/useNear';
 import { defineComponent } from '@vue/runtime-core';
@@ -76,7 +76,7 @@ export default defineComponent({
   components: {
     BigStats,
     SingleStatProvider,
-    RecentActionsProvider,
+    ActionsProvider,
     TransactionActions,
     BigStat,
   },

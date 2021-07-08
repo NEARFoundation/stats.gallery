@@ -1,5 +1,8 @@
 import { Network } from '@/services/near/indexer/networks';
-import { UnifiedTransactionAction } from '@/services/near/indexer/types';
+import {
+  Action,
+  UnifiedTransactionAction,
+} from '@/services/near/indexer/types';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { RpcResponse, RpcViewAccountResult } from '@/services/near/rpc/types';
 import { ref, Ref, watch } from 'vue';
@@ -10,7 +13,7 @@ export function useAccountViews({
   network,
 }: {
   account: Ref<string>;
-  actions: Ref<UnifiedTransactionAction[]>;
+  actions: Ref<Action[]>;
   network: Ref<Network>;
 }): {
   views: Ref<RpcResponse<RpcViewAccountResult>[]>;
@@ -27,7 +30,7 @@ export function useAccountViews({
         actions.value.flatMap(action => [
           RpcClient.from(network.value).viewAccount({
             account: account.value,
-            blockId: action.receipt_included_in_block_height + 1, // Wait for gas to be settled
+            blockId: action.block_hash,
           }),
         ]),
       );

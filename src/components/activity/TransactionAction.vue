@@ -35,9 +35,9 @@
       <p v-else class="text-sm text-gray-500">
         <button
           class="cursor-pointer font-medium text-gray-900"
-          @click="setAccount(action.signer_account_id)"
+          @click="setAccount(action.predecessor_account_id)"
         >
-          {{ action.signer_account_id }}
+          {{ action.predecessor_account_id }}
         </button>
         {{ action.action_kind }}
         <button
@@ -65,7 +65,10 @@
 </template>
 
 <script lang="ts">
-import { UnifiedTransactionAction } from '@/services/near/indexer/types';
+import {
+  Action,
+  UnifiedTransactionAction,
+} from '@/services/near/indexer/types';
 import { useNear } from '@/services/useNear';
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
@@ -75,7 +78,7 @@ export default defineComponent({
   components: { TransactionActionIcon },
   props: {
     action: {
-      type: Object as () => UnifiedTransactionAction,
+      type: Object as () => Action,
       required: true,
     },
     account: {

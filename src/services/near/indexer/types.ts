@@ -145,3 +145,12 @@ export type UnifiedTransactionAction =
       receipt_included_in_block_hash: string;
       receipt_included_in_block_height: number;
     };
+
+export type Action = {
+  transaction_hash: string;
+  action_kind: ActionKind;
+  block_hash: string;
+  block_timestamp: number;
+  predecessor_account_id: string;
+  receiver_account_id: string;
+};

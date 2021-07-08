@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { UnifiedTransactionAction } from '@/services/near/indexer/types';
+import { Action } from '@/services/near/indexer/types';
 import { useNear } from '@/services/useNear';
 import { defineComponent } from 'vue';
 import TransactionAction from './TransactionAction.vue';
@@ -42,7 +42,7 @@ export default defineComponent({
   },
   props: {
     actions: {
-      type: Array as () => UnifiedTransactionAction[],
+      type: Array as () => Action[],
       required: true,
     },
     isLoading: {

@@ -1,4 +1,4 @@
-import { UnifiedTransactionAction } from '@/services/near/indexer/types';
+import { Action } from '@/services/near/indexer/types';
 import { toNear } from '@/utils/near';
 import {
   ComposeOption,
@@ -16,7 +16,7 @@ export function useBalanceHistoryChart({
   views,
   final,
 }: {
-  actions: Ref<UnifiedTransactionAction[]>;
+  actions: Ref<Action[]>;
   views: Ref<RpcResponse<RpcViewAccountResult>[]>;
   final?: {
     amount: string;

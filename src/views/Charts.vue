@@ -23,7 +23,7 @@ import { useTopIncomingChart } from '@/services/charts/useTopIncomingChart';
 import { useTopOutgoingChart } from '@/services/charts/useTopOutgoingChart';
 import { useAccountViews } from '@/services/useAccountViews';
 import { useNear } from '@/services/useNear';
-import { useRecentActions } from '@/services/useRecentActions';
+import { useActions } from '@/services/useActions';
 import { defineComponent, reactive, watch } from '@vue/runtime-core';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent } from 'echarts/components';
@@ -46,7 +46,7 @@ export default defineComponent({
   },
   setup() {
     const { account, network, timeframe, rpc } = useNear();
-    const { actions } = useRecentActions({ account, network, timeframe });
+    const { actions } = useActions({ account, network, timeframe });
     const { views } = useAccountViews({ account, actions, network });
     const actionTypeOption = useActionTypeChart(actions);
     const topIncomingOption = useTopIncomingChart(actions);

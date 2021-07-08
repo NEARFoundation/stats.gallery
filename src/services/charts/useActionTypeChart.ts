@@ -1,7 +1,4 @@
-import {
-  ActionKind,
-  UnifiedTransactionAction,
-} from '@/services/near/indexer/types';
+import { Action, ActionKind } from '@/services/near/indexer/types';
 import {
   ComposeOption,
   PieSeriesOption,
@@ -11,9 +8,7 @@ import { ref, Ref, watch } from 'vue';
 
 type Option = ComposeOption<PieSeriesOption | TooltipComponentOption>;
 
-export function useActionTypeChart(
-  actions: Ref<UnifiedTransactionAction[]>,
-): Ref<Option> {
+export function useActionTypeChart(actions: Ref<Action[]>): Ref<Option> {
   const pieSlice = (name: string, value: number, color: string) => ({
     name,
     value,

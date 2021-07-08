@@ -1,4 +1,4 @@
-import { UnifiedTransactionAction } from '@/services/near/indexer/types';
+import { Action } from '@/services/near/indexer/types';
 import {
   BarSeriesOption,
   ComposeOption,
@@ -8,12 +8,10 @@ import { ref, Ref, watch } from 'vue';
 
 type Option = ComposeOption<BarSeriesOption | TooltipComponentOption>;
 
-export function useTopIncomingChart(
-  actions: Ref<UnifiedTransactionAction[]>,
-): Ref<Option> {
+export function useTopIncomingChart(actions: Ref<Action[]>): Ref<Option> {
   const makeData = () => {
     const groups = actions.value.reduce((acc, current) => {
-      const account = current.signer_account_id;
+      const account = current.predecessor_account_id;
       if (!acc[account]) {
         acc[account] = 0;
       }
