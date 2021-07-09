@@ -21,9 +21,10 @@ import { useActionTypeChart } from '@/services/charts/useActionTypeChart';
 import { useBalanceHistoryChart } from '@/services/charts/useBalanceHistoryChart';
 import { useTopIncomingChart } from '@/services/charts/useTopIncomingChart';
 import { useTopOutgoingChart } from '@/services/charts/useTopOutgoingChart';
+import { timeframeToPastTimestamp } from '@/services/timeframe';
 import { useAccountViews } from '@/services/useAccountViews';
-import { useNear } from '@/services/useNear';
 import { useActions } from '@/services/useActions';
+import { useNear } from '@/services/useNear';
 import { defineComponent, reactive, watch } from '@vue/runtime-core';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent } from 'echarts/components';
@@ -72,10 +73,26 @@ export default defineComponent({
       },
       { immediate: true },
     );
+    const initialBalance = reactive({
+      timestamp: 0,
+      amount: '0',
+    });
+    watch([views, timeframe, finalBalance], ([views, timeframe]) => {
+      initialBalance.timestamp =
+        timeframeToPastTimestamp(timeframe) * 1_000_000;
+
+      const last = views[views.length - 1];
+      if (last) {
+        initialBalance.amount = last.amount;
+      } else {
+        initialBalance.amount = finalBalance.amount;
+      }
+    });
     const balanceHistoryOption = useBalanceHistoryChart({
       actions,
       views,
       final: finalBalance,
+      initial: initialBalance,
     });
 
     return {

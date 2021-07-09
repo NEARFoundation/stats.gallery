@@ -7,17 +7,22 @@ import {
 } from 'echarts';
 import { DateTime } from 'luxon';
 import { ref, Ref, watch } from 'vue';
-import { RpcResponse, AccountView } from '../near/rpc/types';
+import { AccountView } from '../near/rpc/types';
 
 type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
 
 export function useBalanceHistoryChart({
   actions,
   views,
+  initial,
   final,
 }: {
   actions: Ref<Action[]>;
   views: Ref<(AccountView | undefined)[]>;
+  initial?: {
+    amount: string;
+    timestamp: number;
+  };
   final?: {
     amount: string;
     timestamp: number;
@@ -38,6 +43,14 @@ export function useBalanceHistoryChart({
         return [];
       }
     });
+
+    if (initial) {
+      const time = DateTime.fromMillis(initial.timestamp / 1_000_000);
+      recorded.push({
+        name: time.toLocaleString(DateTime.DATETIME_MED),
+        value: [time.toISO(), toNear(initial.amount).toString()],
+      });
+    }
 
     if (final) {
       const time = DateTime.fromMillis(final.timestamp / 1_000_000);
