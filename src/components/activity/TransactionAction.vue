@@ -65,10 +65,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Action,
-  UnifiedTransactionAction,
-} from '@/services/near/indexer/types';
+import { Action } from '@/services/near/indexer/types';
 import { useNear } from '@/services/useNear';
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';

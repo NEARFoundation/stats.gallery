@@ -48,7 +48,7 @@ export class Cache {
         action.createIndex('predecessor', 'predecessor_account_id');
         action.createIndex('receiver', 'receiver_account_id');
 
-        const oldest_action = db.createObjectStore('action_range', {
+        db.createObjectStore('action_range', {
           keyPath: 'account_id',
         });
 
