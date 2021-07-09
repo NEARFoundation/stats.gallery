@@ -1,6 +1,12 @@
 import { Network, networks } from '@/services/near/indexer/networks';
+import { isString } from '@/utils/is';
 import axios from 'axios';
-import { RpcResponse, AccountView } from './types';
+import { Cache } from '@/services/near/cache';
+import { AccountView, RpcResponse } from './types';
+
+export type AccountViewQuery = {
+  account: string;
+} & ({ blockId: string | number } | { finality: 'optimistic' | 'final' });
 
 export class RpcClient {
   public static from(network: Network): RpcClient {
@@ -13,10 +19,8 @@ export class RpcClient {
 
   constructor(public network: Network) {}
 
-  public async viewAccount(
-    query: {
-      account: string;
-    } & ({ blockId: string | number } | { finality: 'optimistic' | 'final' }),
+  private rpcViewAccount(
+    query: AccountViewQuery,
   ): Promise<RpcResponse<AccountView>> {
     return axios({
       url: this.endpoint,
@@ -33,5 +37,34 @@ export class RpcClient {
         },
       },
     }).then(v => v.data);
+  }
+
+  private async cacheViewAccount(
+    query: AccountViewQuery,
+  ): Promise<AccountView | undefined> {
+    if ('blockId' in query && isString(query.blockId)) {
+      return Cache.from(this.network).getView(query.account, query.blockId);
+    } else {
+      return undefined;
+    }
+  }
+
+  public async viewAccount(
+    query: AccountViewQuery,
+  ): Promise<RpcResponse<AccountView>> {
+    const fromCache = await this.cacheViewAccount(query);
+    if (fromCache !== undefined) {
+      return {
+        id: 'dontcare',
+        jsonrpc: '2.0',
+        result: fromCache,
+      };
+    } else {
+      const r = await this.rpcViewAccount(query);
+      if ('result' in r) {
+        Cache.from(this.network).putView(query.account, r.result);
+      }
+      return r;
+    }
   }
 }

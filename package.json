@@ -15,6 +15,7 @@
     "core-js": "^3.6.5",
     "echarts": "^5.1.2",
     "heroicons-vue3": "^1.0.1",
+    "idb": "^6.1.2",
     "luxon": "^1.27.0",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",

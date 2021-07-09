@@ -17,7 +17,7 @@ export function useBalanceHistoryChart({
   final,
 }: {
   actions: Ref<Action[]>;
-  views: Ref<RpcResponse<AccountView>[]>;
+  views: Ref<(AccountView | undefined)[]>;
   final?: {
     amount: string;
     timestamp: number;
@@ -26,12 +26,12 @@ export function useBalanceHistoryChart({
   const makeData = () => {
     const recorded = actions.value.flatMap((action, i) => {
       const view = views.value[i];
-      if (action && view && 'result' in view) {
+      if (action && view) {
         const time = DateTime.fromMillis(action.block_timestamp / 1_000_000);
         return [
           {
             name: time.toLocaleString(DateTime.DATETIME_MED),
-            value: [time.toISO(), toNear(view.result.amount).toString()],
+            value: [time.toISO(), toNear(view.amount).toString()],
           },
         ];
       } else {

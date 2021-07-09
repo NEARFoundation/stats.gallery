@@ -2,7 +2,13 @@ import { Network } from '@/services/near/indexer/networks';
 import { IDBPDatabase, openDB } from 'idb';
 import { RequestParams } from '../indexer/IndexerClient';
 import { Action } from '../indexer/types';
-import { Schema } from './schema';
+import { AccountView } from '../rpc/types';
+import {
+  IndexSchema,
+  INDEX_SCHEMA_VERSION,
+  Schema,
+  SCHEMA_VERSION,
+} from './schema';
 
 export class Cache {
   public static from(network: Network): Cache {
@@ -13,11 +19,29 @@ export class Cache {
   private db: Promise<IDBPDatabase<Schema>> = Promise.resolve(
     null as unknown as IDBPDatabase<Schema>,
   );
+  private index: Promise<IDBPDatabase<IndexSchema>> = openDB(
+    '__index',
+    INDEX_SCHEMA_VERSION,
+    {
+      upgrade(db) {
+        db.createObjectStore('databases', {
+          keyPath: 'name',
+        });
+      },
+    },
+  );
 
   public set network(value: Network) {
     this._network = value;
-    this.db = openDB(this.network, 1, {
-      upgrade(db) {
+    this.index.then(index => {
+      index.put('databases', {
+        name: this.network,
+        version: SCHEMA_VERSION,
+      });
+    });
+
+    this.db = openDB(this.network, SCHEMA_VERSION, {
+      upgrade: db => {
         const action = db.createObjectStore('action', {
           keyPath: ['receipt_id', 'index_in_action_receipt'],
         });
@@ -33,10 +57,6 @@ export class Cache {
         });
         view.createIndex('account', 'account_id');
         view.createIndex('block_hash', 'block_hash');
-
-        const oldest_view = db.createObjectStore('view_range', {
-          keyPath: 'account_id',
-        });
       },
     });
   }
@@ -114,5 +134,18 @@ export class Cache {
       (a, b) => b.block_timestamp - a.block_timestamp,
     );
     return uniqueSortedArray;
+  }
+
+  public async getView(
+    account: string,
+    blockHash: string,
+  ): Promise<AccountView | undefined> {
+    const db = await this.db;
+    return db.get('view', [account, blockHash]);
+  }
+
+  public async putView(account: string, view: AccountView): Promise<void> {
+    const db = await this.db;
+    await db.put('view', { ...view, account_id: account });
   }
 }
