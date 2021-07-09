@@ -1,6 +1,6 @@
 import { Network, networks } from '@/services/near/indexer/networks';
 import axios from 'axios';
-import { RpcResponse, RpcViewAccountResult } from './types';
+import { RpcResponse, AccountView } from './types';
 
 export class RpcClient {
   public static from(network: Network): RpcClient {
@@ -17,7 +17,7 @@ export class RpcClient {
     query: {
       account: string;
     } & ({ blockId: string | number } | { finality: 'optimistic' | 'final' }),
-  ): Promise<RpcResponse<RpcViewAccountResult>> {
+  ): Promise<RpcResponse<AccountView>> {
     return axios({
       url: this.endpoint,
       method: 'POST',

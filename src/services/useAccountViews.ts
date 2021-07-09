@@ -4,7 +4,7 @@ import {
   UnifiedTransactionAction,
 } from '@/services/near/indexer/types';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
-import { RpcResponse, RpcViewAccountResult } from '@/services/near/rpc/types';
+import { RpcResponse, AccountView } from '@/services/near/rpc/types';
 import { ref, Ref, watch } from 'vue';
 
 export function useAccountViews({
@@ -16,11 +16,11 @@ export function useAccountViews({
   actions: Ref<Action[]>;
   network: Ref<Network>;
 }): {
-  views: Ref<RpcResponse<RpcViewAccountResult>[]>;
+  views: Ref<RpcResponse<AccountView>[]>;
   isLoading: Ref<boolean>;
 } {
   const isLoading = ref(true);
-  const views = ref([] as RpcResponse<RpcViewAccountResult>[]);
+  const views = ref([] as RpcResponse<AccountView>[]);
 
   watch(
     actions,

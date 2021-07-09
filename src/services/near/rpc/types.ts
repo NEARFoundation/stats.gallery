@@ -14,8 +14,8 @@ export type RpcResponse<T extends RpcResult> = {
     }
 );
 
-export type RpcResult = RpcViewAccountResult;
-export type RpcViewAccountResult = {
+export type RpcResult = AccountView;
+export type AccountView = {
   amount: string;
   locked: string;
   code_hash: string;

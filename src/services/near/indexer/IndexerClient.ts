@@ -1,11 +1,23 @@
 import axios from 'axios';
+import { Cache } from '../cache';
 import { Network, networks } from './networks';
 import { Action, IAccessKey, UnifiedTransactionAction } from './types';
 
-interface RequestParams {
+export interface RequestParams {
   account: string;
-  after?: number;
-  before?: number;
+  after: number;
+  before: number;
+}
+
+function upperIntersection(
+  cachedRange: { after: number; before: number },
+  request: RequestParams,
+): false | number {
+  if (request.after < cachedRange.after) {
+    return false;
+  } else {
+    return cachedRange.before;
+  }
 }
 
 export class IndexerClient {
@@ -89,6 +101,34 @@ export class IndexerClient {
   }
 
   public async getActions(params: RequestParams): Promise<Action[]> {
-    return this.getMultiple('actions', params);
+    const cache = Cache.from(this.network);
+    const cachedRange = await cache.getActionRange(params.account);
+    if (cachedRange !== undefined) {
+      const lowerBound = upperIntersection(cachedRange, params);
+      if (lowerBound !== false) {
+        const freshParams = { ...params, after: lowerBound };
+        const freshActionsPromise = this.getMultiple<Action>(
+          'actions',
+          freshParams,
+        );
+        const cachedActionsPromise = cache.getActions(params);
+        const [freshActions, cachedActions] = await Promise.all([
+          freshActionsPromise,
+          cachedActionsPromise,
+        ]);
+        const actions = freshActions.concat(cachedActions);
+        cache.putActions({ params, actions });
+        return actions;
+      }
+    }
+
+    const actions = await this.getMultiple<Action>('actions', params);
+    cache.putActions({ params, actions });
+    // console.log('getactions');
+    // console.log(await Cache.from(this.network).putActions({
+    //   params, actions
+    // }));
+    // console.log(await Cache.from(this.network).getActions(params));
+    return actions;
   }
 }

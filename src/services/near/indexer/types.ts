@@ -147,6 +147,8 @@ export type UnifiedTransactionAction =
     };
 
 export type Action = {
+  receipt_id: string;
+  index_in_action_receipt: number;
   transaction_hash: string;
   action_kind: ActionKind;
   block_hash: string;

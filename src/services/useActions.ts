@@ -21,6 +21,7 @@ export function useActions({
     IndexerClient.from(network.value).getActions({
       account: account.value,
       after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
+      before: Date.now() * 1_000_000,
     });
   const { value: actions, isLoading } = usePromise(
     [account, network, timeframe] as WatchSource[],

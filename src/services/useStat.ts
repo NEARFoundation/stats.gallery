@@ -24,6 +24,7 @@ export function useStat<T>(
     IndexerClient.from(network.value).getSingle<T>(stat, {
       account: account.value,
       after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
+      before: Date.now() * 1_000_000,
     });
   const { value, isLoading } = usePromise(
     [account, network, timeframe] as WatchSource[],

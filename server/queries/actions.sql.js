@@ -20,6 +20,8 @@ module.exports = params => {
 
   return sql`
     select
+      r.receipt_id,
+      ara.index_in_action_receipt,
       r.originated_from_transaction_hash as transaction_hash,
       ara.action_kind,
       r.included_in_block_hash as block_hash,

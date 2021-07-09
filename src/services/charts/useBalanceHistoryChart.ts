@@ -7,7 +7,7 @@ import {
 } from 'echarts';
 import { DateTime } from 'luxon';
 import { ref, Ref, watch } from 'vue';
-import { RpcResponse, RpcViewAccountResult } from '../near/rpc/types';
+import { RpcResponse, AccountView } from '../near/rpc/types';
 
 type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
 
@@ -17,7 +17,7 @@ export function useBalanceHistoryChart({
   final,
 }: {
   actions: Ref<Action[]>;
-  views: Ref<RpcResponse<RpcViewAccountResult>[]>;
+  views: Ref<RpcResponse<AccountView>[]>;
   final?: {
     amount: string;
     timestamp: number;
