@@ -12,20 +12,23 @@
       </router-view>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script lang="ts">
+import Footer from '@/components/Footer.vue';
 import TopBar from '@/components/navigation/TopBar.vue';
+import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { useTitle } from '@/services/useTitle';
 import { defineComponent } from 'vue';
 import { RouterView } from 'vue-router';
-import { RouteTitleGenerator } from './router';
 
 export default defineComponent({
   components: {
     TopBar,
     RouterView,
+    Footer,
   },
   setup() {
     provideNear();

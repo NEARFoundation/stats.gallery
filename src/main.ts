@@ -8,9 +8,9 @@ import {
   nearTimestampToLocaleString,
   toNear,
 } from '@/utils/near';
+import LogRocket from 'logrocket';
 import 'tailwindcss/tailwind.css';
 import { createApp } from 'vue';
-import LogRocket from 'logrocket';
 
 if (process.env['NODE_ENV'] === 'production') {
   LogRocket.init('near/statsgallery');
