@@ -10,6 +10,11 @@ import {
 } from '@/utils/near';
 import 'tailwindcss/tailwind.css';
 import { createApp } from 'vue';
+import LogRocket from 'logrocket';
+
+if (process.env['NODE_ENV'] === 'production') {
+  LogRocket.init('near/statsgallery');
+}
 
 const app = createApp(App);
 app.use(router).mount('#app');
