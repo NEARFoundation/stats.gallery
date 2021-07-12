@@ -67,7 +67,7 @@ export function useBalanceHistoryChart({
     const g = makeData();
     return {
       tooltip: {
-        trigger: 'item',
+        trigger: 'axis',
       },
       xAxis: {
         type: 'time',
@@ -87,6 +87,7 @@ export function useBalanceHistoryChart({
           name: 'Accounts',
           type: 'line',
           step: 'start',
+          showSymbol: false,
           areaStyle: {},
           data: g,
         },
@@ -96,7 +97,7 @@ export function useBalanceHistoryChart({
 
   const option = ref(genOption());
 
-  watch([actions, views], () => {
+  watch([actions, views, initial, final], () => {
     option.value = genOption();
   });
 
