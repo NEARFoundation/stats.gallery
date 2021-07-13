@@ -39,21 +39,26 @@ export default defineComponent({
     AccountMayNotExistAlert,
   },
   setup() {
-    const { account, network } = provideNear();
+    const { account, network, rpc } = provideNear();
     const accountExists = ref(true);
 
     // Account exists RPC call watcher
     watch(
       [account, network],
-      async ([account, network]) => {
-        const r = await RpcClient.from(network).viewAccount({
-          account,
-          finality: 'final',
-        });
-        if ('error' in r) {
-          accountExists.value = !r.error.data.includes(
-            'does not exist while viewing',
-          );
+      async ([account]) => {
+        // Only bother checking if the user has actually entered an account
+        if (account.length) {
+          const r = await rpc.viewAccount({
+            account,
+            finality: 'final',
+          });
+          if ('error' in r) {
+            accountExists.value = !r.error.data.includes(
+              'does not exist while viewing',
+            );
+          }
+        } else {
+          accountExists.value = true;
         }
       },
       { immediate: true },

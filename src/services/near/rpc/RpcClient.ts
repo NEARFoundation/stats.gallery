@@ -9,6 +9,9 @@ export type AccountViewQuery = {
 } & ({ blockId: string | number } | { finality: 'optimistic' | 'final' });
 
 export class RpcClient {
+  // Consider final views fresh for 2 minutes
+  private static readonly FINAL_VIEW_EXPIRE = 1000 * 60 * 2;
+
   public static from(network: Network): RpcClient {
     return new RpcClient(network);
   }
@@ -19,7 +22,7 @@ export class RpcClient {
 
   constructor(public network: Network) {}
 
-  private rpcViewAccount(
+  private getAccountViewFromRpc(
     query: AccountViewQuery,
   ): Promise<RpcResponse<AccountView>> {
     return axios({
@@ -39,20 +42,31 @@ export class RpcClient {
     }).then(v => v.data);
   }
 
-  private async cacheViewAccount(
+  private async getAccountViewFromCache(
     query: AccountViewQuery,
   ): Promise<AccountView | undefined> {
     if ('blockId' in query && isString(query.blockId)) {
+      // Regular, by-block-id cache
       return Cache.from(this.network).getView(query.account, query.blockId);
-    } else {
-      return undefined;
+    } else if ('finality' in query) {
+      // The latest account view is requested
+      const r = await Cache.from(this.network).getFinalView(query.account);
+      if (
+        r &&
+        // Only use the most recent views
+        Date.now() - r.timestamp.getTime() < RpcClient.FINAL_VIEW_EXPIRE
+      ) {
+        return r;
+      }
     }
+
+    return undefined;
   }
 
   public async viewAccount(
     query: AccountViewQuery,
   ): Promise<RpcResponse<AccountView>> {
-    const fromCache = await this.cacheViewAccount(query);
+    const fromCache = await this.getAccountViewFromCache(query);
     if (fromCache !== undefined) {
       return {
         id: 'dontcare',
@@ -60,8 +74,17 @@ export class RpcClient {
         result: fromCache,
       };
     } else {
-      const r = await this.rpcViewAccount(query);
+      const r = await this.getAccountViewFromRpc(query);
+
       if ('result' in r) {
+        if ('finality' in query) {
+          Cache.from(this.network).putFinalView(
+            query.account,
+            new Date(),
+            r.result,
+          );
+        }
+
         Cache.from(this.network).putView(query.account, r.result);
       }
       return r;

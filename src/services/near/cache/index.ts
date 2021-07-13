@@ -41,22 +41,30 @@ export class Cache {
     });
 
     this.db = openDB(this.network, SCHEMA_VERSION, {
-      upgrade: db => {
-        const action = db.createObjectStore('action', {
-          keyPath: ['receipt_id', 'index_in_action_receipt'],
-        });
-        action.createIndex('predecessor', 'predecessor_account_id');
-        action.createIndex('receiver', 'receiver_account_id');
+      upgrade(db, oldVersion, newVersion) {
+        if (oldVersion < 1) {
+          const action = db.createObjectStore('action', {
+            keyPath: ['receipt_id', 'index_in_action_receipt'],
+          });
+          action.createIndex('predecessor', 'predecessor_account_id');
+          action.createIndex('receiver', 'receiver_account_id');
 
-        db.createObjectStore('action_range', {
-          keyPath: 'account_id',
-        });
+          db.createObjectStore('action_range', {
+            keyPath: 'account_id',
+          });
 
-        const view = db.createObjectStore('view', {
-          keyPath: ['account_id', 'block_hash'],
-        });
-        view.createIndex('account', 'account_id');
-        view.createIndex('block_hash', 'block_hash');
+          const view = db.createObjectStore('view', {
+            keyPath: ['account_id', 'block_hash'],
+          });
+          view.createIndex('account', 'account_id');
+          view.createIndex('block_hash', 'block_hash');
+        }
+
+        if (oldVersion < 2) {
+          db.createObjectStore('final_view', {
+            keyPath: 'account_id',
+          });
+        }
       },
     });
   }
@@ -147,5 +155,21 @@ export class Cache {
   public async putView(account: string, view: AccountView): Promise<void> {
     const db = await this.db;
     await db.put('view', { ...view, account_id: account });
+  }
+
+  public async getFinalView(
+    account: string,
+  ): Promise<(AccountView & { timestamp: Date }) | undefined> {
+    const db = await this.db;
+    return db.get('final_view', account);
+  }
+
+  public async putFinalView(
+    account: string,
+    timestamp: Date,
+    view: AccountView,
+  ): Promise<void> {
+    const db = await this.db;
+    await db.put('final_view', { ...view, timestamp, account_id: account });
   }
 }

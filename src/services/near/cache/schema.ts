@@ -14,7 +14,7 @@ export interface IndexSchema extends DBSchema {
   };
 }
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export interface Schema extends DBSchema {
   view: {
@@ -26,6 +26,13 @@ export interface Schema extends DBSchema {
       account: string;
       block_hash: string;
     };
+  };
+  final_view: {
+    key: string;
+    value: {
+      account_id: string;
+      timestamp: Date;
+    } & AccountView;
   };
   action: {
     key: [string, string];
