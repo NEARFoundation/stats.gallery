@@ -8,12 +8,10 @@
   <div class="relative overflow-hidden">
     <div class="relative px-4 sm:px-6 lg:px-8 mt-10 max-w-7xl sm:mx-auto">
       <router-view v-slot="{ Component, route }">
-        <keep-alive>
-          <component
-            :is="Component"
-            :key="route.meta.usePathKey ? route.path : undefined"
-          />
-        </keep-alive>
+        <component
+          :is="Component"
+          :key="route.meta.usePathKey ? route.path : undefined"
+        />
       </router-view>
     </div>
   </div>
@@ -29,7 +27,6 @@ import { provideNear } from '@/services/provideNear';
 import { useTitle } from '@/services/useTitle';
 import { defineComponent, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
-import { RpcClient } from './services/near/rpc/RpcClient';
 
 export default defineComponent({
   components: {
