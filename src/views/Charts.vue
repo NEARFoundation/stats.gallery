@@ -1,12 +1,19 @@
 <template>
   <h1 class="text-2xl font-medium text-center">Balance History</h1>
-  <VChart class="chart" theme="light" :option="balanceHistoryOption" />
+  <BalanceHistoryLoader
+    v-if="viewsIsLoading || actionsIsLoading"
+    class="chart"
+  />
+  <VChart v-else class="chart" theme="light" :option="balanceHistoryOption" />
   <h1 class="text-2xl font-medium text-center">Action Types</h1>
-  <VChart class="chart" theme="light" :option="actionTypeOption" />
+  <PieChartLoader v-if="actionsIsLoading" class="chart" />
+  <VChart v-else class="chart" theme="light" :option="actionTypeOption" />
   <h1 class="text-2xl font-medium text-center">Top 10 Senders</h1>
-  <VChart class="chart" theme="light" :option="topIncomingOption" />
+  <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
+  <VChart v-else class="chart" theme="light" :option="topIncomingOption" />
   <h1 class="text-2xl font-medium text-center">Top 10 Receivers</h1>
-  <VChart class="chart" theme="light" :option="topOutgoingOption" />
+  <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
+  <VChart v-else class="chart" theme="light" :option="topOutgoingOption" />
 </template>
 
 <style scoped>
@@ -17,6 +24,9 @@
 </style>
 
 <script lang="ts">
+import BalanceHistoryLoader from '@/components/charts/loaders/BalanceHistoryLoader.vue';
+import HorizontalBarChartLoader from '@/components/charts/loaders/HorizontalBarChartLoader.vue';
+import PieChartLoader from '@/components/charts/loaders/PieChartLoader.vue';
 import { useActionTypeChart } from '@/services/charts/useActionTypeChart';
 import { useBalanceHistoryChart } from '@/services/charts/useBalanceHistoryChart';
 import { useTopIncomingChart } from '@/services/charts/useTopIncomingChart';
@@ -45,11 +55,22 @@ use([
 export default defineComponent({
   components: {
     VChart,
+    BalanceHistoryLoader,
+    PieChartLoader,
+    HorizontalBarChartLoader,
   },
   setup() {
     const { account, network, timeframe, rpc } = useNear();
-    const { actions } = useActions({ account, network, timeframe });
-    const { views } = useAccountViews({ account, actions, network });
+    const { actions, isLoading: actionsIsLoading } = useActions({
+      account,
+      network,
+      timeframe,
+    });
+    const { views, isLoading: viewsIsLoading } = useAccountViews({
+      account,
+      actions,
+      network,
+    });
     const actionTypeOption = useActionTypeChart(actions);
     const topIncomingOption = useTopIncomingChart(actions);
     const topOutgoingOption = useTopOutgoingChart(actions);
@@ -126,6 +147,8 @@ export default defineComponent({
       topIncomingOption,
       topOutgoingOption,
       balanceHistoryOption,
+      actionsIsLoading,
+      viewsIsLoading,
     };
   },
 });
