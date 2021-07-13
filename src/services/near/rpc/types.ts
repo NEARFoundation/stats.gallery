@@ -10,6 +10,7 @@ export type RpcResponse<T extends RpcResult> = {
       error: {
         code: number;
         message: string;
+        data: string;
       };
     }
 );

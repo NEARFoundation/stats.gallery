@@ -1,5 +1,10 @@
 <template>
   <TopBar />
+  <AccountMayNotExistAlert
+    v-if="!accountExists"
+    class="my-4 mx-2"
+    :account="account"
+  />
   <div class="relative overflow-hidden">
     <div class="relative px-4 sm:px-6 lg:px-8 mt-10 max-w-7xl sm:mx-auto">
       <router-view v-slot="{ Component, route }">
@@ -16,22 +21,43 @@
 </template>
 
 <script lang="ts">
+import AccountMayNotExistAlert from '@/components/alerts/AccountMayNotExistAlert.vue';
 import Footer from '@/components/Footer.vue';
 import TopBar from '@/components/navigation/TopBar.vue';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { useTitle } from '@/services/useTitle';
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
+import { RpcClient } from './services/near/rpc/RpcClient';
 
 export default defineComponent({
   components: {
     TopBar,
     RouterView,
     Footer,
+    AccountMayNotExistAlert,
   },
   setup() {
-    provideNear();
+    const { account, network } = provideNear();
+    const accountExists = ref(true);
+
+    // Account exists RPC call watcher
+    watch(
+      [account, network],
+      async ([account, network]) => {
+        const r = await RpcClient.from(network).viewAccount({
+          account,
+          finality: 'final',
+        });
+        if ('error' in r) {
+          accountExists.value = !r.error.data.includes(
+            'does not exist while viewing',
+          );
+        }
+      },
+      { immediate: true },
+    );
 
     const titleSuffix = ' - near stats.gallery';
 
@@ -42,6 +68,8 @@ export default defineComponent({
         return (route.meta.title as string) + titleSuffix;
       }
     });
+
+    return { account, accountExists };
   },
 });
 </script>

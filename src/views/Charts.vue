@@ -27,12 +27,10 @@ import { useAccountViews } from '@/services/useAccountViews';
 import { useActions } from '@/services/useActions';
 import { useNear } from '@/services/useNear';
 import { defineComponent, reactive, watch } from '@vue/runtime-core';
-import { init } from 'echarts';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { DateTime } from 'luxon';
 import VChart from 'vue-echarts';
 
 use([
