@@ -16,29 +16,19 @@
         <div class="nav__links">
           <router-link
             v-if="account && selectedNetwork"
-            v-slot="{ isActive }"
             :to="`/${selectedNetwork}/${account}`"
             class="nav__link"
-            :aria-current="isActive ? 'page' : undefined"
             >Activity</router-link
           >
           <span class="nav__link nav__link--disabled" v-else>Activity</span>
           <router-link
             v-if="account && selectedNetwork"
-            v-slot="{ isActive }"
             :to="`/${selectedNetwork}/${account}/charts`"
             class="nav__link"
-            :aria-current="isActive ? 'page' : undefined"
             >Charts</router-link
           >
           <span class="nav__link nav__link--disabled" v-else>Charts</span>
-          <router-link
-            v-slot="{ isActive }"
-            to="/about"
-            class="nav__link"
-            :aria-current="isActive ? 'page' : undefined"
-            >About</router-link
-          >
+          <router-link to="/about" class="nav__link">About</router-link>
         </div>
       </div>
 
