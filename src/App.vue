@@ -45,15 +45,16 @@ export default defineComponent({
       async ([account]) => {
         // Only bother checking if the user has actually entered an account
         if (account.length) {
+          // Hide the alert during loading
+          accountExists.value = true;
           const r = await rpc.viewAccount({
             account,
             finality: 'final',
           });
-          if ('error' in r) {
-            accountExists.value = !r.error.data.includes(
-              'does not exist while viewing',
-            );
-          }
+          accountExists.value = !(
+            'error' in r &&
+            r.error.data.includes('does not exist while viewing')
+          );
         } else {
           accountExists.value = true;
         }
