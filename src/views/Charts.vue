@@ -32,6 +32,7 @@ import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
+import { DateTime } from 'luxon';
 import VChart from 'vue-echarts';
 
 use([
@@ -55,7 +56,7 @@ export default defineComponent({
     const topIncomingOption = useTopIncomingChart(actions);
     const topOutgoingOption = useTopOutgoingChart(actions);
     const finalBalance = reactive({
-      timestamp: 0,
+      timestamp: Date.now() * 1_000_000,
       amount: '0',
     });
     watch(
@@ -82,31 +83,35 @@ export default defineComponent({
     watch(
       [views, actions, timeframe, finalBalance],
       ([views, actions, timeframe]) => {
-        if (actions.length) {
-          // Do we have a CREATE_ACCOUNT action in scope?
-          const createAccountAction = actions.find(
-            action =>
-              action.action_kind === ActionKind.CREATE_ACCOUNT &&
-              action.receiver_account_id === account.value,
-          );
-          const selectedEnd = timeframeToPastTimestamp(timeframe) * 1_000_000;
+        // Do we have a CREATE_ACCOUNT action in scope?
+        const createAccountAction = actions.find(
+          action =>
+            action.action_kind === ActionKind.CREATE_ACCOUNT &&
+            action.receiver_account_id === account.value,
+        );
+        const selectedEnd = timeframeToPastTimestamp(timeframe) * 1_000_000;
 
-          if (
-            createAccountAction &&
-            createAccountAction.block_timestamp > selectedEnd
-          ) {
-            // Truncate view to time when account exists
-            initialBalance.timestamp = createAccountAction.block_timestamp;
-            initialBalance.amount = '0';
+        if (
+          createAccountAction &&
+          createAccountAction.block_timestamp > selectedEnd
+        ) {
+          // Truncate view to time when account exists
+          initialBalance.timestamp = createAccountAction.block_timestamp;
+          initialBalance.amount = '0';
+        } else {
+          // No CREATE_ACCOUNT action
+          if (timeframe === Timeframe.ALL) {
+            // This should not happen often: No CREATE_ACCOUNT action despite displaying Timeframe.ALL
+            if (actions.length) {
+              initialBalance.timestamp =
+                actions[actions.length - 1].block_timestamp;
+              initialBalance.amount = views[views.length - 1]?.amount ?? '0';
+            }
           } else {
             // Only display selected portion
             initialBalance.timestamp = selectedEnd;
             const last = views[views.length - 1];
-            if (last) {
-              initialBalance.amount = last.amount;
-            } else {
-              initialBalance.amount = finalBalance.amount;
-            }
+            initialBalance.amount = last?.amount ?? finalBalance.amount;
           }
         }
       },

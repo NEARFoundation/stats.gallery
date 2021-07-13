@@ -124,11 +124,6 @@ export class IndexerClient {
 
     const actions = await this.getMultiple<Action>('actions', params);
     cache.putActions({ params, actions });
-    // console.log('getactions');
-    // console.log(await Cache.from(this.network).putActions({
-    //   params, actions
-    // }));
-    // console.log(await Cache.from(this.network).getActions(params));
     return actions;
   }
 }
