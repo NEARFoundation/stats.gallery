@@ -20,14 +20,14 @@
             class="nav__link"
             >Activity</router-link
           >
-          <span class="nav__link nav__link--disabled" v-else>Activity</span>
+          <span class="nav__link" v-else @click="search.focus()">Activity</span>
           <router-link
             v-if="account && selectedNetwork"
             :to="`/${selectedNetwork}/${account}/charts`"
             class="nav__link"
             >Charts</router-link
           >
-          <span class="nav__link nav__link--disabled" v-else>Charts</span>
+          <span class="nav__link" v-else @click="search.focus()">Charts</span>
           <router-link to="/about" class="nav__link">About</router-link>
         </div>
       </div>
@@ -45,6 +45,7 @@
           <!-- Search field -->
           <input
             id="search"
+            ref="search"
             name="search"
             class="search__input"
             placeholder="my-account.near&hellip;"
@@ -81,7 +82,7 @@
         :aria-current="isActive ? 'page' : undefined"
         >Activity</router-link
       >
-      <span class="mobile-menu__item mobile-menu__item--disabled" v-else
+      <span class="mobile-menu__item" v-else @click="search.focus()"
         >Activity</span
       >
       <router-link
@@ -93,7 +94,7 @@
         :aria-current="isActive ? 'page' : undefined"
         >Charts</router-link
       >
-      <span class="mobile-menu__item mobile-menu__item--disabled" v-else
+      <span class="mobile-menu__item" v-else @click="search.focus()"
         >Charts</span
       >
       <router-link
@@ -142,13 +143,9 @@
   }
 
   &__link {
-    @apply text-gray-300 px-3 py-2 rounded-md text-sm font-medium;
+    @apply text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-pointer;
 
-    &--disabled {
-      @apply cursor-not-allowed;
-    }
-
-    &:not(.router-link-active):not(&--disabled) {
+    &:not(.router-link-active) {
       @apply hover:bg-gray-700 hover:text-white;
     }
 
@@ -220,14 +217,10 @@
   @apply sm:hidden px-2 pt-2 pb-3 space-y-1;
 
   &__item {
-    @apply block px-3 py-2 rounded-md text-base text-gray-300 font-medium;
+    @apply block px-3 py-2 rounded-md text-base text-gray-300 font-medium cursor-pointer;
 
-    &:not(&--active):not(&--disabled) {
+    &:not(&--active) {
       @apply hover:bg-gray-700 hover:text-white;
-    }
-
-    &--disabled {
-      @apply cursor-not-allowed;
     }
 
     &--active {
@@ -241,7 +234,7 @@
 import { useNear } from '@/services/useNear';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, Ref, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import NetworkSelector from './NetworkSelector.vue';
 import TimeframeSelector from './TimeframeSelector.vue';
@@ -279,12 +272,15 @@ export default defineComponent({
       account.value = displayedAccount.value;
     };
 
+    const search: Ref<HTMLInputElement | null> = ref(null);
+
     return {
       selectedNetwork,
       open,
       account,
       displayedAccount,
       updateAccount,
+      search,
     };
   },
 });
