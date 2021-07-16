@@ -1,9 +1,15 @@
-import { Ref, ref, watch } from 'vue';
+import { isTimeframe, Timeframe } from '@/services/timeframe';
+import { usePreference } from '@/services/usePreference';
+import { Ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { isTimeframe, Timeframe } from './timeframe';
+
+const NEAR_TIMEFRAME_PREFERENCES_KEY = 'near-timeframe';
 
 export function useTimeframeFromUrl(): Ref<Timeframe> {
-  const timeframe = ref(Timeframe.MONTH);
+  const timeframe = usePreference<Timeframe>(
+    NEAR_TIMEFRAME_PREFERENCES_KEY,
+    Timeframe.MONTH,
+  );
   const route = useRoute();
 
   watch(

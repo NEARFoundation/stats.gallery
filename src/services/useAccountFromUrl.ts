@@ -1,9 +1,13 @@
+import { usePreference } from '@/services/usePreference';
 import { isString } from '@/utils/is';
-import { Ref, ref, watch } from 'vue';
+import { Ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
+const NEAR_ACCOUNT_PREFERENCES_KEY = 'near-account';
+
 export function useAccountFromUrl(): Ref<string> {
-  const account = ref('');
+  const account = usePreference(NEAR_ACCOUNT_PREFERENCES_KEY);
+
   const route = useRoute();
 
   watch(
