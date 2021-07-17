@@ -1,7 +1,7 @@
 import { Network } from '@/services/near/indexer/networks';
 import { Action } from '@/services/near/indexer/types';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
-import { AccountView } from '@/services/near/rpc/types';
+import { AccountView, RpcResponse } from '@/services/near/rpc/types';
 import { ref, Ref, watch } from 'vue';
 
 export function useAccountViews({
@@ -23,14 +23,26 @@ export function useAccountViews({
     actions,
     async () => {
       isLoading.value = true;
+      // Block hash -> Request
+      const blockRequests = new Map<
+        string,
+        Promise<RpcResponse<AccountView>>
+      >();
       views.value = (
         await Promise.all(
-          actions.value.map(action =>
-            RpcClient.from(network.value).viewAccount({
+          actions.value.map(action => {
+            if (blockRequests.has(action.block_hash)) {
+              return blockRequests.get(action.block_hash)!;
+            }
+
+            const r = RpcClient.from(network.value).viewAccount({
               account: account.value,
               blockId: action.block_hash,
-            }),
-          ),
+            });
+
+            blockRequests.set(action.block_hash, r);
+            return r;
+          }),
         )
       ).map(r => ('result' in r ? r.result : undefined));
       isLoading.value = false;
