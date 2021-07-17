@@ -1,8 +1,8 @@
+import { usePromise } from '@/composables/usePromise';
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { UnifiedTransactionAction } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
-import { usePromise } from '@/services/usePromise';
 import { Ref, WatchSource } from 'vue';
 
 export function useRecentActions({

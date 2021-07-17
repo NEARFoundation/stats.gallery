@@ -31,8 +31,8 @@
 </template>
 
 <script lang="ts">
+import { useNear } from '@/composables/useNear';
 import { Action } from '@/services/near/indexer/types';
-import { useNear } from '@/services/useNear';
 import { defineComponent } from 'vue';
 import TransactionAction from './TransactionAction.vue';
 

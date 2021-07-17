@@ -22,9 +22,9 @@
 import AccountMayNotExistAlert from '@/components/alerts/AccountMayNotExistAlert.vue';
 import Footer from '@/components/Footer.vue';
 import TopBar from '@/components/navigation/TopBar.vue';
+import { useTitle } from '@/composables/useTitle';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
-import { useTitle } from '@/services/useTitle';
 import { defineComponent, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
 

@@ -41,7 +41,7 @@ export class Cache {
     });
 
     this.db = openDB(this.network, SCHEMA_VERSION, {
-      upgrade(db, oldVersion, newVersion) {
+      upgrade(db, oldVersion) {
         if (oldVersion < 1) {
           const action = db.createObjectStore('action', {
             keyPath: ['receipt_id', 'index_in_action_receipt'],

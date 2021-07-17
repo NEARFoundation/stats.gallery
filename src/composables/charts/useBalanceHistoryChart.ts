@@ -7,7 +7,7 @@ import {
 } from 'echarts';
 import { DateTime } from 'luxon';
 import { ref, Ref, watch } from 'vue';
-import { AccountView } from '../near/rpc/types';
+import { AccountView } from '../../services/near/rpc/types';
 
 type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
 

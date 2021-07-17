@@ -231,7 +231,7 @@
 </style>
 
 <script lang="ts">
-import { useNear } from '@/services/useNear';
+import { useNear } from '@/composables/useNear';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MenuIcon, SearchIcon, XIcon } from 'heroicons-vue3/outline';
 import { defineComponent, Ref, ref, watch } from 'vue';

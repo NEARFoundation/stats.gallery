@@ -1,4 +1,4 @@
-import { usePreference } from '@/services/usePreference';
+import { usePreference } from '@/composables/usePreference';
 import { isString } from '@/utils/is';
 import { Ref, watch } from 'vue';
 import { useRoute } from 'vue-router';

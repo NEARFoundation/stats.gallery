@@ -1,5 +1,5 @@
+import { usePreference } from '@/composables/usePreference';
 import { isTimeframe, Timeframe } from '@/services/timeframe';
-import { usePreference } from '@/services/usePreference';
 import { Ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 

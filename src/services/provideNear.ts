@@ -1,9 +1,9 @@
+import { useAccountFromUrl } from '@/composables/useAccountFromUrl';
+import { useNetworkFromUrl } from '@/composables/useNetworkFromUrl';
+import { useTimeframeFromUrl } from '@/composables/useTimeframeFromUrl';
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
-import { useAccountFromUrl } from '@/services/useAccountFromUrl';
-import { useNetworkFromUrl } from '@/services/useNetworkFromUrl';
-import { useTimeframeFromUrl } from '@/services/useTimeframeFromUrl';
 import { provide, reactive, Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

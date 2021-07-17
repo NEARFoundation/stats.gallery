@@ -96,8 +96,8 @@
 </style>
 
 <script lang="ts">
+import { useNear } from '@/composables/useNear';
 import { Network, networks } from '@/services/near/indexer/networks';
-import { useNear } from '@/services/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';
 import { ChevronDownIcon, WifiIcon } from 'heroicons-vue3/outline';

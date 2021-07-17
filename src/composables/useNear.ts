@@ -1,15 +1,15 @@
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
-import { inject, Ref } from 'vue';
-import { RpcClient } from './near/rpc/RpcClient';
+import { RpcClient } from '@/services/near/rpc/RpcClient';
 import {
   NEAR_ACCOUNT,
   NEAR_INDEXER,
   NEAR_NETWORK,
   NEAR_RPC,
   NEAR_TIMEFRAME,
-} from './provideNear';
-import { Timeframe } from './timeframe';
+} from '@/services/provideNear';
+import { Timeframe } from '@/services/timeframe';
+import { inject, Ref } from 'vue';
 
 export function useNear(): {
   account: Ref<string>;

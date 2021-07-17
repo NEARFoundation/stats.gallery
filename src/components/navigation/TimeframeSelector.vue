@@ -95,11 +95,11 @@
 </style>
 
 <script lang="ts">
+import { useNear } from '@/composables/useNear';
 import { Timeframe } from '@/services/timeframe';
-import { useNear } from '@/services/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';
-import { ChevronDownIcon, CalendarIcon } from 'heroicons-vue3/outline';
+import { CalendarIcon, ChevronDownIcon } from 'heroicons-vue3/outline';
 
 export default defineComponent({
   components: {

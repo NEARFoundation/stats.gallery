@@ -1,5 +1,5 @@
+import { usePreference } from '@/composables/usePreference';
 import { isNetwork, Network } from '@/services/near/indexer/networks';
-import { usePreference } from '@/services/usePreference';
 import { Ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
