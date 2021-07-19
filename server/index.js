@@ -3,9 +3,12 @@ const Router = require('@koa/router');
 const cors = require('@koa/cors');
 const { createPool } = require('slonik');
 const routes = require('./routes');
+const poll = require('./poll');
 
 const app = new Koa();
-app.listen(process.env['PORT'] || 3000);
+const port = process.env['PORT'] || 3000;
+console.log('Listening on port ' + port + '...');
+app.listen(port);
 app.use(cors());
 
 const index = new Router();
@@ -28,21 +31,43 @@ endpoints.forEach((endpoint, i) => {
   const pool = createPool(connection);
 
   routes.forEach(route => {
-    router.get('/' + route.path, async (ctx, next) => {
-      console.log('/' + route.path);
-      console.log('Request', ctx.request);
-      try {
-        const result = await pool.connect(connection => {
-          return connection.any(route.query(ctx.query));
+    if ('poll' in route) {
+      const fn = async () =>
+        await pool.connect(connection => {
+          return connection.any(route.query());
         });
-        console.log('Response', result);
+      const [run, cancel] = poll(fn, route.poll);
 
-        ctx.response.body = result;
-      } catch (e) {
-        console.log(e);
-        ctx.response.status = 500;
-      }
-    });
+      router.get('/' + route.path, async (ctx, next) => {
+        console.log('/' + route.path);
+        console.log('Request', ctx.request);
+        try {
+          const result = await run();
+          console.log('Response', result);
+
+          ctx.response.body = result;
+        } catch (e) {
+          console.log(e);
+          ctx.response.status = 500;
+        }
+      });
+    } else {
+      router.get('/' + route.path, async (ctx, next) => {
+        console.log('/' + route.path);
+        console.log('Request', ctx.request);
+        try {
+          const result = await pool.connect(connection => {
+            return connection.any(route.query(ctx.query));
+          });
+          console.log('Response', result);
+
+          ctx.response.body = result;
+        } catch (e) {
+          console.log(e);
+          ctx.response.status = 500;
+        }
+      });
+    }
   });
 
   process.on('exit', async () => {

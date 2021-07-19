@@ -10,6 +10,11 @@ const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
 const transactionCountSql = require('./queries/transaction-count.sql');
 
+const SECOND = 1000,
+  MINUTE = 60 * SECOND,
+  HOUR = 60 * MINUTE,
+  DAY = 24 * HOUR;
+
 module.exports = [
   {
     path: 'access-keys',
@@ -38,6 +43,7 @@ module.exports = [
   {
     path: 'new-accounts',
     query: newAccountsSql,
+    poll: HOUR,
   },
   {
     path: 'recent-transaction-actions',
