@@ -31,8 +31,9 @@ export function useAccountViews({
       views.value = (
         await Promise.all(
           actions.value.map(action => {
-            if (blockRequests.has(action.block_hash)) {
-              return blockRequests.get(action.block_hash)!;
+            const value = blockRequests.get(action.block_hash);
+            if (value) {
+              return value;
             }
 
             const r = RpcClient.from(network.value).viewAccount({
