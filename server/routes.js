@@ -4,6 +4,7 @@ const distinctSendersSql = require('./queries/distinct-senders.sql');
 const distinctReceiversSql = require('./queries/distinct-receivers.sql');
 const gasSpentSql = require('./queries/gas-spent.sql');
 const gasTokensSpentSql = require('./queries/gas-tokens-spent.sql');
+const newAccountsSql = require('./queries/new-accounts.sql');
 const recentTransactionActionsSql = require('./queries/recent-transaction-actions.sql');
 const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
@@ -33,6 +34,10 @@ module.exports = [
   {
     path: 'gas-tokens-spent',
     query: gasTokensSpentSql,
+  },
+  {
+    path: 'new-accounts',
+    query: newAccountsSql,
   },
   {
     path: 'recent-transaction-actions',
