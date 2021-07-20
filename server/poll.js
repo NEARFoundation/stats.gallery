@@ -6,7 +6,8 @@
  * @param {{ defaultValue?: any; updateInterval: number; maxRetrys?: number; }} options
  */
 function poll(fn, options) {
-  let result = Promise.resolve(options.defaultValue ?? undefined);
+  let firstRun = true;
+  let result = Promise.resolve(options.defaultValue);
   let id = -1;
   const call = () => result;
   let canceled = false;
@@ -19,10 +20,21 @@ function poll(fn, options) {
     if (canceled) return;
 
     try {
-      const value = await fn();
-      result = Promise.resolve(value);
+      if (firstRun) {
+        // Await the result if we have nothing but the default value
+        // Hopefully it doesn't error, otherwise return the default value
+        const inFlight = fn();
+        result = inFlight.catch(() => options.defaultValue);
+
+        await inFlight;
+      } else {
+        const value = await fn();
+        // Only overwrite result with good data
+        result = Promise.resolve(value);
+      }
       // Schedule next
       id = setTimeout(() => update(0), options.updateInterval);
+      firstRun = false;
     } catch (e) {
       if (depth < (options.maxRetrys ?? 7)) {
         // Retry without changing `result`
