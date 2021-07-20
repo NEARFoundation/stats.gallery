@@ -4,7 +4,8 @@ const distinctSendersSql = require('./queries/distinct-senders.sql');
 const distinctReceiversSql = require('./queries/distinct-receivers.sql');
 const gasSpentSql = require('./queries/gas-spent.sql');
 const gasTokensSpentSql = require('./queries/gas-tokens-spent.sql');
-const newAccountsSql = require('./queries/new-accounts.sql');
+const newAccountsCountSql = require('./queries/new-accounts-count.sql');
+const newAccountsListSql = require('./queries/new-accounts-list.sql');
 const recentTransactionActionsSql = require('./queries/recent-transaction-actions.sql');
 const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
@@ -41,9 +42,14 @@ module.exports = [
     query: gasTokensSpentSql,
   },
   {
-    path: 'new-accounts',
-    query: newAccountsSql,
+    path: 'new-accounts-count',
+    query: newAccountsCountSql,
     poll: HOUR,
+  },
+  {
+    path: 'new-accounts-list',
+    query: newAccountsListSql,
+    poll: 10 * MINUTE,
   },
   {
     path: 'recent-transaction-actions',
