@@ -36,13 +36,16 @@ endpoints.forEach((endpoint, i) => {
         await pool.connect(connection => {
           return connection.any(route.query());
         });
-      const [run, cancel] = poll(fn, route.poll);
+      const { call } = poll(fn, {
+        updateInterval: route.poll,
+        defaultValue: [],
+      });
 
       router.get('/' + route.path, async (ctx, next) => {
         console.log('/' + route.path);
         console.log('Request', ctx.request);
         try {
-          const result = await run();
+          const result = await call();
           console.log('Response', result);
 
           ctx.response.body = result;
