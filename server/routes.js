@@ -11,6 +11,7 @@ const recentTransactionActionsSql = require('./queries/recent-transaction-action
 const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
 const transactionCountSql = require('./queries/transaction-count.sql');
+const topAccountsSql = require('./queries/top-accounts.sql');
 
 const SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -59,6 +60,11 @@ module.exports = [
   {
     path: 'recent-transaction-actions',
     query: recentTransactionActionsSql,
+  },
+  {
+    path: 'top-accounts',
+    query: topAccountsSql,
+    poll: 6 * HOUR,
   },
   {
     path: 'total-received',
