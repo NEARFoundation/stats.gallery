@@ -1,5 +1,6 @@
 const accessKeysSql = require('./queries/access-keys.sql');
 const accountCreationSql = require('./queries/account-creation.sql');
+const accountRelationStrengthSql = require('./queries/account-relation-strength.sql');
 const actionsSql = require('./queries/actions.sql');
 const distinctSendersSql = require('./queries/distinct-senders.sql');
 const distinctReceiversSql = require('./queries/distinct-receivers.sql');
@@ -26,6 +27,10 @@ module.exports = [
   {
     path: 'account-creation',
     query: accountCreationSql,
+  },
+  {
+    path: 'account-relation-strength',
+    query: accountRelationStrengthSql,
   },
   {
     path: 'actions',
