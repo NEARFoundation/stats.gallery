@@ -1,4 +1,5 @@
 const accessKeysSql = require('./queries/access-keys.sql');
+const accountActivityDistributionSql = require('./queries/account-activity-distribution.sql');
 const accountCreationSql = require('./queries/account-creation.sql');
 const accountRelationStrengthSql = require('./queries/account-relation-strength.sql');
 const actionsSql = require('./queries/actions.sql');
@@ -23,6 +24,11 @@ module.exports = [
   {
     path: 'access-keys',
     query: accessKeysSql,
+  },
+  {
+    path: 'account-activity-distribution',
+    query: accountActivityDistributionSql,
+    poll: 3 * DAY,
   },
   {
     path: 'account-creation',
