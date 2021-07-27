@@ -5,18 +5,15 @@
     class="my-4 mx-2"
     :account="account"
   />
-  <div class="relative overflow-hidden">
-    <div class="relative px-4 sm:px-6 lg:px-8 mt-10 max-w-7xl sm:mx-auto">
-      <router-view v-slot="{ Component, route }">
-        <component
-          :is="Component"
-          :key="route.meta.usePathKey ? route.path : undefined"
-        />
-      </router-view>
-    </div>
-  </div>
+  <router-view></router-view>
   <Footer />
 </template>
+
+<style>
+body {
+  background-color: #f1f5f9;
+}
+</style>
 
 <script lang="ts">
 import AccountMayNotExistAlert from '@/components/alerts/AccountMayNotExistAlert.vue';
