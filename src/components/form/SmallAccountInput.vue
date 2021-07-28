@@ -4,19 +4,18 @@
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       type="text"
-      :class="[
-        modelValue.length ? 'bg-white' : 'bg-gray-100',
-        `text-xl text-black
+      class="
+        text-base text-black
         focus:ring-green-500 focus:ring-2
         font-normal
-        focus:bg-white
         block
         w-full
         outline-none
         rounded-l-sm
-        p-3
-        z-10`,
-      ]"
+        border border-gray-300 border-r-0
+        p-2
+        z-10
+      "
       placeholder="account-name"
     />
     <Switch
@@ -25,10 +24,10 @@
         z-0
         inline-flex
         items-center
-        px-3
+        px-2
         rounded-r-sm
         border border-gray-300
-        text-xl text-gray-500
+        text-base text-gray-500
         bg-gray-100
       "
     >

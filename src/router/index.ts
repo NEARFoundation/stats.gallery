@@ -1,6 +1,7 @@
 import About from '@/views/About.vue';
 import Activity from '@/views/Activity.vue';
 import Charts from '@/views/Charts.vue';
+import Overview from '@/views/Overview.vue';
 import {
   createRouter,
   createWebHistory,
@@ -43,6 +44,14 @@ const routes: Array<RouteRecordRaw> = [
     component: About,
     meta: {
       title: 'about',
+    },
+  },
+  {
+    path: '/overview',
+    name: 'overview',
+    component: Overview,
+    meta: {
+      title: 'overview',
     },
   },
 ];

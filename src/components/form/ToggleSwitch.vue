@@ -1,7 +1,10 @@
 <template>
   <SwitchGroup as="div" class="flex items-center cursor-pointer">
     <SwitchLabel as="span" class="pr-2">
-      <span class="text-sm font-medium text-gray-900">Light</span>
+      <span class="hidden sm:block text-sm font-medium text-gray-900"
+        >Light</span
+      >
+      <SunIcon class="block sm:hidden w-6 text-gray-400" />
     </SwitchLabel>
     <Switch
       :modelValue="modelValue"
@@ -21,7 +24,10 @@
       />
     </Switch>
     <SwitchLabel as="span" class="pl-2">
-      <span class="text-sm font-medium text-gray-900">Dark</span>
+      <span class="hidden sm:block text-sm font-medium text-gray-900"
+        >Dark</span
+      >
+      <MoonIcon class="block sm:hidden w-6 text-gray-600" />
     </SwitchLabel>
   </SwitchGroup>
 </template>
@@ -29,6 +35,7 @@
 <script lang="ts">
 import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 import { defineComponent } from '@vue/runtime-core';
+import { MoonIcon, SunIcon } from 'heroicons-vue3/outline';
 
 export default defineComponent({
   name: 'toggle-switch',
@@ -36,6 +43,8 @@ export default defineComponent({
     Switch,
     SwitchGroup,
     SwitchLabel,
+    MoonIcon,
+    SunIcon,
   },
   props: {
     modelValue: {

@@ -1,12 +1,5 @@
 <template>
-  <TopBar />
-  <AccountMayNotExistAlert
-    v-if="!accountExists"
-    class="my-4 mx-2"
-    :account="account"
-  />
   <router-view></router-view>
-  <Footer />
 </template>
 
 <style>
@@ -16,9 +9,6 @@ body {
 </style>
 
 <script lang="ts">
-import AccountMayNotExistAlert from '@/components/alerts/AccountMayNotExistAlert.vue';
-import Footer from '@/components/Footer.vue';
-import TopBar from '@/components/navigation/TopBar.vue';
 import { useTitle } from '@/composables/useTitle';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
@@ -27,10 +17,7 @@ import { RouterView } from 'vue-router';
 
 export default defineComponent({
   components: {
-    TopBar,
     RouterView,
-    Footer,
-    AccountMayNotExistAlert,
   },
   setup() {
     const { account, network, rpc } = provideNear();
