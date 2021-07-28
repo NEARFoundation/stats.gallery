@@ -1,6 +1,7 @@
 import App from '@/App.vue';
 import ExternalLinkIcon from '@/components/ExternalLinkIcon.vue';
 import NearSymbol from '@/components/NearSymbol.vue';
+import QuestionMarkIcon from '@/components/QuestionMarkIcon.vue';
 import router from '@/router';
 import { timeframeToPastTimestamp } from '@/services/timeframe';
 import { compactNumber } from '@/utils/compactNumber';
@@ -21,6 +22,7 @@ if (process.env['NODE_ENV'] === 'production') {
 const app = createApp(App);
 app.component('near-symbol', NearSymbol);
 app.component('external-link-icon', ExternalLinkIcon);
+app.component('question-mark-icon', QuestionMarkIcon);
 
 app.use(router).mount('#app');
 

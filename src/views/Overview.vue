@@ -1,6 +1,6 @@
 <template>
   <CombinedTopBar :showIntake="true" />
-  <div class="p-3 mx-auto max-w-7xl outline-black flex flex-wrap">
+  <div class="p-3 mx-auto max-w-7xl flex flex-wrap">
     <header class="ml-80 w-full flex-grow flex flex-wrap">
       <h1 class="font-extrabold text-5xl flex-grow">bloodninja.near</h1>
 
@@ -60,40 +60,106 @@
       </div>
     </header>
 
-    <div class="w-full mt-4"></div>
+    <div class="w-full mt-4 flex">
+      <nav class="w-80 flex flex-col space-y-3">
+        <SectionLink to="/overview" :icon="OverviewIcon" name="Overview" />
+        <SectionLink to="/stats" :icon="StatsIcon" name="Stats" />
+        <SectionLink
+          to="/transactions"
+          :icon="TransactionsIcon"
+          name="Transactions"
+        />
+        <SectionLink to="/quests" :icon="QuestsIcon" name="Quests" />
+        <SectionLink
+          to="/leaderboards"
+          :icon="LeaderboardsIcon"
+          name="Leaderboards"
+        />
+        <hr />
+        <SectionLink
+          to="/exchange"
+          :icon="ExchangeIcon"
+          name="Exchange NEAR"
+          external
+        />
+        <SectionLink to="/send" :icon="SendIcon" name="Send NEAR" external />
+        <SectionLink
+          to="/receive"
+          :icon="ReceiveIcon"
+          name="Receive NEAR"
+          external
+        />
+        <SectionLink to="/nft" :icon="NftIcon" name="Buy NFT" external />
+      </nav>
 
-    <nav class="w-80 border border-blue-500 flex flex-col space-y-3">
-      <SectionLink to="/overview" :icon="OverviewIcon" name="Overview" />
-      <SectionLink to="/stats" :icon="StatsIcon" name="Stats" />
-      <SectionLink
-        to="/transactions"
-        :icon="TransactionsIcon"
-        name="Transactions"
-      />
-      <SectionLink to="/quests" :icon="QuestsIcon" name="Quests" />
-      <SectionLink
-        to="/leaderboards"
-        :icon="LeaderboardsIcon"
-        name="Leaderboards"
-      />
-      <hr />
-      <SectionLink
-        to="/exchange"
-        :icon="ExchangeIcon"
-        name="Exchange NEAR"
-        external
-      />
-      <SectionLink to="/send" :icon="SendIcon" name="Send NEAR" external />
-      <SectionLink
-        to="/receive"
-        :icon="ReceiveIcon"
-        name="Receive NEAR"
-        external
-      />
-      <SectionLink to="/nft" :icon="NftIcon" name="Buy NFT" external />
-    </nav>
-
-    <main class="border border-red-500 flex-grow">main</main>
+      <main class="flex-grow grid grid-cols-3 grid-flow-row-dense gap-3">
+        <div class="row-span-2 shadow-lg rounded-md bg-white">
+          <header class="bg-gray-50 py-2 px-3 border-b border-gray-200 flex">
+            <span class="text-lg text-gray-800 font-bold">Score</span>
+            <question-mark-icon
+              class="text-gray-300 mx-2 cursor-pointer hover:text-gray-400"
+            />
+          </header>
+          <div class="flex flex-col items-center p-3 space-y-4">
+            <div
+              class="
+                text-2xl
+                font-bold
+                text-white
+                bg-purple-700
+                py-1
+                px-4
+                rounded-full
+              "
+            >
+              84
+            </div>
+            <h4 class="w-full font-medium">Recent earnings</h4>
+            <div class="w-full flex flex-col space-y-2">
+              <div class="flex">
+                <div class="flex-grow">Transaction</div>
+                <div class="text-green-500 font-bold">+1</div>
+              </div>
+              <div class="flex">
+                <div class="flex-grow">Buy an NFT</div>
+                <div class="text-green-500 font-bold">+20</div>
+              </div>
+              <div class="flex">
+                <div class="flex-grow">Send NEAR</div>
+                <div class="text-green-500 font-bold">+20</div>
+              </div>
+              <div class="flex">
+                <div class="flex-grow">Make your first transaction</div>
+                <div class="text-green-500 font-bold">+20</div>
+              </div>
+            </div>
+            <button
+              class="
+                mt-5
+                cursor-pointer
+                bg-gray-200
+                hover:bg-gray-300
+                px-2
+                rounded-sm
+              "
+            >
+              View all score earnings
+            </button>
+          </div>
+        </div>
+        <div class="row-span-1 border-2 border-blue-500 p-2">level</div>
+        <div class="row-span-2 border-2 border-blue-500 p-2">balance</div>
+        <div class="row-span-1 border-2 border-blue-500 p-2">rank</div>
+        <div class="col-span-3 border-2 border-blue-500 p-2">earn near</div>
+        <div class="col-span-2 border-2 border-blue-500 p-2">brief stats</div>
+        <div class="col-span-1 border-2 border-blue-500 p-2">
+          weekly transactions rate
+        </div>
+        <div class="col-span-3 border-2 border-blue-500 p-2">
+          transactions history
+        </div>
+      </main>
+    </div>
   </div>
   <Footer />
 </template>
