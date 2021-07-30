@@ -16,8 +16,6 @@
       shadow
     "
   >
-    <small>
-      <slot />
-    </small>
+    <slot />
   </button>
 </template>

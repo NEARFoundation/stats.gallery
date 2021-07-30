@@ -1,8 +1,10 @@
 <template>
   <CombinedTopBar :showIntake="true" />
   <div class="p-3 mx-auto max-w-7xl flex flex-wrap">
-    <header class="lg:ml-80 w-full flex-grow flex flex-wrap">
-      <h1 class="font-extrabold text-5xl flex-grow">bloodninja.near</h1>
+    <header class="lg:ml-64 xl:ml-80 w-full flex-grow flex flex-wrap">
+      <h1 class="font-display font-extrabold text-5xl flex-grow">
+        bloodninja.near
+      </h1>
 
       <div class="sr-only">Metrics</div>
       <div class="self-center flex space-x-3">
@@ -24,7 +26,7 @@
         <div
           class="py-1 px-4 bg-white rounded-full flex justify-center font-bold"
         >
-          <near-symbol />&nbsp;583.2564
+          <near-symbol class="w-5" />&nbsp;583.2564
         </div>
       </div>
 
@@ -40,7 +42,15 @@
 
     <div class="w-full mt-5 flex">
       <nav
-        class="w-16 sm:w-52 lg:w-80 flex-shrink-0 flex flex-col space-y-2 pr-4"
+        class="
+          w-16
+          md:w-52
+          lg:w-64
+          xl:w-80
+          flex-shrink-0 flex flex-col
+          space-y-2
+          pr-4
+        "
       >
         <SectionLink to="/overview" :icon="OverviewIcon" name="Overview" />
         <SectionLink to="/stats" :icon="StatsIcon" name="Stats" />
@@ -133,9 +143,10 @@
                   hover:bg-gray-300
                   px-2
                   rounded-sm
+                  truncate
                 "
               >
-                View all score earnings
+                View scores
               </button>
             </div>
           </div>
@@ -190,9 +201,9 @@
           >
             <div class="flex-grow flex flex-col justify-center items-center">
               <div class="text-2xl font-bold flex py-1">
-                <NearSymbol class="w-8 h-8" />&nbsp;583.2564
+                <near-symbol class="w-8 h-8" />&nbsp;583.2564
               </div>
-              <div class="text-green-500 font-medium flex py-1 items-center">
+              <div class="text-green-500 font-semibold flex py-1 items-center">
                 +23.256
               </div>
             </div>
@@ -232,6 +243,7 @@
                   hover:bg-gray-300
                   px-2
                   rounded-sm
+                  truncate
                 "
               >
                 View transfers
@@ -286,24 +298,108 @@
             col-span-3
             order-5
             md:order-none
+            cursor-default
             rounded-md
             relative
             nearkat-prompt
             flex
             h-32
             px-4
+            sm:pl-6 sm:pr-16
+            items-center
+            sm:space-x-4
+            justify-center
+            sm:justify-between
           "
         >
-          <img src="@/assets/nearkat_prompt.png" />
+          <button class="absolute top-0 right-0 p-1 hover:opacity-75">
+            <XIcon class="w-6 h-6 text-white" />
+          </button>
+          <img
+            class="pt-3 h-full self-end hidden lg:block"
+            src="@/assets/nearkat_prompt.png"
+          />
+          <div class="hidden sm:block flex-shrink-0 text-white text-xl">
+            <p>Complete quests.</p>
+            <p>Make transactions.</p>
+            <p>Buy NFTs.</p>
+          </div>
+          <BigChevron
+            class="hidden md:block h-full flex-shrink py-6 text-white"
+          />
+          <div class="flex flex-col items-center space-y-4 w-64 text-white">
+            <EarnNear />
+            <button
+              class="
+                border-2 border-white
+                rounded
+                px-4
+                text-lg
+                hover:bg-white hover:bg-opacity-10
+              "
+            >
+              Learn more
+            </button>
+          </div>
         </div>
         <DashboardCard
-          class="col-span-2 order-6 md:order-none"
+          class="col-span-1 xl:col-span-2 order-6 md:order-none"
           title="Brief Stats"
-        ></DashboardCard>
+        >
+          <div class="flex-grow flex items-center">
+            <div
+              class="
+                flex-grow flex flex-col
+                items-center
+                sm:flex-row sm:items-start
+                flex-wrap
+                justify-around
+              "
+            >
+              <BriefStat title="Transactions sent" value="138">
+                <div class="flex justify-between self-stretch">
+                  <div class="flex flex-col items-center">
+                    <div>
+                      <ArrowSmDownIcon
+                        class="inline align-text-top w-5 text-gray-400"
+                      />
+                      <span class="text-green-500 font-semibold">135</span>
+                    </div>
+                    <small>Incoming</small>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <div>
+                      <ArrowSmUpIcon
+                        class="inline align-text-top w-5 text-gray-400"
+                      />
+                      <span class="text-red-500 font-semibold">3</span>
+                    </div>
+                    <small>Outgoing</small>
+                  </div>
+                </div>
+              </BriefStat>
+              <BriefStat title="Gas burned" value="4.1 Tgas">
+                <div class="flex"><near-symbol class="w-5" />&nbsp;0.00051</div>
+              </BriefStat>
+              <BriefStat title="Days with NEAR" value="34 days &#128588;">
+                <p>Since Jun 03, 2021</p>
+              </BriefStat>
+            </div>
+          </div>
+        </DashboardCard>
         <DashboardCard
-          class="col-span-1 order-7 md:order-none"
+          class="col-span-2 xl:col-span-1 order-7 md:order-none"
           title="Weekly Transaction Rate"
-        ></DashboardCard>
+        >
+          <div class="flex flex-1">
+            <VChart
+              class="chart flex-shrink"
+              theme="light"
+              :option="weeklyTransactionRateOption"
+              autoresize
+            />
+          </div>
+        </DashboardCard>
         <DashboardCard
           class="col-span-3 order-8 md:order-none"
           title="Transaction History"
@@ -318,26 +414,41 @@
 .nearkat-prompt {
   background: linear-gradient(93.84deg, #d946ef -28.43%, #fb923c 81.44%);
 }
+
+.chart {
+  min-height: 250px;
+}
 </style>
 
 <script lang="ts">
 import Footer from '@/components/Footer.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
-import { defineComponent } from 'vue';
+import { useGaugeChart } from '@/composables/charts/useGaugeChart';
+import { GaugeChart } from 'echarts/charts';
+import { TitleComponent } from 'echarts/components';
+import { use } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { ArrowSmDownIcon, ArrowSmUpIcon, XIcon } from 'heroicons-vue3/solid';
+import { defineComponent, ref, watch } from 'vue';
+import VChart from 'vue-echarts';
+import BigChevron from './overview/BigChevron.vue';
+import BriefStat from './overview/BriefStat.vue';
+import DashboardCard from './overview/DashboardCard.vue';
+import DonutChart from './overview/DonutChart.vue';
+import EarnNear from './overview/EarnNear.vue';
+import ExchangeIcon from './overview/icons/ExchangeIcon.vue';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
+import NftIcon from './overview/icons/NftIcon.vue';
 import OverviewIcon from './overview/icons/OverviewIcon.vue';
 import QuestsIcon from './overview/icons/QuestsIcon.vue';
-import SectionLink from './overview/SectionLink.vue';
+import ReceiveIcon from './overview/icons/ReceiveIcon.vue';
+import SendIcon from './overview/icons/SendIcon.vue';
 import StatsIcon from './overview/icons/StatsIcon.vue';
 import TransactionsIcon from './overview/icons/TransactionsIcon.vue';
-import ExchangeIcon from './overview/icons/ExchangeIcon.vue';
-import SendIcon from './overview/icons/SendIcon.vue';
-import ReceiveIcon from './overview/icons/ReceiveIcon.vue';
-import NftIcon from './overview/icons/NftIcon.vue';
-import DashboardCard from './overview/DashboardCard.vue';
+import SectionLink from './overview/SectionLink.vue';
 import Star from './overview/Star.vue';
-import DonutChart from './overview/DonutChart.vue';
-import NearSymbol from '@/components/NearSymbol.vue';
+
+use([CanvasRenderer, GaugeChart, TitleComponent]);
 
 export default defineComponent({
   components: {
@@ -347,10 +458,19 @@ export default defineComponent({
     DashboardCard,
     Star,
     DonutChart,
-    NearSymbol,
+    XIcon,
+    BigChevron,
+    EarnNear,
+    ArrowSmDownIcon,
+    ArrowSmUpIcon,
+    BriefStat,
+    VChart,
   },
   setup() {
+    const weeklyTransactionRateOption = useGaugeChart(ref(13));
+
     return {
+      weeklyTransactionRateOption,
       OverviewIcon,
       StatsIcon,
       TransactionsIcon,

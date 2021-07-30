@@ -39,7 +39,7 @@
         "
       >
         <SmallAccountInput class="w-full sm:w-48" v-model="displayedAccount" />
-        <SmallTimeframeInput class="w-full sm:w-32" v-model="timeframe" />
+        <SmallTimeframeInput class="w-full sm:w-24" v-model="timeframe" />
         <SmallNetworkInput class="w-full sm:w-32" v-model="selectedNetwork" />
         <SmallPrimaryButton class="w-full sm:w-24">View</SmallPrimaryButton>
       </div>

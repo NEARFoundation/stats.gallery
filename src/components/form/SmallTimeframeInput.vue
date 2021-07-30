@@ -5,17 +5,19 @@
         class="
           w-full
           bg-white
+          hover:bg-gray-100
           cursor-pointer
           relative
           rounded-sm
           p-2
+          pl-3
           pr-8
           border border-gray-300
           text-left
           focus:ring-green-500 focus:ring-2 focus:outline-none
         "
       >
-        <span class="block truncate text-base text-black text-center">{{
+        <span class="block truncate text-base text-black">{{
           selected.text
         }}</span>
         <span
@@ -29,7 +31,7 @@
             pointer-events-none
           "
         >
-          <SelectorIcon class="h-5 w-5 text-gray-700" aria-hidden="true" />
+          <SelectorIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
         </span>
       </ListboxButton>
 
@@ -60,31 +62,16 @@
             v-for="timeframe in timeframes"
             :key="timeframe"
             :value="timeframe"
-            v-slot="{ active, selected }"
+            v-slot="{ active }"
           >
             <li
               :class="[
-                active ? 'text-white bg-green-600' : 'text-gray-900',
-                'cursor-pointer select-none relative py-2 pl-3 pr-9',
+                active ? 'bg-gray-100' : '',
+                'cursor-pointer select-none relative py-2 px-3',
               ]"
             >
-              <span
-                :class="[
-                  selected ? 'font-semibold' : 'font-normal',
-                  'block truncate',
-                ]"
-              >
+              <span class="block truncate">
                 {{ timeframe.text }}
-              </span>
-
-              <span
-                v-if="selected"
-                :class="[
-                  active ? 'text-white' : 'text-green-600',
-                  'absolute inset-y-0 right-0 flex items-center pr-4',
-                ]"
-              >
-                <CheckIcon class="h-5 w-5" aria-hidden="true" />
               </span>
             </li>
           </ListboxOption>
@@ -102,7 +89,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue';
-import { CheckIcon, SelectorIcon } from 'heroicons-vue3/outline';
+import { SelectorIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
@@ -112,7 +99,6 @@ export default defineComponent({
     ListboxButton,
     ListboxOption,
     ListboxOptions,
-    CheckIcon,
     SelectorIcon,
   },
   props: {
