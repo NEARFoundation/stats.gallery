@@ -4,6 +4,7 @@
 
 <style>
 body {
+  @apply text-gray-700;
   background-color: #f1f5f9;
 }
 </style>

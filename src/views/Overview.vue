@@ -1,25 +1,12 @@
 <template>
   <CombinedTopBar :showIntake="true" />
   <div class="p-3 mx-auto max-w-7xl flex flex-wrap">
-    <header class="ml-80 w-full flex-grow flex flex-wrap">
+    <header class="lg:ml-80 w-full flex-grow flex flex-wrap">
       <h1 class="font-extrabold text-5xl flex-grow">bloodninja.near</h1>
 
       <div class="sr-only">Metrics</div>
       <div class="self-center flex space-x-3">
-        <div
-          class="
-            py-1
-            px-4
-            bg-blue-500
-            rounded-full
-            flex
-            justify-center
-            text-white
-            font-bold
-          "
-        >
-          1
-        </div>
+        <Star class="text-blue-500">1</Star>
         <div
           class="
             py-1
@@ -35,16 +22,7 @@
           84
         </div>
         <div
-          class="
-            py-1
-            px-4
-            bg-white
-            rounded-full
-            flex
-            justify-center
-            text-black
-            font-bold
-          "
+          class="py-1 px-4 bg-white rounded-full flex justify-center font-bold"
         >
           <near-symbol />&nbsp;583.2564
         </div>
@@ -60,8 +38,10 @@
       </div>
     </header>
 
-    <div class="w-full mt-4 flex">
-      <nav class="w-80 flex flex-col space-y-3">
+    <div class="w-full mt-5 flex">
+      <nav
+        class="w-16 sm:w-52 lg:w-80 flex-shrink-0 flex flex-col space-y-2 pr-4"
+      >
         <SectionLink to="/overview" :icon="OverviewIcon" name="Overview" />
         <SectionLink to="/stats" :icon="StatsIcon" name="Stats" />
         <SectionLink
@@ -75,7 +55,7 @@
           :icon="LeaderboardsIcon"
           name="Leaderboards"
         />
-        <hr />
+        <hr class="w-64" />
         <SectionLink
           to="/exchange"
           :icon="ExchangeIcon"
@@ -92,98 +72,282 @@
         <SectionLink to="/nft" :icon="NftIcon" name="Buy NFT" external />
       </nav>
 
-      <main class="flex-grow grid grid-cols-3 grid-flow-row-dense gap-3">
-        <div class="row-span-2 shadow-lg rounded-md bg-white">
-          <header class="bg-gray-50 py-2 px-3 border-b border-gray-200 flex">
-            <span class="text-lg text-gray-800 font-bold">Score</span>
-            <question-mark-icon
-              class="text-gray-300 mx-2 cursor-pointer hover:text-gray-400"
-            />
-          </header>
-          <div class="flex flex-col items-center p-3 space-y-4">
-            <div
-              class="
-                text-2xl
-                font-bold
-                text-white
-                bg-purple-700
-                py-1
-                px-4
-                rounded-full
-              "
-            >
-              84
-            </div>
-            <h4 class="w-full font-medium">Recent earnings</h4>
-            <div class="w-full flex flex-col space-y-2">
-              <div class="flex">
-                <div class="flex-grow">Transaction</div>
-                <div class="text-green-500 font-bold">+1</div>
-              </div>
-              <div class="flex">
-                <div class="flex-grow">Buy an NFT</div>
-                <div class="text-green-500 font-bold">+20</div>
-              </div>
-              <div class="flex">
-                <div class="flex-grow">Send NEAR</div>
-                <div class="text-green-500 font-bold">+20</div>
-              </div>
-              <div class="flex">
-                <div class="flex-grow">Make your first transaction</div>
-                <div class="text-green-500 font-bold">+20</div>
+      <main
+        class="
+          flex-grow flex flex-col
+          space-y-3
+          md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
+        "
+      >
+        <DashboardCard class="row-span-2 order-1 md:order-none" title="Score">
+          <div
+            class="
+              flex flex-col
+              items-center
+              p-3
+              space-y-4
+              justify-between
+              flex-grow
+            "
+          >
+            <div class="flex-grow flex justify-center items-center">
+              <div
+                class="
+                  text-2xl
+                  font-bold
+                  text-white
+                  bg-purple-700
+                  py-1
+                  px-4
+                  rounded-full
+                "
+              >
+                84
               </div>
             </div>
-            <button
-              class="
-                mt-5
-                cursor-pointer
-                bg-gray-200
-                hover:bg-gray-300
-                px-2
-                rounded-sm
-              "
-            >
-              View all score earnings
-            </button>
+            <div class="w-full flex flex-col space-y-4 items-center">
+              <h4 class="w-full font-medium">Recent earnings</h4>
+              <div class="w-full flex flex-col space-y-2">
+                <div class="flex">
+                  <div class="flex-grow">Transaction</div>
+                  <div class="text-green-500 font-bold">+1</div>
+                </div>
+                <div class="flex">
+                  <div class="flex-grow">Buy an NFT</div>
+                  <div class="text-green-500 font-bold">+20</div>
+                </div>
+                <div class="flex">
+                  <div class="flex-grow">Send NEAR</div>
+                  <div class="text-green-500 font-bold">+20</div>
+                </div>
+                <div class="flex">
+                  <div class="flex-grow">Make your first transaction</div>
+                  <div class="text-green-500 font-bold">+20</div>
+                </div>
+              </div>
+              <button
+                class="
+                  mt-5
+                  cursor-pointer
+                  bg-gray-200
+                  hover:bg-gray-300
+                  px-2
+                  rounded-sm
+                "
+              >
+                View all score earnings
+              </button>
+            </div>
           </div>
+        </DashboardCard>
+        <DashboardCard class="row-span-1 order-2 md:order-none" title="Level">
+          <div
+            class="
+              flex flex-col
+              items-center
+              justify-center
+              flex-grow
+              p-3
+              space-y-2
+            "
+          >
+            <div class="flex space-x-2 items-center">
+              <Star class="text-blue-500">1</Star>
+              <div class="font-bold text-2xl">Beginner</div>
+            </div>
+            <div class="flex w-full items-center space-x-2">
+              <span class="text-gray-500 text-lg">84</span>
+              <div
+                class="
+                  flex-grow
+                  bg-gray-200
+                  h-2
+                  rounded-full
+                  relative
+                  flex
+                  overflow-hidden
+                "
+              >
+                <div
+                  class="bg-purple-500 rounded-full"
+                  style="width: 33%"
+                ></div>
+              </div>
+              <span class="text-gray-500 text-lg">500</span>
+            </div>
+          </div>
+        </DashboardCard>
+        <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
+          <div
+            class="
+              flex flex-col
+              items-center
+              p-3
+              space-y-4
+              justify-between
+              flex-grow
+            "
+          >
+            <div class="flex-grow flex flex-col justify-center items-center">
+              <div class="text-2xl font-bold flex py-1">
+                <NearSymbol class="w-8 h-8" />&nbsp;583.2564
+              </div>
+              <div class="text-green-500 font-medium flex py-1 items-center">
+                +23.256
+              </div>
+            </div>
+            <div class="w-full flex flex-col space-y-4 items-center">
+              <h4 class="w-full font-medium">Recent transfers</h4>
+              <div class="w-full flex flex-col space-y-2">
+                <div class="flex">
+                  <div class="flex-1 overflow-ellipsis overflow-hidden">
+                    @account.near
+                  </div>
+                  <div class="text-red-500 font-bold">&minus;151</div>
+                </div>
+                <div class="flex">
+                  <div class="flex-1 overflow-ellipsis overflow-hidden">
+                    @anotheraccount.near
+                  </div>
+                  <div class="text-green-500 font-bold">+223.3245</div>
+                </div>
+                <div class="flex">
+                  <div class="flex-1 overflow-ellipsis overflow-hidden">
+                    @earn.near
+                  </div>
+                  <div class="text-green-500 font-bold">+2000</div>
+                </div>
+                <div class="flex">
+                  <div class="flex-1 overflow-ellipsis overflow-hidden">
+                    @longaccountname.near
+                  </div>
+                  <div class="text-red-500 font-bold">&minus;1322.435</div>
+                </div>
+              </div>
+              <button
+                class="
+                  mt-5
+                  cursor-pointer
+                  bg-gray-200
+                  hover:bg-gray-300
+                  px-2
+                  rounded-sm
+                "
+              >
+                View transfers
+              </button>
+            </div>
+          </div>
+        </DashboardCard>
+        <DashboardCard class="row-span-1 order-3 md:order-none" title="Rank">
+          <div
+            class="
+              flex
+              items-center
+              flex-grow
+              p-3
+              flex-row flex-wrap
+              justify-center
+            "
+          >
+            <div class="flex-grow">
+              <div class="text-2xl font-bold text-center">#123,456</div>
+              <div class="text-green-500 font-bold text-center">+2</div>
+            </div>
+            <div class="relative p-2">
+              <DonutChart
+                :fraction="0.05"
+                trackThickness="20"
+                thickness="20"
+                lineCap="round"
+                color="rgb(124, 58, 237)"
+                trackColor="rgb(226, 232, 240)"
+                class="w-20 h-20"
+              />
+              <div
+                class="
+                  absolute
+                  top-0
+                  left-0
+                  w-full
+                  h-full
+                  flex
+                  items-center
+                  justify-center
+                "
+              >
+                <div class="font-bold text-lg">5%</div>
+              </div>
+            </div>
+          </div>
+        </DashboardCard>
+        <div
+          class="
+            col-span-3
+            order-5
+            md:order-none
+            rounded-md
+            relative
+            nearkat-prompt
+            flex
+            h-32
+            px-4
+          "
+        >
+          <img src="@/assets/nearkat_prompt.png" />
         </div>
-        <div class="row-span-1 border-2 border-blue-500 p-2">level</div>
-        <div class="row-span-2 border-2 border-blue-500 p-2">balance</div>
-        <div class="row-span-1 border-2 border-blue-500 p-2">rank</div>
-        <div class="col-span-3 border-2 border-blue-500 p-2">earn near</div>
-        <div class="col-span-2 border-2 border-blue-500 p-2">brief stats</div>
-        <div class="col-span-1 border-2 border-blue-500 p-2">
-          weekly transactions rate
-        </div>
-        <div class="col-span-3 border-2 border-blue-500 p-2">
-          transactions history
-        </div>
+        <DashboardCard
+          class="col-span-2 order-6 md:order-none"
+          title="Brief Stats"
+        ></DashboardCard>
+        <DashboardCard
+          class="col-span-1 order-7 md:order-none"
+          title="Weekly Transaction Rate"
+        ></DashboardCard>
+        <DashboardCard
+          class="col-span-3 order-8 md:order-none"
+          title="Transaction History"
+        ></DashboardCard>
       </main>
     </div>
   </div>
   <Footer />
 </template>
 
+<style scoped>
+.nearkat-prompt {
+  background: linear-gradient(93.84deg, #d946ef -28.43%, #fb923c 81.44%);
+}
+</style>
+
 <script lang="ts">
 import Footer from '@/components/Footer.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
 import { defineComponent } from 'vue';
-import LeaderboardsIcon from './overview/LeaderboardsIcon.vue';
-import OverviewIcon from './overview/OverviewIcon.vue';
-import QuestsIcon from './overview/QuestsIcon.vue';
+import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
+import OverviewIcon from './overview/icons/OverviewIcon.vue';
+import QuestsIcon from './overview/icons/QuestsIcon.vue';
 import SectionLink from './overview/SectionLink.vue';
-import StatsIcon from './overview/StatsIcon.vue';
-import TransactionsIcon from './overview/TransactionsIcon.vue';
-import ExchangeIcon from './overview/ExchangeIcon.vue';
-import SendIcon from './overview/SendIcon.vue';
-import ReceiveIcon from './overview/ReceiveIcon.vue';
-import NftIcon from './overview/NftIcon.vue';
+import StatsIcon from './overview/icons/StatsIcon.vue';
+import TransactionsIcon from './overview/icons/TransactionsIcon.vue';
+import ExchangeIcon from './overview/icons/ExchangeIcon.vue';
+import SendIcon from './overview/icons/SendIcon.vue';
+import ReceiveIcon from './overview/icons/ReceiveIcon.vue';
+import NftIcon from './overview/icons/NftIcon.vue';
+import DashboardCard from './overview/DashboardCard.vue';
+import Star from './overview/Star.vue';
+import DonutChart from './overview/DonutChart.vue';
+import NearSymbol from '@/components/NearSymbol.vue';
 
 export default defineComponent({
   components: {
     Footer,
     CombinedTopBar,
     SectionLink,
+    DashboardCard,
+    Star,
+    DonutChart,
+    NearSymbol,
   },
   setup() {
     return {

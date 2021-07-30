@@ -1,10 +1,12 @@
 <template>
-  <div class="py-16 lg:py-64 flex flex-col items-center text-white bg-gray-700">
-    <h1 class="font-bold text-4xl lg:text-6xl mb-5 mx-4 text-center">
+  <div class="py-16 lg:py-64 flex flex-col items-center bg-gray-700">
+    <h1 class="font-bold text-white text-4xl lg:text-6xl mb-5 mx-4 text-center">
       Investigate
       <span class="text-green-400 uppercase">your NEAR</span> account
     </h1>
-    <p class="text-2xl lg:text-4xl mb-8">and 314,071 other accounts</p>
+    <p class="text-2xl text-white lg:text-4xl mb-8">
+      and 314,071 other accounts
+    </p>
     <div
       class="
         flex flex-col
