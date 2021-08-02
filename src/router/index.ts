@@ -54,6 +54,14 @@ const routes: Array<RouteRecordRaw> = [
       title: 'overview',
     },
   },
+  {
+    path: '/stats',
+    name: 'stats',
+    component: Charts,
+    meta: {
+      title: 'stats',
+    },
+  },
 ];
 
 const router = createRouter({

@@ -12,7 +12,7 @@
       "
     >
       <span class="text-lg text-gray-800 font-bold truncate">{{ title }}</span>
-      <Tooltip>
+      <Tooltip v-if="!!$slots.help">
         <template #trigger>
           <question-mark-icon
             class="text-gray-300 mx-2 mt-1 cursor-pointer hover:text-gray-400"
@@ -23,7 +23,7 @@
         </template>
       </Tooltip>
     </header>
-    <slot name="content" />
+    <slot />
   </div>
 </template>
 

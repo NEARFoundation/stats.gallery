@@ -88,7 +88,10 @@ export function useBalanceHistoryChart({
           type: 'line',
           step: 'start',
           showSymbol: false,
-          areaStyle: {},
+          color: 'rgb(124, 58, 237)',
+          areaStyle: {
+            color: 'rgb(139, 92, 246)',
+          },
           data: g,
         },
       ],
