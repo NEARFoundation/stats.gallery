@@ -2,7 +2,9 @@
   <CombinedTopBar :showIntake="true" />
   <div class="p-3 mx-auto max-w-7xl flex flex-wrap">
     <header class="lg:ml-64 xl:ml-80 w-full flex-grow flex flex-wrap">
-      <h1 class="font-display font-extrabold text-5xl flex-grow">
+      <h1
+        class="font-display font-extrabold text-4xl md:text-5xl my-1 flex-grow"
+      >
         bloodninja.near
       </h1>
 
@@ -33,10 +35,24 @@
       <div class="w-full mt-2"></div>
 
       <div class="sr-only">Badges</div>
-      <div class="flex space-x-3">
-        <div class="w-6 h-6 bg-pink-500 rounded-md transform rotate-45"></div>
-        <div class="w-6 h-6 bg-blue-500 rounded-md transform rotate-45"></div>
-        <div class="w-6 h-6 bg-yellow-500 rounded-md transform rotate-45"></div>
+      <div class="flex space-x-1">
+        <Badge
+          name="Come get some!"
+          description="Send your first transaction"
+          :fraction="0.97"
+        >
+          <TransactionBadge class="w-8 h-8 text-pink-500" />
+        </Badge>
+        <Badge name="One-of-a-kind" description="Buy an NFT" :fraction="0.0081">
+          <NftBadge class="w-8 h-8 text-blue-500" />
+        </Badge>
+        <Badge
+          name="Up and away!"
+          description="Deploy a contract"
+          :fraction="0.0006"
+        >
+          <FunctionBadge class="w-8 h-8 text-yellow-500" />
+        </Badge>
       </div>
     </header>
 
@@ -90,208 +106,232 @@
         "
       >
         <DashboardCard class="row-span-2 order-1 md:order-none" title="Score">
-          <div
-            class="
-              flex flex-col
-              items-center
-              p-3
-              space-y-4
-              justify-between
-              flex-grow
-            "
-          >
-            <div class="flex-grow flex justify-center items-center">
-              <div
-                class="
-                  text-2xl
-                  font-bold
-                  text-white
-                  bg-purple-700
-                  py-1
-                  px-4
-                  rounded-full
-                "
-              >
-                84
-              </div>
-            </div>
-            <div class="w-full flex flex-col space-y-4 items-center">
-              <h4 class="w-full font-medium">Recent earnings</h4>
-              <div class="w-full flex flex-col space-y-2">
-                <div class="flex">
-                  <div class="flex-grow">Transaction</div>
-                  <div class="text-green-500 font-bold">+1</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-grow">Buy an NFT</div>
-                  <div class="text-green-500 font-bold">+20</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-grow">Send NEAR</div>
-                  <div class="text-green-500 font-bold">+20</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-grow">Make your first transaction</div>
-                  <div class="text-green-500 font-bold">+20</div>
+          <template #help>
+            Track your activity across the network with a unified score. The
+            more you participate, the higher your score grows!
+          </template>
+          <template #content>
+            <div
+              class="
+                flex flex-col
+                items-center
+                p-3
+                space-y-4
+                justify-between
+                flex-grow
+              "
+            >
+              <div class="flex-grow flex justify-center items-center">
+                <div
+                  class="
+                    text-2xl
+                    font-bold
+                    text-white
+                    bg-purple-700
+                    py-1
+                    px-4
+                    rounded-full
+                  "
+                >
+                  84
                 </div>
               </div>
-              <button
-                class="
-                  mt-5
-                  cursor-pointer
-                  bg-gray-200
-                  hover:bg-gray-300
-                  px-2
-                  rounded-sm
-                  truncate
-                "
-              >
-                View scores
-              </button>
+              <div class="w-full flex flex-col space-y-4 items-center">
+                <h4 class="w-full font-medium">Recent earnings</h4>
+                <div class="w-full flex flex-col space-y-2">
+                  <div class="flex">
+                    <div class="flex-grow">Transaction</div>
+                    <div class="text-green-500 font-bold">+1</div>
+                  </div>
+                  <div class="flex">
+                    <div class="flex-grow">Buy an NFT</div>
+                    <div class="text-green-500 font-bold">+20</div>
+                  </div>
+                  <div class="flex">
+                    <div class="flex-grow">Send NEAR</div>
+                    <div class="text-green-500 font-bold">+20</div>
+                  </div>
+                  <div class="flex">
+                    <div class="flex-grow">Make your first transaction</div>
+                    <div class="text-green-500 font-bold">+20</div>
+                  </div>
+                </div>
+                <button
+                  class="
+                    mt-5
+                    cursor-pointer
+                    bg-gray-200
+                    hover:bg-gray-300
+                    px-2
+                    rounded-sm
+                    truncate
+                  "
+                >
+                  View scores
+                </button>
+              </div>
             </div>
-          </div>
+          </template>
         </DashboardCard>
         <DashboardCard class="row-span-1 order-2 md:order-none" title="Level">
-          <div
-            class="
-              flex flex-col
-              items-center
-              justify-center
-              flex-grow
-              p-3
-              space-y-2
-            "
-          >
-            <div class="flex space-x-2 items-center">
-              <Star class="text-blue-500">1</Star>
-              <div class="font-bold text-2xl">Beginner</div>
-            </div>
-            <div class="flex w-full items-center space-x-2">
-              <span class="text-gray-500 text-lg">84</span>
-              <div
-                class="
-                  flex-grow
-                  bg-gray-200
-                  h-2
-                  rounded-full
-                  relative
-                  flex
-                  overflow-hidden
-                "
-              >
-                <div
-                  class="bg-purple-500 rounded-full"
-                  style="width: 33%"
-                ></div>
+          <template #help>
+            Complete quests and earn points to increase your level. Try to reach
+            the max!
+          </template>
+          <template #content>
+            <div
+              class="
+                flex flex-col
+                items-center
+                justify-center
+                flex-grow
+                p-3
+                space-y-2
+              "
+            >
+              <div class="flex space-x-2 items-center">
+                <Star class="text-blue-500">1</Star>
+                <div class="font-bold text-2xl">Beginner</div>
               </div>
-              <span class="text-gray-500 text-lg">500</span>
+              <div class="flex w-full items-center space-x-2">
+                <span class="text-gray-500 text-lg">84</span>
+                <div
+                  class="
+                    flex-grow
+                    bg-gray-200
+                    h-2
+                    rounded-full
+                    relative
+                    flex
+                    overflow-hidden
+                  "
+                >
+                  <div
+                    class="bg-purple-500 rounded-full"
+                    style="width: 33%"
+                  ></div>
+                </div>
+                <span class="text-gray-500 text-lg">500</span>
+              </div>
             </div>
-          </div>
+          </template>
         </DashboardCard>
         <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
-          <div
-            class="
-              flex flex-col
-              items-center
-              p-3
-              space-y-4
-              justify-between
-              flex-grow
-            "
-          >
-            <div class="flex-grow flex flex-col justify-center items-center">
-              <div class="text-2xl font-bold flex py-1">
-                <near-symbol class="w-8 h-8" />&nbsp;583.2564
+          <template #help>
+            Monitor your current balance of NEAR and review recent transactions.
+          </template>
+          <template #content>
+            <div
+              class="
+                flex flex-col
+                items-center
+                p-3
+                space-y-4
+                justify-between
+                flex-grow
+              "
+            >
+              <div class="flex-grow flex flex-col justify-center items-center">
+                <div class="text-2xl font-bold flex py-1">
+                  <near-symbol class="w-8 h-8" />&nbsp;583.2564
+                </div>
+                <div
+                  class="text-green-500 font-semibold flex py-1 items-center"
+                >
+                  +23.256
+                </div>
               </div>
-              <div class="text-green-500 font-semibold flex py-1 items-center">
-                +23.256
+              <div class="w-full flex flex-col space-y-4 items-center">
+                <h4 class="w-full font-medium">Recent transfers</h4>
+                <div class="w-full flex flex-col space-y-2">
+                  <div class="flex">
+                    <div class="flex-1 overflow-ellipsis overflow-hidden">
+                      @account.near
+                    </div>
+                    <div class="text-red-500 font-bold">&minus;151</div>
+                  </div>
+                  <div class="flex">
+                    <div class="flex-1 overflow-ellipsis overflow-hidden">
+                      @anotheraccount.near
+                    </div>
+                    <div class="text-green-500 font-bold">+223.3245</div>
+                  </div>
+                  <div class="flex">
+                    <div class="flex-1 overflow-ellipsis overflow-hidden">
+                      @earn.near
+                    </div>
+                    <div class="text-green-500 font-bold">+2000</div>
+                  </div>
+                  <div class="flex">
+                    <div class="flex-1 overflow-ellipsis overflow-hidden">
+                      @longaccountname.near
+                    </div>
+                    <div class="text-red-500 font-bold">&minus;1322.435</div>
+                  </div>
+                </div>
+                <button
+                  class="
+                    mt-5
+                    cursor-pointer
+                    bg-gray-200
+                    hover:bg-gray-300
+                    px-2
+                    rounded-sm
+                    truncate
+                  "
+                >
+                  View transfers
+                </button>
               </div>
             </div>
-            <div class="w-full flex flex-col space-y-4 items-center">
-              <h4 class="w-full font-medium">Recent transfers</h4>
-              <div class="w-full flex flex-col space-y-2">
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @account.near
-                  </div>
-                  <div class="text-red-500 font-bold">&minus;151</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @anotheraccount.near
-                  </div>
-                  <div class="text-green-500 font-bold">+223.3245</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @earn.near
-                  </div>
-                  <div class="text-green-500 font-bold">+2000</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @longaccountname.near
-                  </div>
-                  <div class="text-red-500 font-bold">&minus;1322.435</div>
-                </div>
-              </div>
-              <button
-                class="
-                  mt-5
-                  cursor-pointer
-                  bg-gray-200
-                  hover:bg-gray-300
-                  px-2
-                  rounded-sm
-                  truncate
-                "
-              >
-                View transfers
-              </button>
-            </div>
-          </div>
+          </template>
         </DashboardCard>
         <DashboardCard class="row-span-1 order-3 md:order-none" title="Rank">
-          <div
-            class="
-              flex
-              items-center
-              flex-grow
-              p-3
-              flex-row flex-wrap
-              justify-center
-            "
-          >
-            <div class="flex-grow">
-              <div class="text-2xl font-bold text-center">#123,456</div>
-              <div class="text-green-500 font-bold text-center">+2</div>
-            </div>
-            <div class="relative p-2">
-              <DonutChart
-                :fraction="0.05"
-                trackThickness="20"
-                thickness="20"
-                lineCap="round"
-                color="rgb(124, 58, 237)"
-                trackColor="rgb(226, 232, 240)"
-                class="w-20 h-20"
-              />
-              <div
-                class="
-                  absolute
-                  top-0
-                  left-0
-                  w-full
-                  h-full
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-                <div class="font-bold text-lg">5%</div>
+          <template #help>
+            How do you stack up against other accounts?
+          </template>
+          <template #content>
+            <div
+              class="
+                flex
+                items-center
+                flex-grow
+                p-3
+                flex-row flex-wrap
+                justify-center
+              "
+            >
+              <div class="flex-grow">
+                <div class="text-2xl font-bold text-center">#123,456</div>
+                <div class="text-green-500 font-bold text-center">+2</div>
+              </div>
+              <div class="relative p-2">
+                <DonutChart
+                  :fraction="0.05"
+                  :trackThickness="20"
+                  :thickness="20"
+                  lineCap="round"
+                  color="rgb(124, 58, 237)"
+                  trackColor="rgb(226, 232, 240)"
+                  class="w-20 h-20"
+                />
+                <div
+                  class="
+                    absolute
+                    top-0
+                    left-0
+                    w-full
+                    h-full
+                    flex
+                    items-center
+                    justify-center
+                  "
+                >
+                  <div class="font-bold text-lg">5%</div>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </DashboardCard>
         <div
           class="
@@ -300,6 +340,7 @@
             md:order-none
             cursor-default
             rounded-md
+            shadow-lg
             relative
             nearkat-prompt
             flex
@@ -346,59 +387,72 @@
           class="col-span-1 xl:col-span-2 order-6 md:order-none"
           title="Brief Stats"
         >
-          <div class="flex-grow flex items-center">
-            <div
-              class="
-                flex-grow flex flex-col
-                items-center
-                sm:flex-row sm:items-start
-                flex-wrap
-                justify-around
-              "
-            >
-              <BriefStat title="Transactions sent" value="138">
-                <div class="flex justify-between self-stretch">
-                  <div class="flex flex-col items-center">
-                    <div>
-                      <ArrowSmDownIcon
-                        class="inline align-text-top w-5 text-gray-400"
-                      />
-                      <span class="text-green-500 font-semibold">135</span>
+          <template #help>
+            A quick look at your account across time. What a journey!
+          </template>
+          <template #content>
+            <div class="flex-grow flex items-center">
+              <div
+                class="
+                  flex-grow flex flex-col
+                  items-center
+                  sm:flex-row sm:items-start
+                  flex-wrap
+                  justify-around
+                "
+              >
+                <BriefStat title="Transactions sent" value="138">
+                  <div class="flex justify-between self-stretch">
+                    <div class="flex flex-col items-center">
+                      <div>
+                        <ArrowSmDownIcon
+                          class="inline align-text-top w-5 text-gray-400"
+                        />
+                        <span class="text-green-500 font-semibold">135</span>
+                      </div>
+                      <small>Incoming</small>
                     </div>
-                    <small>Incoming</small>
-                  </div>
-                  <div class="flex flex-col items-center">
-                    <div>
-                      <ArrowSmUpIcon
-                        class="inline align-text-top w-5 text-gray-400"
-                      />
-                      <span class="text-red-500 font-semibold">3</span>
+                    <div class="flex flex-col items-center">
+                      <div>
+                        <ArrowSmUpIcon
+                          class="inline align-text-top w-5 text-gray-400"
+                        />
+                        <span class="text-red-500 font-semibold">3</span>
+                      </div>
+                      <small>Outgoing</small>
                     </div>
-                    <small>Outgoing</small>
                   </div>
-                </div>
-              </BriefStat>
-              <BriefStat title="Gas burned" value="4.1 Tgas">
-                <div class="flex"><near-symbol class="w-5" />&nbsp;0.00051</div>
-              </BriefStat>
-              <BriefStat title="Days with NEAR" value="34 days &#128588;">
-                <p>Since Jun 03, 2021</p>
-              </BriefStat>
+                </BriefStat>
+                <BriefStat title="Gas burned" value="4.1 Tgas">
+                  <div class="flex">
+                    <near-symbol class="w-5" />&nbsp;0.00041
+                  </div>
+                </BriefStat>
+                <BriefStat title="Days with NEAR" value="34 days &#128588;">
+                  <p>Since Jun 03, 2021</p>
+                </BriefStat>
+              </div>
             </div>
-          </div>
+          </template>
         </DashboardCard>
         <DashboardCard
           class="col-span-2 xl:col-span-1 order-7 md:order-none"
           title="Weekly Transaction Rate"
         >
-          <div class="flex flex-1">
-            <VChart
-              class="chart flex-shrink"
-              theme="light"
-              :option="weeklyTransactionRateOption"
-              autoresize
-            />
-          </div>
+          <template #help>
+            This is the number of transactions you've sent over the past 7 days.
+            Are you cookin', cruisin', or crawlin'?
+          </template>
+          <template #content>
+            <div class="flex flex-1">
+              <VChart
+                class="chart flex-shrink"
+                theme="light"
+                :option="weeklyTransactionRateOption"
+                autoresize
+              />
+            </div>
+          </template>
         </DashboardCard>
         <DashboardCard
           class="col-span-3 order-8 md:order-none"
@@ -429,8 +483,12 @@ import { TitleComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { ArrowSmDownIcon, ArrowSmUpIcon, XIcon } from 'heroicons-vue3/solid';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import VChart from 'vue-echarts';
+import Badge from './overview/badges/Badge.vue';
+import FunctionBadge from './overview/badges/FunctionBadge.vue';
+import NftBadge from './overview/badges/NftBadge.vue';
+import TransactionBadge from './overview/badges/TransactionBadge.vue';
 import BigChevron from './overview/BigChevron.vue';
 import BriefStat from './overview/BriefStat.vue';
 import DashboardCard from './overview/DashboardCard.vue';
@@ -465,9 +523,13 @@ export default defineComponent({
     ArrowSmUpIcon,
     BriefStat,
     VChart,
+    TransactionBadge,
+    NftBadge,
+    FunctionBadge,
+    Badge,
   },
   setup() {
-    const weeklyTransactionRateOption = useGaugeChart(ref(13));
+    const weeklyTransactionRateOption = useGaugeChart(ref(30));
 
     return {
       weeklyTransactionRateOption,
