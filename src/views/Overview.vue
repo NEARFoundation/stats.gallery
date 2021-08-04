@@ -7,74 +7,7 @@
         md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
       "
     >
-      <DashboardCard class="row-span-2 order-1 md:order-none" title="Score">
-        <template #help>
-          Track your activity across the network with a unified score. The more
-          you participate, the higher your score grows!
-        </template>
-        <template #default>
-          <div
-            class="
-              flex flex-col
-              items-center
-              p-3
-              space-y-4
-              justify-between
-              flex-grow
-            "
-          >
-            <div class="flex-grow flex justify-center items-center">
-              <div
-                class="
-                  text-2xl
-                  font-bold
-                  text-white
-                  bg-purple-700
-                  py-1
-                  px-4
-                  rounded-full
-                "
-              >
-                84
-              </div>
-            </div>
-            <div class="w-full flex flex-col space-y-4 items-center">
-              <h4 class="w-full font-medium">Recent earnings</h4>
-              <div class="w-full flex flex-col space-y-2">
-                <div class="flex">
-                  <div class="flex-grow">Transaction</div>
-                  <div class="text-green-500 font-bold">+1</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-grow">Buy an NFT</div>
-                  <div class="text-green-500 font-bold">+20</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-grow">Send NEAR</div>
-                  <div class="text-green-500 font-bold">+20</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-grow">Make your first transaction</div>
-                  <div class="text-green-500 font-bold">+20</div>
-                </div>
-              </div>
-              <button
-                class="
-                  mt-5
-                  cursor-pointer
-                  bg-gray-200
-                  hover:bg-gray-300
-                  px-2
-                  rounded-sm
-                  truncate
-                "
-              >
-                View scores
-              </button>
-            </div>
-          </div>
-        </template>
-      </DashboardCard>
+      <ScoreWidget class="row-span-2 order-1 md:order-none" />
       <DashboardCard class="row-span-1 order-2 md:order-none" title="Level">
         <template #help>
           Complete quests and earn points to increase your level. Try to reach
@@ -383,6 +316,7 @@ import DashboardCard from './overview/DashboardCard.vue';
 import DonutChart from './overview/DonutChart.vue';
 import EarnNear from './overview/EarnNear.vue';
 import Star from './overview/Star.vue';
+import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import Page from './Page.vue';
 
 use([CanvasRenderer, GaugeChart, TitleComponent]);
@@ -400,6 +334,7 @@ export default defineComponent({
     BriefStat,
     VChart,
     Page,
+    ScoreWidget,
   },
   setup() {
     const weeklyTransactionRateOption = useGaugeChart(ref(13));

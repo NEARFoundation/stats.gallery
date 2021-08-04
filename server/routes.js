@@ -10,6 +10,7 @@ const gasTokensSpentSql = require('./queries/gas-tokens-spent.sql');
 const newAccountsCountSql = require('./queries/new-accounts-count.sql');
 const newAccountsListSql = require('./queries/new-accounts-list.sql');
 const recentTransactionActionsSql = require('./queries/recent-transaction-actions.sql');
+const scoreSql = require('./queries/score.sql');
 const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
 const transactionCountSql = require('./queries/transaction-count.sql');
@@ -71,6 +72,10 @@ module.exports = [
   {
     path: 'recent-transaction-actions',
     query: recentTransactionActionsSql,
+  },
+  {
+    path: 'score',
+    query: scoreSql,
   },
   {
     path: 'top-accounts',

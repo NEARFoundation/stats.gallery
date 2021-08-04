@@ -1,8 +1,8 @@
 <template>
   <div class="flex">
     <input
-      :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      :value="modelValue.toLowerCase()"
+      @input="$emit('update:modelValue', $event.target.value.toLowerCase())"
       type="text"
       :class="[
         modelValue.length ? 'bg-white' : 'bg-gray-100',

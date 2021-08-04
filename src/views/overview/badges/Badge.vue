@@ -8,9 +8,11 @@
       <div class="text-gray-300">{{ description }}</div>
       <div class="text-sm">
         <span :class="rarityClass">{{ rarityName }}</span>
-        <span class="text-white"> &bull; </span>
-        <strong>{{ $filters.compactNumber(fraction * 100) }}%</strong> of
-        accounts have this achievement
+        <template v-if="fraction < 1">
+          <span class="text-white"> &bull; </span>
+          <strong>{{ $filters.compactNumber(fraction * 100) }}%</strong> of
+          accounts have this achievement
+        </template>
       </div>
     </template>
   </Tooltip>

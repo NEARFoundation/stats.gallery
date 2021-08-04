@@ -90,7 +90,7 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { SelectorIcon } from 'heroicons-vue3/outline';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, toRef, toRefs, watch } from 'vue';
 
 export default defineComponent({
   name: 'timeframe-input',
@@ -108,7 +108,7 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue'],
-  setup() {
+  setup(props, { emit }) {
     const timeframes = [
       {
         text: 'day',
@@ -132,7 +132,15 @@ export default defineComponent({
       },
     ];
 
-    const selected = ref(timeframes[3]);
+    const selected = ref(timeframes.find(t => t.value === props.modelValue)!);
+
+    watch(toRefs(props), () => {
+      selected.value = timeframes.find(t => t.value === props.modelValue)!;
+    });
+
+    watch(selected, () => {
+      emit('update:modelValue', selected.value.value);
+    });
 
     return {
       timeframes,

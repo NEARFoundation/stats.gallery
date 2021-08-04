@@ -34,7 +34,6 @@
           autosize
       /></DashboardCard>
       <DashboardCard title="Top 10 Receivers">
-        <span class="bg-purple-600"></span>
         <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
         <VChart
           v-else

@@ -5,7 +5,7 @@
       <h1
         class="font-display font-extrabold text-4xl md:text-5xl my-1 flex-grow"
       >
-        bloodninja.near
+        {{ account }}
       </h1>
 
       <div class="sr-only">Metrics</div>
@@ -39,7 +39,7 @@
         <Badge
           name="Join the party!"
           description="Send your first transaction"
-          :fraction="0.97"
+          :fraction="1"
         >
           <TransactionBadge class="w-8 h-8 text-pink-500" />
         </Badge>
@@ -107,6 +107,7 @@
 <script lang="ts">
 import Footer from '@/components/Footer.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
+import { useNear } from '@/composables/useNear';
 import { defineComponent } from 'vue';
 import Badge from './overview/badges/Badge.vue';
 import FunctionBadge from './overview/badges/FunctionBadge.vue';
@@ -136,7 +137,10 @@ export default defineComponent({
     Badge,
   },
   setup() {
+    const { account } = useNear();
+
     return {
+      account,
       OverviewIcon,
       StatsIcon,
       TransactionsIcon,

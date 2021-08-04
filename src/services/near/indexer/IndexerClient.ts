@@ -79,6 +79,10 @@ export class IndexerClient {
     return this.getSingle('transaction-count', params);
   }
 
+  public async getScore(params: RequestParams): Promise<number> {
+    return this.getSingle('score', params);
+  }
+
   public async getMultiple<T>(
     url: string,
     { account, before, after }: RequestParams,
