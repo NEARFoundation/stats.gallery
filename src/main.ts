@@ -4,17 +4,21 @@ import NearSymbol from '@/components/NearSymbol.vue';
 import QuestionMarkIcon from '@/components/QuestionMarkIcon.vue';
 import router from '@/router';
 import { timeframeToPastTimestamp } from '@/services/timeframe';
-import { compactNumber, standardNumber } from '@/utils/numberFormat';
+import { humanizeActionKind, humanizeLevel } from '@/utils/humanize';
 import {
   nearSymbol,
   nearTimestampToISO,
   nearTimestampToLocaleString,
   toNear,
 } from '@/utils/near';
+import {
+  compactNumber,
+  percentNumber,
+  standardNumber,
+} from '@/utils/numberFormat';
 import LogRocket from 'logrocket';
 import 'tailwindcss/tailwind.css';
 import { createApp } from 'vue';
-import { humanizeActionKind, humanizeLevel } from '@/utils/humanize';
 
 if (process.env['NODE_ENV'] === 'production') {
   LogRocket.init('near/statsgallery');
@@ -33,6 +37,7 @@ app.config.globalProperties = {
     number: {
       compact: compactNumber,
       standard: standardNumber,
+      percent: percentNumber,
     },
     humanize: {
       actionKind: humanizeActionKind,

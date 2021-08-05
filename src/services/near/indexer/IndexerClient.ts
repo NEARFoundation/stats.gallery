@@ -83,6 +83,15 @@ export class IndexerClient {
     return this.getSingle('score', params);
   }
 
+  public async getDistribution(): Promise<
+    Record<string, number> & { total: number }
+  > {
+    return axios({
+      baseURL: this.endpoint,
+      url: 'account-activity-distribution',
+    }).then(r => r.data[0]);
+  }
+
   public async getMultiple<T>(
     url: string,
     { account, before, after }: RequestParams,

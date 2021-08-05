@@ -9,49 +9,6 @@
     >
       <ScoreWidget class="row-span-2 order-1 md:order-none" />
       <LevelWidget class="row-span-1 order-2 md:order-none" />
-      <!-- <DashboardCard class="row-span-1 order-2 md:order-none" title="Level">
-        <template #help>
-          Complete quests and earn points to increase your level. Try to reach
-          the max!
-        </template>
-        <template #default>
-          <div
-            class="
-              flex flex-col
-              items-center
-              justify-center
-              flex-grow
-              p-3
-              space-y-2
-            "
-          >
-            <div class="flex space-x-2 items-center">
-              <Star class="text-blue-500">1</Star>
-              <div class="font-bold text-2xl">Beginner</div>
-            </div>
-            <div class="flex w-full items-center space-x-2">
-              <span class="text-gray-500 text-lg">84</span>
-              <div
-                class="
-                  flex-grow
-                  bg-gray-200
-                  h-2
-                  rounded-full
-                  relative
-                  flex
-                  overflow-hidden
-                "
-              >
-                <div
-                  class="bg-purple-500 rounded-full"
-                  style="width: 33%"
-                ></div>
-              </div>
-              <span class="text-gray-500 text-lg">500</span>
-            </div>
-          </div>
-        </template>
-      </DashboardCard> -->
       <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
         <template #help>
           Monitor your current balance of NEAR and review recent transactions.
@@ -120,7 +77,8 @@
           </div>
         </template>
       </DashboardCard>
-      <DashboardCard class="row-span-1 order-3 md:order-none" title="Rank">
+      <RankWidget class="row-span-1 order-3 md:order-none" />
+      <!-- <DashboardCard class="row-span-1 order-3 md:order-none" title="Rank">
         <template #help> How do you stack up against other accounts? </template>
         <template #default>
           <div
@@ -164,7 +122,7 @@
             </div>
           </div>
         </template>
-      </DashboardCard>
+      </DashboardCard> -->
       <div
         class="
           col-span-3
@@ -314,9 +272,9 @@ import VChart from 'vue-echarts';
 import BigChevron from './overview/BigChevron.vue';
 import BriefStat from './overview/BriefStat.vue';
 import DashboardCard from './overview/DashboardCard.vue';
-import DonutChart from './overview/DonutChart.vue';
 import EarnNear from './overview/EarnNear.vue';
 import LevelWidget from './overview/widgets/LevelWidget.vue';
+import RankWidget from './overview/widgets/RankWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import Page from './Page.vue';
 
@@ -325,7 +283,6 @@ use([CanvasRenderer, GaugeChart, TitleComponent]);
 export default defineComponent({
   components: {
     DashboardCard,
-    DonutChart,
     XIcon,
     BigChevron,
     EarnNear,
@@ -336,6 +293,7 @@ export default defineComponent({
     Page,
     ScoreWidget,
     LevelWidget,
+    RankWidget,
   },
   setup() {
     const weeklyTransactionRateOption = useGaugeChart(ref(13));
