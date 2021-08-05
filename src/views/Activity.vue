@@ -14,7 +14,7 @@
       <BigStat :isLoading="isLoading">
         <template #name>Gas Spent</template>
         <template #value>
-          {{ $filters.compactNumber(value) }}
+          {{ $filters.number.compact(value) }}
         </template>
       </BigStat>
     </SingleStatProvider>
@@ -29,7 +29,7 @@
         <template #name>NEAR Spent on Gas</template>
         <template #value>
           {{ nearSymbol }}&nbsp;{{
-            $filters.compactNumber($filters.toNear(value))
+            $filters.number.compact($filters.toNear(value))
           }}
         </template>
       </BigStat>
@@ -44,7 +44,7 @@
       <BigStat :isLoading="isLoading">
         <template #name>Transactions</template>
         <template #value>
-          {{ $filters.compactNumber(value) }}
+          {{ $filters.number.compact(value) }}
         </template>
       </BigStat>
     </SingleStatProvider>

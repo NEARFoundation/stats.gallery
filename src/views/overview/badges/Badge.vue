@@ -10,7 +10,7 @@
         <span :class="rarityClass">{{ rarityName }}</span>
         <template v-if="fraction < 1">
           <span class="text-white"> &bull; </span>
-          <strong>{{ $filters.compactNumber(fraction * 100) }}%</strong> of
+          <strong>{{ $filters.number.compact(fraction * 100) }}%</strong> of
           accounts have this achievement
         </template>
       </div>

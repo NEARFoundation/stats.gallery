@@ -27,7 +27,7 @@
               rounded-full
             "
           >
-            {{ score }}
+            {{ $filters.number.standard(score) }}
           </div>
         </div>
         <div class="w-full flex-grow flex flex-col space-y-4 items-center">
@@ -37,7 +37,9 @@
               <div class="flex-grow truncate">
                 {{ $filters.humanizeActionKind(action.actionKind) }}
               </div>
-              <div class="text-green-500 font-bold">+{{ action.score }}</div>
+              <div class="text-green-500 font-bold">
+                +{{ $filters.number.compact(action.score) }}
+              </div>
             </div>
             <div
               v-if="scoringActions.length === 0"

@@ -4,7 +4,7 @@ import NearSymbol from '@/components/NearSymbol.vue';
 import QuestionMarkIcon from '@/components/QuestionMarkIcon.vue';
 import router from '@/router';
 import { timeframeToPastTimestamp } from '@/services/timeframe';
-import { compactNumber } from '@/utils/compactNumber';
+import { compactNumber, standardNumber } from '@/utils/numberFormat';
 import {
   nearSymbol,
   nearTimestampToISO,
@@ -30,7 +30,10 @@ app.use(router).mount('#app');
 app.config.globalProperties = {
   nearSymbol,
   $filters: {
-    compactNumber,
+    number: {
+      compact: compactNumber,
+      standard: standardNumber,
+    },
     toNear,
     nearTimestampToLocaleString,
     nearTimestampToISO,
