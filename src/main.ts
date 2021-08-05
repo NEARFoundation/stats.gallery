@@ -14,7 +14,7 @@ import {
 import LogRocket from 'logrocket';
 import 'tailwindcss/tailwind.css';
 import { createApp } from 'vue';
-import { humanizeActionKind } from '@/utils/humanize';
+import { humanizeActionKind, humanizeLevel } from '@/utils/humanize';
 
 if (process.env['NODE_ENV'] === 'production') {
   LogRocket.init('near/statsgallery');
@@ -34,10 +34,13 @@ app.config.globalProperties = {
       compact: compactNumber,
       standard: standardNumber,
     },
+    humanize: {
+      actionKind: humanizeActionKind,
+      level: humanizeLevel,
+    },
     toNear,
     nearTimestampToLocaleString,
     nearTimestampToISO,
     timeframeToPastTimestamp,
-    humanizeActionKind,
   },
 };

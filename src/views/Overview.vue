@@ -8,7 +8,8 @@
       "
     >
       <ScoreWidget class="row-span-2 order-1 md:order-none" />
-      <DashboardCard class="row-span-1 order-2 md:order-none" title="Level">
+      <LevelWidget class="row-span-1 order-2 md:order-none" />
+      <!-- <DashboardCard class="row-span-1 order-2 md:order-none" title="Level">
         <template #help>
           Complete quests and earn points to increase your level. Try to reach
           the max!
@@ -50,7 +51,7 @@
             </div>
           </div>
         </template>
-      </DashboardCard>
+      </DashboardCard> -->
       <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
         <template #help>
           Monitor your current balance of NEAR and review recent transactions.
@@ -315,7 +316,7 @@ import BriefStat from './overview/BriefStat.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import DonutChart from './overview/DonutChart.vue';
 import EarnNear from './overview/EarnNear.vue';
-import Star from './overview/Star.vue';
+import LevelWidget from './overview/widgets/LevelWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import Page from './Page.vue';
 
@@ -324,7 +325,6 @@ use([CanvasRenderer, GaugeChart, TitleComponent]);
 export default defineComponent({
   components: {
     DashboardCard,
-    Star,
     DonutChart,
     XIcon,
     BigChevron,
@@ -335,6 +335,7 @@ export default defineComponent({
     VChart,
     Page,
     ScoreWidget,
+    LevelWidget,
   },
   setup() {
     const weeklyTransactionRateOption = useGaugeChart(ref(13));

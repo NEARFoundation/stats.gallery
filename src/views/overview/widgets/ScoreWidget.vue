@@ -35,7 +35,7 @@
           <div class="w-full flex-grow flex flex-col space-y-2">
             <div v-for="(action, i) in scoringActions" :key="i" class="flex">
               <div class="flex-grow truncate">
-                {{ $filters.humanizeActionKind(action.actionKind) }}
+                {{ $filters.humanize.actionKind(action.actionKind) }}
               </div>
               <div class="text-green-500 font-bold">
                 +{{ $filters.number.compact(action.score) }}
