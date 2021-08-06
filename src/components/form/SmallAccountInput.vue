@@ -3,6 +3,7 @@
     <input
       :value="modelValue.toLowerCase()"
       @input="$emit('update:modelValue', $event.target.value.toLowerCase())"
+      @keydown.enter="$emit('submit', $event.target.value.toLowerCase())"
       type="text"
       class="
         text-base text-black
@@ -53,7 +54,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'submit'],
   setup() {
     const isSuffixActive = ref(true);
 

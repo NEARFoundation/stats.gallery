@@ -39,7 +39,11 @@
           lg:w-auto
         "
       >
-        <SmallAccountInput class="w-full sm:w-48" v-model="displayedAccount" />
+        <SmallAccountInput
+          class="w-full sm:w-48"
+          v-model="displayedAccount"
+          @submit="update"
+        />
         <SmallTimeframeInput
           class="w-full sm:w-24"
           v-model="selectedTimeframe"
@@ -96,13 +100,6 @@ export default defineComponent({
       account.value = displayedAccount.value;
       network.value = selectedNetwork.value;
       timeframe.value = selectedTimeframe.value;
-
-      console.log(
-        displayedAccount.value,
-        selectedNetwork.value,
-        selectedTimeframe.value,
-      );
-      console.log(account.value, network.value, timeframe.value);
     };
 
     const theme = ref(false);
