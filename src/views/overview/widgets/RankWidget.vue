@@ -86,7 +86,6 @@ export default defineComponent({
         if (p) {
           const float = parseFloat(p);
           percentile.value = float;
-          console.log(float, distribution.total);
           ranking.value = ((1 - float) * distribution.total) | 0;
         }
       },

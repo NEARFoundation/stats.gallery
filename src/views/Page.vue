@@ -1,9 +1,16 @@
 <template>
   <CombinedTopBar :showIntake="true" />
-  <div class="p-3 mx-auto max-w-7xl flex flex-wrap">
-    <header class="lg:ml-64 xl:ml-80 w-full flex-grow flex flex-wrap">
+  <div class="p-3 mx-auto max-w-7xl flex flex-col">
+    <header class="lg:ml-64 xl:ml-80 flex-grow flex flex-wrap">
       <h1
-        class="font-display font-extrabold text-4xl md:text-5xl my-1 flex-grow"
+        class="
+          font-display font-extrabold
+          text-4xl
+          truncate
+          md:text-5xl
+          my-1
+          flex-grow
+        "
       >
         {{ account }}
       </h1>

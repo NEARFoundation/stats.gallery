@@ -9,7 +9,8 @@
     >
       <ScoreWidget class="row-span-2 order-1 md:order-none" />
       <LevelWidget class="row-span-1 order-2 md:order-none" />
-      <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
+      <BalanceWidget class="row-span-2 order-4 md:order-none" />
+      <!-- <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
         <template #help>
           Monitor your current balance of NEAR and review recent transactions.
         </template>
@@ -76,53 +77,8 @@
             </div>
           </div>
         </template>
-      </DashboardCard>
-      <RankWidget class="row-span-1 order-3 md:order-none" />
-      <!-- <DashboardCard class="row-span-1 order-3 md:order-none" title="Rank">
-        <template #help> How do you stack up against other accounts? </template>
-        <template #default>
-          <div
-            class="
-              flex
-              items-center
-              flex-grow
-              p-3
-              flex-row flex-wrap
-              justify-center
-            "
-          >
-            <div class="flex-grow">
-              <div class="text-2xl font-bold text-center">#123,456</div>
-              <div class="text-green-500 font-bold text-center">+2</div>
-            </div>
-            <div class="relative p-2">
-              <DonutChart
-                :fraction="0.05"
-                :trackThickness="20"
-                :thickness="20"
-                lineCap="round"
-                color="rgb(124, 58, 237)"
-                trackColor="rgb(226, 232, 240)"
-                class="w-20 h-20"
-              />
-              <div
-                class="
-                  absolute
-                  top-0
-                  left-0
-                  w-full
-                  h-full
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-                <div class="font-bold text-lg">5%</div>
-              </div>
-            </div>
-          </div>
-        </template>
       </DashboardCard> -->
+      <RankWidget class="row-span-1 order-3 md:order-none" />
       <div
         class="
           col-span-3
@@ -273,6 +229,7 @@ import BigChevron from './overview/BigChevron.vue';
 import BriefStat from './overview/BriefStat.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import EarnNear from './overview/EarnNear.vue';
+import BalanceWidget from './overview/widgets/BalanceWidget.vue';
 import LevelWidget from './overview/widgets/LevelWidget.vue';
 import RankWidget from './overview/widgets/RankWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
@@ -294,6 +251,7 @@ export default defineComponent({
     ScoreWidget,
     LevelWidget,
     RankWidget,
+    BalanceWidget,
   },
   setup() {
     const weeklyTransactionRateOption = useGaugeChart(ref(13));
