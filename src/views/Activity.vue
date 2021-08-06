@@ -35,7 +35,7 @@
       </BigStat>
     </SingleStatProvider>
     <SingleStatProvider
-      stat="transaction-count"
+      stat="sent-transaction-count"
       :account="account"
       :network="network"
       :timeframe="timeframe"

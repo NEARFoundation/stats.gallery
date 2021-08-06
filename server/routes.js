@@ -9,12 +9,13 @@ const gasSpentSql = require('./queries/gas-spent.sql');
 const gasTokensSpentSql = require('./queries/gas-tokens-spent.sql');
 const newAccountsCountSql = require('./queries/new-accounts-count.sql');
 const newAccountsListSql = require('./queries/new-accounts-list.sql');
+const receivedTransactionCountSql = require('./queries/received-transaction-count.sql');
 const recentTransactionActionsSql = require('./queries/recent-transaction-actions.sql');
 const scoreSql = require('./queries/score.sql');
+const sentTransactionCountSql = require('./queries/sent-transaction-count.sql');
+const topAccountsSql = require('./queries/top-accounts.sql');
 const totalReceivedSql = require('./queries/total-received.sql');
 const totalSentSql = require('./queries/total-sent.sql');
-const transactionCountSql = require('./queries/transaction-count.sql');
-const topAccountsSql = require('./queries/top-accounts.sql');
 
 const SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -70,12 +71,20 @@ module.exports = [
     poll: 10 * MINUTE,
   },
   {
+    path: 'received-transaction-count',
+    query: receivedTransactionCountSql,
+  },
+  {
     path: 'recent-transaction-actions',
     query: recentTransactionActionsSql,
   },
   {
     path: 'score',
     query: scoreSql,
+  },
+  {
+    path: 'sent-transaction-count',
+    query: sentTransactionCountSql,
   },
   {
     path: 'top-accounts',
@@ -89,9 +98,5 @@ module.exports = [
   {
     path: 'total-sent',
     query: totalSentSql,
-  },
-  {
-    path: 'transaction-count',
-    query: transactionCountSql,
   },
 ];

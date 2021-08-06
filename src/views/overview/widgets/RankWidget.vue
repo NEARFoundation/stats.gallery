@@ -69,7 +69,7 @@ export default defineComponent({
         total: 0,
       } as Await<ReturnType<typeof indexer.getDistribution>>,
     );
-    const { value: transactionCount } = useStat('transaction-count', 0, {
+    const { value: transactionCount } = useStat('sent-transaction-count', 0, {
       account,
       network,
       timeframe,

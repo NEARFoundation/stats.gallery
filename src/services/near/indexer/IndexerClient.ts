@@ -75,8 +75,8 @@ export class IndexerClient {
     return this.getSingle('gas-spent', params);
   }
 
-  public async getTransactionCount(params: RequestParams): Promise<number> {
-    return this.getSingle('transaction-count', params);
+  public async getSentTransactionCount(params: RequestParams): Promise<number> {
+    return this.getSingle('sent-transaction-count', params);
   }
 
   public async getScore(params: RequestParams): Promise<number> {

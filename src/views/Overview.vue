@@ -4,80 +4,14 @@
       class="
         flex-grow flex flex-col
         space-y-3
+        overflow-x-auto
+        pr-3
         md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
       "
     >
       <ScoreWidget class="row-span-2 order-1 md:order-none" />
       <LevelWidget class="row-span-1 order-2 md:order-none" />
       <BalanceWidget class="row-span-2 order-4 md:order-none" />
-      <!-- <DashboardCard class="row-span-2 order-4 md:order-none" title="Balance">
-        <template #help>
-          Monitor your current balance of NEAR and review recent transactions.
-        </template>
-        <template #default>
-          <div
-            class="
-              flex flex-col
-              items-center
-              p-3
-              space-y-4
-              justify-between
-              flex-grow
-            "
-          >
-            <div class="flex-grow flex flex-col justify-center items-center">
-              <div class="text-2xl font-bold flex py-1">
-                <near-symbol class="w-8 h-8" />&nbsp;583.2564
-              </div>
-              <div class="text-green-500 font-semibold flex py-1 items-center">
-                +23.256
-              </div>
-            </div>
-            <div class="w-full flex flex-col space-y-4 items-center">
-              <h4 class="w-full font-medium">Recent transfers</h4>
-              <div class="w-full flex flex-col space-y-2">
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @account.near
-                  </div>
-                  <div class="text-red-500 font-bold">&minus;151</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @anotheraccount.near
-                  </div>
-                  <div class="text-green-500 font-bold">+223.3245</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @earn.near
-                  </div>
-                  <div class="text-green-500 font-bold">+2000</div>
-                </div>
-                <div class="flex">
-                  <div class="flex-1 overflow-ellipsis overflow-hidden">
-                    @longaccountname.near
-                  </div>
-                  <div class="text-red-500 font-bold">&minus;1322.435</div>
-                </div>
-              </div>
-              <button
-                class="
-                  mt-5
-                  cursor-pointer
-                  bg-gray-200
-                  hover:bg-gray-300
-                  px-2
-                  rounded-sm
-                  truncate
-                "
-              >
-                View transfers
-              </button>
-            </div>
-          </div>
-        </template>
-      </DashboardCard> -->
       <RankWidget class="row-span-1 order-3 md:order-none" />
       <div
         class="
@@ -129,7 +63,8 @@
           </button>
         </div>
       </div>
-      <DashboardCard
+      <StatsWidget class="col-span-1 xl:col-span-2 order-6 md:order-none" />
+      <!-- <DashboardCard
         class="col-span-1 xl:col-span-2 order-6 md:order-none"
         title="Brief Stats"
       >
@@ -178,7 +113,7 @@
             </div>
           </div>
         </template>
-      </DashboardCard>
+      </DashboardCard> -->
       <DashboardCard
         class="col-span-2 xl:col-span-1 order-7 md:order-none"
         title="Weekly Transaction Rate"
@@ -222,17 +157,17 @@ import { GaugeChart } from 'echarts/charts';
 import { TitleComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { ArrowSmDownIcon, ArrowSmUpIcon, XIcon } from 'heroicons-vue3/solid';
+import { XIcon } from 'heroicons-vue3/solid';
 import { defineComponent, ref } from 'vue';
 import VChart from 'vue-echarts';
 import BigChevron from './overview/BigChevron.vue';
-import BriefStat from './overview/BriefStat.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import EarnNear from './overview/EarnNear.vue';
 import BalanceWidget from './overview/widgets/BalanceWidget.vue';
 import LevelWidget from './overview/widgets/LevelWidget.vue';
 import RankWidget from './overview/widgets/RankWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
+import StatsWidget from './overview/widgets/StatsWidget.vue';
 import Page from './Page.vue';
 
 use([CanvasRenderer, GaugeChart, TitleComponent]);
@@ -243,15 +178,13 @@ export default defineComponent({
     XIcon,
     BigChevron,
     EarnNear,
-    ArrowSmDownIcon,
-    ArrowSmUpIcon,
-    BriefStat,
     VChart,
     Page,
     ScoreWidget,
     LevelWidget,
     RankWidget,
     BalanceWidget,
+    StatsWidget,
   },
   setup() {
     const weeklyTransactionRateOption = useGaugeChart(ref(13));
