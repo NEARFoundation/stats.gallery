@@ -12,41 +12,20 @@
         block
         w-full
         outline-none
-        rounded-l-sm
-        border border-gray-300 border-r-0
+        rounded-sm
+        border border-gray-300
         p-2
         z-10
       "
       placeholder="account-name"
     />
-    <Switch
-      v-model="isSuffixActive"
-      class="
-        z-0
-        inline-flex
-        items-center
-        px-2
-        rounded-r-sm
-        border border-gray-300
-        text-base text-gray-500
-        bg-gray-100
-      "
-    >
-      <span class="sr-only">Use .near suffix</span>
-      <span v-if="isSuffixActive" aria-hidden="true">.near</span>
-      <span v-else aria-hidden="true"><s>.near</s></span>
-    </Switch>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { Switch } from '@headlessui/vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  components: {
-    Switch,
-  },
   name: 'account-input',
   props: {
     modelValue: {
@@ -55,12 +34,5 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue', 'submit'],
-  setup() {
-    const isSuffixActive = ref(true);
-
-    return {
-      isSuffixActive,
-    };
-  },
 });
 </script>

@@ -64,75 +64,9 @@
         </div>
       </div>
       <StatsWidget class="col-span-1 xl:col-span-2 order-6 md:order-none" />
-      <!-- <DashboardCard
-        class="col-span-1 xl:col-span-2 order-6 md:order-none"
-        title="Brief Stats"
-      >
-        <template #help>
-          A quick look at your account across time. What a journey!
-        </template>
-        <template #default>
-          <div class="flex-grow flex items-center">
-            <div
-              class="
-                flex-grow flex flex-col
-                items-center
-                sm:flex-row sm:items-start
-                flex-wrap
-                justify-around
-              "
-            >
-              <BriefStat title="Transactions sent" value="138">
-                <div class="flex justify-between self-stretch">
-                  <div class="flex flex-col items-center">
-                    <div>
-                      <ArrowSmDownIcon
-                        class="inline align-text-top w-5 text-gray-400"
-                      />
-                      <span class="text-green-500 font-semibold">135</span>
-                    </div>
-                    <small>Incoming</small>
-                  </div>
-                  <div class="flex flex-col items-center">
-                    <div>
-                      <ArrowSmUpIcon
-                        class="inline align-text-top w-5 text-gray-400"
-                      />
-                      <span class="text-red-500 font-semibold">3</span>
-                    </div>
-                    <small>Outgoing</small>
-                  </div>
-                </div>
-              </BriefStat>
-              <BriefStat title="Gas burned" value="4.1 Tgas">
-                <div class="flex"><near-symbol class="w-5" />&nbsp;0.00041</div>
-              </BriefStat>
-              <BriefStat title="Days with NEAR" value="34 days &#128588;">
-                <p>Since Jun 03, 2021</p>
-              </BriefStat>
-            </div>
-          </div>
-        </template>
-      </DashboardCard> -->
-      <DashboardCard
+      <TransactionRateWidget
         class="col-span-2 xl:col-span-1 order-7 md:order-none"
-        title="Weekly Transaction Rate"
-      >
-        <template #help>
-          This is the number of transactions you've sent over the past 7 days.
-          Are you cookin', cruisin', or crawlin'?
-        </template>
-        <template #default>
-          <div class="flex flex-1">
-            <VChart
-              class="chart flex-shrink"
-              theme="light"
-              :option="weeklyTransactionRateOption"
-              autoresize
-            />
-          </div>
-        </template>
-      </DashboardCard>
+      />
       <DashboardCard
         class="col-span-3 order-8 md:order-none"
         title="Transaction History"
@@ -152,14 +86,12 @@
 </style>
 
 <script lang="ts">
-import { useGaugeChart } from '@/composables/charts/useGaugeChart';
 import { GaugeChart } from 'echarts/charts';
 import { TitleComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { XIcon } from 'heroicons-vue3/solid';
-import { defineComponent, ref } from 'vue';
-import VChart from 'vue-echarts';
+import { defineComponent } from 'vue';
 import BigChevron from './overview/BigChevron.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import EarnNear from './overview/EarnNear.vue';
@@ -168,6 +100,7 @@ import LevelWidget from './overview/widgets/LevelWidget.vue';
 import RankWidget from './overview/widgets/RankWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import StatsWidget from './overview/widgets/StatsWidget.vue';
+import TransactionRateWidget from './overview/widgets/TransactionRateWidget.vue';
 import Page from './Page.vue';
 
 use([CanvasRenderer, GaugeChart, TitleComponent]);
@@ -178,20 +111,13 @@ export default defineComponent({
     XIcon,
     BigChevron,
     EarnNear,
-    VChart,
     Page,
     ScoreWidget,
     LevelWidget,
     RankWidget,
     BalanceWidget,
     StatsWidget,
-  },
-  setup() {
-    const weeklyTransactionRateOption = useGaugeChart(ref(13));
-
-    return {
-      weeklyTransactionRateOption,
-    };
+    TransactionRateWidget,
   },
 });
 </script>
