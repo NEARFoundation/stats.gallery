@@ -2,7 +2,8 @@ import { usePromise } from '@/composables/usePromise';
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
-import { Ref, WatchSource } from 'vue';
+import { deref, OptionalRef } from '@/utils/deref';
+import { isRef, Ref, WatchSource } from 'vue';
 
 // De-duplicate requests within one second
 const requestExpirationTimeout = 1000;
@@ -15,14 +16,12 @@ function requestId(
     network,
     timeframe,
   }: {
-    account: Ref<string>;
-    network: Ref<Network>;
-    timeframe: Ref<Timeframe>;
+    account: string;
+    network: Network;
+    timeframe: Timeframe;
   },
 ): string {
-  return [stat, account.value, network.value, timeframe.value]
-    .map(s => btoa(s))
-    .join('-');
+  return [stat, account, network, timeframe].map(s => btoa(s)).join('-');
 }
 
 export function useStat<T>(
@@ -33,16 +32,20 @@ export function useStat<T>(
     network,
     timeframe,
   }: {
-    account: Ref<string>;
-    network: Ref<Network>;
-    timeframe: Ref<Timeframe>;
+    account: OptionalRef<string>;
+    network: OptionalRef<Network>;
+    timeframe: OptionalRef<Timeframe>;
   },
 ): {
   value: Ref<T>;
   isLoading: Ref<boolean>;
 } {
   const f: () => Promise<T> = () => {
-    const rid = requestId(stat, { account, network, timeframe });
+    const rid = requestId(stat, {
+      account: deref(account),
+      network: deref(network),
+      timeframe: deref(timeframe),
+    });
     // Check if we have already made the request (in the past `requestExpirationTimeout` ms)
     const savedRequest = requests.get(rid);
 
@@ -50,9 +53,9 @@ export function useStat<T>(
       return savedRequest as Promise<T>;
     } else {
       // Actually make the request
-      const request = IndexerClient.from(network.value).getSingle<T>(stat, {
-        account: account.value,
-        after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
+      const request = IndexerClient.from(deref(network)).getSingle<T>(stat, {
+        account: deref(account),
+        after: timeframeToPastTimestamp(deref(timeframe)) * 1_000_000,
         before: Date.now() * 1_000_000,
       });
 
@@ -71,7 +74,7 @@ export function useStat<T>(
   };
 
   const { value, isLoading } = usePromise(
-    [account, network, timeframe] as WatchSource[],
+    [account, network, timeframe].filter(w => isRef(w)) as WatchSource[],
     f,
     defaultValue,
   );

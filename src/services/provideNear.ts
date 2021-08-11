@@ -5,6 +5,7 @@ import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { provide, reactive, Ref, watch } from 'vue';
+import { Timeframe } from './timeframe';
 
 export const NEAR_ACCOUNT = Symbol('near_account');
 export const NEAR_NETWORK = Symbol('near_network');
@@ -15,6 +16,7 @@ export const NEAR_TIMEFRAME = Symbol('near_timeframe');
 export function provideNear(): {
   account: Ref<string>;
   network: Ref<Network>;
+  timeframe: Ref<Timeframe>;
   indexer: IndexerClient;
   rpc: RpcClient;
 } {
@@ -34,48 +36,10 @@ export function provideNear(): {
     rpc.network = newNetwork;
   });
 
-  // const route = useRoute();
-  // const router = useRouter();
-
-  // watch([account, network, timeframe], () => {
-  //   if (route.matched[0]) {
-  //     const { path } = route.matched[0];
-  //     if (path.includes(':account') || path.includes(':network')) {
-  //       router.push(
-  //         path
-  //           .replace(':network', network.value)
-  //           .replace(':account', account.value) +
-  //           '?t=' +
-  //           timeframe.value,
-  //       );
-  //     } else if (account.value) {
-  //       router.push(`/${network.value}/${account.value}?t=${timeframe.value}`);
-  //     }
-  //   }
-  // });
-
-  // watch(
-  //   route,
-  //   () => {
-  //     if (route.matched[0] && !route.query['t']) {
-  //       const { path } = route.matched[0];
-  //       if (path.includes(':account') || path.includes(':network')) {
-  //         router.replace(
-  //           path
-  //             .replace(':network', network.value)
-  //             .replace(':account', account.value) +
-  //             '?t=' +
-  //             timeframe.value,
-  //         );
-  //       }
-  //     }
-  //   },
-  //   { immediate: true },
-  // );
-
   return {
     account,
     network,
+    timeframe,
     indexer,
     rpc,
   };

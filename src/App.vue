@@ -14,14 +14,15 @@ import { useTitle } from '@/composables/useTitle';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { defineComponent, ref, watch } from 'vue';
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute, useRouter } from 'vue-router';
+import { useScore } from './composables/useScore';
 
 export default defineComponent({
   components: {
     RouterView,
   },
   setup() {
-    const { account, network, rpc } = provideNear();
+    const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
 
     // Account exists RPC call watcher
@@ -50,14 +51,59 @@ export default defineComponent({
     const titleSuffix = ' - near stats.gallery';
 
     useTitle(route => {
+      const suffix = route.meta.noTitleSuffix ? '' : titleSuffix;
       if (typeof route.meta.title === 'function') {
-        return (route.meta.title as RouteTitleGenerator)(route) + titleSuffix;
+        return (route.meta.title as RouteTitleGenerator)(route) + suffix;
       } else {
-        return (route.meta.title as string) + titleSuffix;
+        return (route.meta.title as string) + suffix;
       }
     });
 
-    return { account, accountExists };
+    const route = useRoute();
+    const router = useRouter();
+
+    watch([account, network, timeframe], () => {
+      if (route.matched[0]) {
+        const { path } = route.matched[0];
+        if (path.includes(':account') || path.includes(':network')) {
+          router.push(
+            path
+              .replace(':network', network.value)
+              .replace(':account', account.value) +
+              '?t=' +
+              timeframe.value,
+          );
+        } else if (account.value) {
+          router.push(
+            `/${network.value}/${account.value}?t=${timeframe.value}`,
+          );
+        }
+      }
+    });
+
+    watch(
+      route,
+      () => {
+        if (route.matched[0] && !route.query['t']) {
+          const { path } = route.matched[0];
+          if (path.includes(':account') || path.includes(':network')) {
+            router.replace(
+              path
+                .replace(':network', network.value)
+                .replace(':account', account.value) +
+                '?t=' +
+                timeframe.value,
+            );
+          }
+        }
+      },
+      { immediate: true },
+    );
+
+    return {
+      account,
+      accountExists,
+    };
   },
 });
 </script>

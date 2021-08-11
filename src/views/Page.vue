@@ -17,7 +17,9 @@
 
       <div class="sr-only">Metrics</div>
       <div class="self-center flex space-x-3">
-        <Star class="text-blue-500">1</Star>
+        <Star class="text-blue-500">{{
+          $filters.number.standard(accountLevel.level)
+        }}</Star>
         <div
           class="
             py-1
@@ -30,12 +32,14 @@
             font-bold
           "
         >
-          84
+          {{ $filters.number.standard(score) }}
         </div>
         <div
           class="py-1 px-4 bg-white rounded-full flex justify-center font-bold"
         >
-          <near-symbol class="w-5" />&nbsp;583.2564
+          <near-symbol class="w-5" />&nbsp;{{
+            $filters.number.standard(+$filters.toNear(view.amount))
+          }}
         </div>
       </div>
 
@@ -75,34 +79,34 @@
           pr-4
         "
       >
-        <SectionLink to="/overview" :icon="OverviewIcon" name="Overview" />
-        <SectionLink to="/stats" :icon="StatsIcon" name="Stats" />
+        <SectionLink to="./overview" :icon="OverviewIcon" name="Overview" />
+        <SectionLink to="./stats" :icon="StatsIcon" name="Stats" />
         <SectionLink
-          to="/transactions"
+          to="./transactions"
           :icon="TransactionsIcon"
           name="Transactions"
         />
-        <SectionLink to="/quests" :icon="QuestsIcon" name="Quests" />
+        <SectionLink to="./quests" :icon="QuestsIcon" name="Quests" />
         <SectionLink
-          to="/leaderboards"
+          to="./leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
         />
         <hr class="w-64" />
         <SectionLink
-          to="/exchange"
+          to="./exchange"
           :icon="ExchangeIcon"
           name="Exchange NEAR"
           external
         />
-        <SectionLink to="/send" :icon="SendIcon" name="Send NEAR" external />
+        <SectionLink to="./send" :icon="SendIcon" name="Send NEAR" external />
         <SectionLink
-          to="/receive"
+          to="./receive"
           :icon="ReceiveIcon"
           name="Receive NEAR"
           external
         />
-        <SectionLink to="/nft" :icon="NftIcon" name="Buy NFT" external />
+        <SectionLink to="./nft" :icon="NftIcon" name="Buy NFT" external />
       </nav>
 
       <slot />
@@ -114,7 +118,9 @@
 <script lang="ts">
 import Footer from '@/components/Footer.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
+import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
+import { useScore } from '@/composables/useScore';
 import { defineComponent } from 'vue';
 import Badge from './overview/badges/Badge.vue';
 import FunctionBadge from './overview/badges/FunctionBadge.vue';
@@ -144,10 +150,27 @@ export default defineComponent({
     Badge,
   },
   setup() {
-    const { account } = useNear();
+    const { account, network, timeframe } = useNear();
+    const { view } = useAccountView({
+      account,
+      network,
+      finality: 'final',
+    });
+    const {
+      score,
+      accountLevel,
+      isLoading: isScoreLoading,
+    } = useScore({
+      account,
+      network,
+      timeframe,
+    });
 
     return {
       account,
+      view,
+      score,
+      accountLevel,
       OverviewIcon,
       StatsIcon,
       TransactionsIcon,

@@ -72,6 +72,7 @@
 import { useNear } from '@/composables/useNear';
 import { useRecentActions } from '@/composables/useRecentActions';
 import { useStat } from '@/composables/useStat';
+import { useScore } from '@/composables/useScore';
 import { ActionKind } from '@/services/near/indexer/types';
 import { getActionScore } from '@/utils/score';
 import { defineComponent, ref, watch } from 'vue';
@@ -81,7 +82,7 @@ export default defineComponent({
   components: { DashboardCard },
   setup() {
     const { account, network, timeframe } = useNear();
-    const { value: score, isLoading: isScoreLoading } = useStat('score', 0, {
+    const { score, isLoading: isScoreLoading } = useScore({
       account,
       network,
       timeframe,

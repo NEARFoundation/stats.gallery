@@ -56,9 +56,8 @@
 
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
-import { useStat } from '@/composables/useStat';
-import { AccountLevel, currentLevel } from '@/utils/level';
-import { defineComponent, ref, watch } from 'vue';
+import { useScore } from '@/composables/useScore';
+import { defineComponent } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
 import Star from '../Star.vue';
 
@@ -66,24 +65,11 @@ export default defineComponent({
   components: { DashboardCard, Star },
   setup() {
     const { account, network, timeframe } = useNear();
-    const { value: score, isLoading: isScoreLoading } = useStat('score', 0, {
+    const { accountLevel, isLoading: isScoreLoading } = useScore({
       account,
       network,
       timeframe,
     });
-    const accountLevel = ref({
-      level: 0,
-      requiredToNextLevel: 0,
-      creditToNextLevel: 0,
-    } as AccountLevel);
-
-    watch(
-      score,
-      score => {
-        accountLevel.value = currentLevel(score);
-      },
-      { immediate: true },
-    );
 
     return {
       accountLevel,
