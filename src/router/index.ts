@@ -1,5 +1,6 @@
 import About from '@/views/About.vue';
 import Overview from '@/views/Overview.vue';
+import Quests from '@/views/Quests.vue';
 import Stats from '@/views/Stats.vue';
 import Transactions from '@/views/Transactions.vue';
 import {
@@ -58,6 +59,16 @@ const routes: Array<RouteRecordRaw> = [
       title: <RouteTitleGenerator>(
         (route =>
           `${route.params.account}'s ${route.params.network} transactions`)
+      ),
+    },
+  },
+  {
+    path: '/:network/:account/quests',
+    name: 'quests',
+    component: Quests,
+    meta: {
+      title: <RouteTitleGenerator>(
+        (route => `${route.params.account}'s ${route.params.network} quests`)
       ),
     },
   },

@@ -3,6 +3,10 @@ const accountActivityDistributionSql = require('./queries/account-activity-distr
 const accountCreationSql = require('./queries/account-creation.sql');
 const accountRelationStrengthSql = require('./queries/account-relation-strength.sql');
 const actionsSql = require('./queries/actions.sql');
+const badgeDeploySql = require('./queries/badge-deploy.sql');
+const badgeNftSql = require('./queries/badge-nft.sql');
+const badgeStakeSql = require('./queries/badge-stake.sql');
+const badgeTransferSql = require('./queries/badge-transfer.sql');
 const distinctSendersSql = require('./queries/distinct-senders.sql');
 const distinctReceiversSql = require('./queries/distinct-receivers.sql');
 const gasSpentSql = require('./queries/gas-spent.sql');
@@ -43,6 +47,22 @@ module.exports = [
   {
     path: 'actions',
     query: actionsSql,
+  },
+  {
+    path: 'badge-deploy',
+    query: badgeDeploySql,
+  },
+  {
+    path: 'badge-nft',
+    query: badgeNftSql,
+  },
+  {
+    path: 'badge-stake',
+    query: badgeStakeSql,
+  },
+  {
+    path: 'badge-transfer',
+    query: badgeTransferSql,
   },
   {
     path: 'distinct-receivers',

@@ -116,16 +116,16 @@
 </template>
 
 <script lang="ts">
+import Badge from '@/components/badges/BadgeTooltip.vue';
+import FunctionBadge from '@/components/badges/FunctionBadge.vue';
+import NftBadge from '@/components/badges/NftBadge.vue';
+import TransactionBadge from '@/components/badges/TransactionBadge.vue';
 import Footer from '@/components/Footer.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
 import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
 import { useScore } from '@/composables/useScore';
 import { defineComponent } from 'vue';
-import Badge from './overview/badges/Badge.vue';
-import FunctionBadge from './overview/badges/FunctionBadge.vue';
-import NftBadge from './overview/badges/NftBadge.vue';
-import TransactionBadge from './overview/badges/TransactionBadge.vue';
 import ExchangeIcon from './overview/icons/ExchangeIcon.vue';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
