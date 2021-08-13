@@ -1,6 +1,7 @@
 import About from '@/views/About.vue';
 import Overview from '@/views/Overview.vue';
 import Stats from '@/views/Stats.vue';
+import Transactions from '@/views/Transactions.vue';
 import {
   createRouter,
   createWebHistory,
@@ -46,6 +47,17 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: <RouteTitleGenerator>(
         (route => `${route.params.account}'s ${route.params.network} stats`)
+      ),
+    },
+  },
+  {
+    path: '/:network/:account/transactions',
+    name: 'transactions',
+    component: Transactions,
+    meta: {
+      title: <RouteTitleGenerator>(
+        (route =>
+          `${route.params.account}'s ${route.params.network} transactions`)
       ),
     },
   },
