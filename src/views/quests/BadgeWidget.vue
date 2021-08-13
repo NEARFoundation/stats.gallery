@@ -1,7 +1,7 @@
 <template>
   <BadgeCard
-    :icon="icon"
-    :iconClass="iconClass"
+    :icon="icon[badge.group]"
+    :iconClass="iconClass[badge.group]"
     :name="badge.name"
     :description="badge.description"
     :fraction="badge.rarityFraction"
@@ -14,8 +14,8 @@ import BadgeCard from '@/components/badges/BadgeCard.vue';
 import FunctionBadge from '@/components/badges/FunctionBadge.vue';
 import NftBadge from '@/components/badges/NftBadge.vue';
 import TransactionBadge from '@/components/badges/TransactionBadge.vue';
-import { IBadgeDescriptor } from '@/composables/badges/badges';
-import { Component, defineComponent, ref, watch } from 'vue';
+import { BadgeGroup, IBadgeDescriptor } from '@/composables/badges/badges';
+import { Component, defineComponent } from 'vue';
 
 export default defineComponent({
   components: {
@@ -31,34 +31,20 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
-    const icon = ref(null as Component);
-    const iconClass = ref('');
+  setup() {
+    const icon: Record<BadgeGroup, Component> = {
+      nft: NftBadge,
+      transfer: TransactionBadge,
+      contract: FunctionBadge,
+      stake: FunctionBadge,
+    };
 
-    watch(
-      props,
-      ({ badge }) => {
-        switch (badge.group) {
-          case 'nft':
-            icon.value = NftBadge;
-            iconClass.value = 'text-blue-500';
-            break;
-          case 'transfer':
-            icon.value = TransactionBadge;
-            iconClass.value = 'text-red-500';
-            break;
-          case 'contract':
-            icon.value = FunctionBadge;
-            iconClass.value = 'text-green-500';
-            break;
-          case 'stake':
-            icon.value = FunctionBadge;
-            iconClass.value = 'text-purple-500';
-            break;
-        }
-      },
-      { immediate: true },
-    );
+    const iconClass: Record<BadgeGroup, string> = {
+      nft: 'text-blue-500',
+      transfer: 'text-red-500',
+      contract: 'text-green-500',
+      stake: 'text-purple-500',
+    };
 
     return {
       icon,
