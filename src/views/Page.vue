@@ -82,11 +82,11 @@
           name="Transactions"
         />
         <SectionLink to="./quests" :icon="QuestsIcon" name="Quests" />
-        <SectionLink
+        <!-- <SectionLink
           to="./leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
-        />
+        /> -->
         <hr class="w-64" />
         <SectionLink
           to="https://learnnear.club/"
@@ -113,7 +113,7 @@
               p-3
               border-gray-300 border-2 border-dashed
               rounded-md
-              flex flex-col
+              flex flex-wrap
               justify-center
               items-center
               font-medium
@@ -123,12 +123,37 @@
             <strong>Have a suggestion?</strong>
             <p>Share your experience!</p>
             <a
+              href="https://forms.gle/VsuVJsqdChBuhDdM7"
+              target="_blank"
+              rel="noreferrer"
+              class="
+                whitespace-nowrap
+                m-1
+                border-2 border-gray-400
+                px-3
+                py-1
+                rounded-md
+                font-medium
+                flex
+                items-center
+                space-x-2
+                hover:bg-gray-400 hover:bg-opacity-10
+                focus:outline-none
+                focus:ring-2
+                focus:ring-offset-2
+                focus:ring-gray-500
+              "
+            >
+              <AnnotationIcon class="w-4 h-4" />
+              <span>Feedback</span>
+            </a>
+            <a
               href="https://github.com/NEAR-Edu/stats.gallery/issues/new/choose"
               target="_blank"
               rel="noreferrer"
               class="
                 whitespace-nowrap
-                mt-3
+                m-1
                 border-2 border-gray-400
                 px-3
                 py-1
@@ -145,7 +170,7 @@
               "
             >
               <ContactIcon class="w-4 h-4" />
-              <span>Feedback</span>
+              <span>Reports</span>
             </a>
           </div>
         </div>
@@ -175,7 +200,11 @@ import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
 import { useScore } from '@/composables/useScore';
-import { AcademicCapIcon, ClockIcon } from 'heroicons-vue3/solid';
+import {
+  AcademicCapIcon,
+  ClockIcon,
+  AnnotationIcon,
+} from 'heroicons-vue3/solid';
 import { defineComponent, ref, watch } from 'vue';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
@@ -194,6 +223,7 @@ export default defineComponent({
     Star,
     BadgeTooltip,
     ContactIcon,
+    AnnotationIcon,
   },
   setup() {
     const { account, network, timeframe } = useNear();
