@@ -1,4 +1,12 @@
 <template>
+  <div
+    class="w-full hidden md:flex justify-center bg-white"
+    v-if="!!bannerImagePath"
+  >
+    <a :href="bannerHref" target="_blank" rel="noreferrer">
+      <img class="max-h-12" :src="bannerImagePath" alt="Announcement banner" />
+    </a>
+  </div>
   <nav class="bg-white p-6">
     <div
       class="
@@ -104,12 +112,17 @@ export default defineComponent({
 
     const theme = ref(false);
 
+    const bannerImagePath = process.env['VUE_APP_BANNER_IMAGE_PATH'];
+    const bannerHref = process.env['VUE_APP_BANNER_HREF'];
+
     return {
       displayedAccount,
       selectedNetwork,
       selectedTimeframe,
       update,
       theme,
+      bannerImagePath,
+      bannerHref,
     };
   },
 });
