@@ -1,13 +1,6 @@
 <template>
   <Popover v-slot="{ open }" class="sm:relative">
-    <PopoverButton
-      class="
-        focus:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-white
-        focus-visible:ring-opacity-75
-      "
-    >
+    <PopoverButton>
       <slot name="trigger" :open="open" />
     </PopoverButton>
     <transition

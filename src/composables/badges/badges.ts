@@ -41,7 +41,7 @@ export const badges: IBadgeDescriptor[] = [
     composable: createBadgeComposable('badge-transfer', 100),
   },
   {
-    name: '+cash flow',
+    name: 'ca$h flow',
     description: 'Stake tokens with a validator',
     rarityFraction: 0.038507,
     group: 'stake',
