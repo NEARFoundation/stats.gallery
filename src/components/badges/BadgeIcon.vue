@@ -1,0 +1,82 @@
+<template>
+  <div class="relative">
+    <component :is="icon[group]" :class="iconClass[group]"></component>
+    <!--
+      Note: using transform/scale instead of border/ring because the component
+      may be different sizes, and while relative widths & heights (e.g. w-1/4)
+      will scale dynamically, borders etc. with fixed widths will not.
+      This method also renders better.
+    -->
+    <div
+      v-if="gildClass !== ''"
+      class="
+        absolute
+        -bottom-1
+        right-0
+        rounded-full
+        bg-white
+        w-1/4
+        h-1/4
+        transform
+        scale-150
+      "
+    ></div>
+    <div
+      v-if="gildClass !== ''"
+      class="
+        absolute
+        -bottom-1
+        right-0
+        rounded-full
+        bg-gradient-to-br
+        from-white
+        w-1/4
+        h-1/4
+        transform
+        scale-110
+      "
+      :class="gildClass"
+    ></div>
+  </div>
+</template>
+
+<script lang="ts">
+import { BadgeGroup } from '@/composables/badges/badges';
+import { Component, defineComponent } from 'vue';
+import FunctionBadgeVue from './FunctionBadge.vue';
+import NftBadgeVue from './NftBadge.vue';
+import TransactionBadgeVue from './TransactionBadge.vue';
+
+export default defineComponent({
+  props: {
+    group: {
+      type: String as () => BadgeGroup,
+      required: true,
+    },
+    gildClass: {
+      type: String,
+      default: '',
+    },
+  },
+  setup() {
+    const icon: Record<BadgeGroup, Component> = {
+      nft: NftBadgeVue,
+      transfer: TransactionBadgeVue,
+      contract: FunctionBadgeVue,
+      stake: FunctionBadgeVue,
+    };
+
+    const iconClass: Record<BadgeGroup, string> = {
+      nft: 'text-blue-500',
+      transfer: 'text-red-500',
+      contract: 'text-green-500',
+      stake: 'text-purple-500',
+    };
+
+    return {
+      icon,
+      iconClass,
+    };
+  },
+});
+</script>

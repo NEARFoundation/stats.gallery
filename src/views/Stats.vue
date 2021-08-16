@@ -1,49 +1,47 @@
 <template>
-  <Page>
-    <main class="flex-grow flex flex-col space-y-3">
-      <DashboardCard title="Balance History">
-        <BalanceHistoryLoader
-          v-if="viewsIsLoading || actionsIsLoading"
-          class="chart"
-        />
-        <VChart
-          v-else
-          class="chart"
-          theme="light"
-          :option="balanceHistoryOption"
-          autosize
-        />
-      </DashboardCard>
-      <DashboardCard title="Action Types">
-        <PieChartLoader v-if="actionsIsLoading" class="chart" />
-        <VChart
-          v-else
-          class="chart"
-          theme="light"
-          :option="actionTypeOption"
-          autosize
-        />
-      </DashboardCard>
-      <DashboardCard title="Top 10 Senders">
-        <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
-        <VChart
-          v-else
-          class="chart"
-          theme="light"
-          :option="topIncomingOption"
-          autosize
-      /></DashboardCard>
-      <DashboardCard title="Top 10 Receivers">
-        <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
-        <VChart
-          v-else
-          class="chart"
-          theme="light"
-          :option="topOutgoingOption"
-          autosize
-      /></DashboardCard>
-    </main>
-  </Page>
+  <main class="flex-grow flex flex-col space-y-3">
+    <DashboardCard title="Balance History">
+      <BalanceHistoryLoader
+        v-if="viewsIsLoading || actionsIsLoading"
+        class="chart"
+      />
+      <VChart
+        v-else
+        class="chart"
+        theme="light"
+        :option="balanceHistoryOption"
+        autosize
+      />
+    </DashboardCard>
+    <DashboardCard title="Action Types">
+      <PieChartLoader v-if="actionsIsLoading" class="chart" />
+      <VChart
+        v-else
+        class="chart"
+        theme="light"
+        :option="actionTypeOption"
+        autosize
+      />
+    </DashboardCard>
+    <DashboardCard title="Top 10 Senders">
+      <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
+      <VChart
+        v-else
+        class="chart"
+        theme="light"
+        :option="topIncomingOption"
+        autosize
+    /></DashboardCard>
+    <DashboardCard title="Top 10 Receivers">
+      <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
+      <VChart
+        v-else
+        class="chart"
+        theme="light"
+        :option="topOutgoingOption"
+        autosize
+    /></DashboardCard>
+  </main>
 </template>
 
 <style scoped>
@@ -73,7 +71,6 @@ import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import VChart from 'vue-echarts';
 import DashboardCard from './overview/DashboardCard.vue';
-import Page from './Page.vue';
 
 use([
   CanvasRenderer,
@@ -90,7 +87,6 @@ export default defineComponent({
     BalanceHistoryLoader,
     PieChartLoader,
     HorizontalBarChartLoader,
-    Page,
     DashboardCard,
   },
   setup() {

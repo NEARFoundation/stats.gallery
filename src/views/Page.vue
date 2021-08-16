@@ -47,23 +47,14 @@
 
       <div class="sr-only">Badges</div>
       <div class="flex space-x-1">
-        <Badge
-          name="Join the party!"
-          description="Send your first transaction"
-          :fraction="1"
-        >
-          <TransactionBadge class="w-8 h-8 text-pink-500" />
-        </Badge>
-        <Badge name="One-of-a-kind" description="Buy an NFT" :fraction="0.0081">
-          <NftBadge class="w-8 h-8 text-blue-500" />
-        </Badge>
-        <Badge
-          name="Up and away!"
-          description="Deploy a contract"
-          :fraction="0.0006"
-        >
-          <FunctionBadge class="w-8 h-8 text-yellow-500" />
-        </Badge>
+        <BadgeTooltip
+          v-for="badge in badgeGroups"
+          :key="badge.name"
+          :name="badge.name"
+          :description="badge.description"
+          :fraction="badge.rarityFraction"
+          :group="badge.group"
+        />
       </div>
     </header>
 
@@ -110,22 +101,29 @@
       </nav>
 
       <slot />
+      <router-view></router-view>
     </div>
   </div>
   <Footer />
 </template>
 
 <script lang="ts">
-import Badge from '@/components/badges/BadgeTooltip.vue';
+import BadgeTooltip from '@/components/badges/BadgeTooltip.vue';
 import FunctionBadge from '@/components/badges/FunctionBadge.vue';
 import NftBadge from '@/components/badges/NftBadge.vue';
 import TransactionBadge from '@/components/badges/TransactionBadge.vue';
 import Footer from '@/components/Footer.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
+import {
+  BadgeGroup,
+  badges,
+  IBadgeDescriptor,
+} from '@/composables/badges/badges';
+import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
 import { useScore } from '@/composables/useScore';
-import { defineComponent } from 'vue';
+import { Component, defineComponent, ref, watch } from 'vue';
 import ExchangeIcon from './overview/icons/ExchangeIcon.vue';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
@@ -144,10 +142,7 @@ export default defineComponent({
     CombinedTopBar,
     SectionLink,
     Star,
-    TransactionBadge,
-    NftBadge,
-    FunctionBadge,
-    Badge,
+    BadgeTooltip,
   },
   setup() {
     const { account, network, timeframe } = useNear();
@@ -166,11 +161,36 @@ export default defineComponent({
       timeframe,
     });
 
+    const { achievedBadges } = useAchievedBadges({ account, network });
+    const badgeGroups = ref([] as IBadgeDescriptor[]);
+
+    const findBestBadgeInGroup = (
+      group: BadgeGroup,
+      achievedBadges: Set<IBadgeDescriptor>,
+    ) => {
+      for (let i = badges.length - 1; i >= 0; i--) {
+        const b = badges[i];
+        if (b.group === group && achievedBadges.has(b)) {
+          return b;
+        }
+      }
+    };
+
+    watch(achievedBadges, achievedBadges => {
+      const nft = findBestBadgeInGroup('nft', achievedBadges) ?? [];
+      const transfer = findBestBadgeInGroup('transfer', achievedBadges) ?? [];
+      const contract = findBestBadgeInGroup('contract', achievedBadges) ?? [];
+      const stake = findBestBadgeInGroup('stake', achievedBadges) ?? [];
+
+      badgeGroups.value = [nft, transfer, stake, contract].flat();
+    });
+
     return {
       account,
       view,
       score,
       accountLevel,
+      badgeGroups,
       OverviewIcon,
       StatsIcon,
       TransactionsIcon,
@@ -180,6 +200,9 @@ export default defineComponent({
       SendIcon,
       ReceiveIcon,
       NftIcon,
+      TransactionBadge,
+      FunctionBadge,
+      NftBadge,
     };
   },
 });

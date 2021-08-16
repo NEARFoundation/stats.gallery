@@ -1,7 +1,7 @@
 <template>
   <Tooltip>
     <template #trigger>
-      <slot />
+      <BadgeIcon :group="group" :gildClass="gildClass" class="w-8 h-8" />
     </template>
     <template #content>
       <h5 class="text-lg font-medium">{{ name }}</h5>
@@ -53,11 +53,17 @@
 
 <script lang="ts">
 import Tooltip from '@/components/Tooltip.vue';
+import { BadgeGroup } from '@/composables/badges/badges';
 import { defineComponent, ref, watch } from 'vue';
+import BadgeIcon from './BadgeIcon.vue';
 
 export default defineComponent({
-  components: { Tooltip },
+  components: { Tooltip, BadgeIcon },
   props: {
+    group: {
+      type: String as () => BadgeGroup,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -74,6 +80,7 @@ export default defineComponent({
   setup(props) {
     const rarityClass = ref('');
     const rarityName = ref('');
+    const gildClass = ref('');
 
     watch(
       props,
@@ -81,21 +88,27 @@ export default defineComponent({
         if (props.fraction <= 0.0001) {
           rarityName.value = 'Legendary';
           rarityClass.value = 'font-medium rainbow';
+          gildClass.value = 'to-gray-900';
         } else if (props.fraction <= 0.001) {
           rarityName.value = 'Epic';
           rarityClass.value = 'text-purple-300';
+          gildClass.value = 'to-purple-500';
         } else if (props.fraction <= 0.01) {
           rarityName.value = 'Super Rare';
           rarityClass.value = 'text-blue-300';
+          gildClass.value = 'to-blue-500';
         } else if (props.fraction <= 0.1) {
           rarityName.value = 'Rare';
           rarityClass.value = 'text-yellow-300';
+          gildClass.value = 'to-yellow-500';
         } else if (props.fraction <= 0.25) {
           rarityName.value = 'Uncommon';
           rarityClass.value = 'text-green-300';
+          gildClass.value = 'to-green-500';
         } else {
           rarityName.value = 'Common';
           rarityClass.value = 'text-gray-300';
+          gildClass.value = '';
         }
       },
       { immediate: true },
@@ -104,6 +117,7 @@ export default defineComponent({
     return {
       rarityName,
       rarityClass,
+      gildClass,
     };
   },
 });

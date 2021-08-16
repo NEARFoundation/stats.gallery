@@ -1,41 +1,34 @@
 <template>
-  <Page>
-    <main class="flex-grow flex flex-col space-y-3">
-      <h2 class="text-2xl text-gray-600 font-medium">
-        Collect achievements and get rewarded!
-      </h2>
+  <main class="flex-grow flex flex-col space-y-3">
+    <h2 class="text-2xl text-gray-600 font-medium">
+      Collect achievements and get rewarded!
+    </h2>
+    <div
+      class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"
+      style="grid-auto-rows: 1fr"
+    >
+      <BadgeWidget
+        v-for="(badge, i) in badges"
+        :key="i"
+        :badge="badge"
+        :achieved="achievedBadges.has(badge)"
+      />
       <div
         class="
-          grid grid-flow-row grid-cols-1
-          md:grid-cols-2
-          xl:grid-cols-3
-          gap-3
+          flex
+          justify-center
+          items-center
+          p-3
+          border-2 border-gray-300 border-dashed
+          rounded-md
         "
-        style="grid-auto-rows: 1fr"
       >
-        <BadgeWidget
-          v-for="(badge, i) in badges"
-          :key="i"
-          :badge="badge"
-          :achieved="achievedBadges.has(badge)"
-        />
-        <div
-          class="
-            flex
-            justify-center
-            items-center
-            p-3
-            border-2 border-gray-300 border-dashed
-            rounded-md
-          "
-        >
-          <p class="font-medium text-lg text-gray-400 text-center">
-            New achievements coming soon&hellip;
-          </p>
-        </div>
+        <p class="font-medium text-lg text-gray-400 text-center">
+          New achievements coming soon&hellip;
+        </p>
       </div>
-    </main>
-  </Page>
+    </div>
+  </main>
 </template>
 
 <style scoped>
@@ -52,12 +45,10 @@ import { badges } from '@/composables/badges/badges';
 import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useNear } from '@/composables/useNear';
 import { defineComponent } from 'vue';
-import Page from './Page.vue';
 import BadgeWidget from './quests/BadgeWidget.vue';
 
 export default defineComponent({
   components: {
-    Page,
     BadgeWidget,
   },
   setup() {

@@ -21,7 +21,7 @@ export const badges: IBadgeDescriptor[] = [
   },
   {
     name: 'Join the party!',
-    description: 'Transfer tokens for the first time',
+    description: 'Perform a token transfer',
     rarityFraction: 0.44491,
     group: 'transfer',
     composable: createBadgeComposable('badge-transfer', 1),
@@ -42,14 +42,14 @@ export const badges: IBadgeDescriptor[] = [
   },
   {
     name: '+cash flow',
-    description: 'Stake NEAR tokens with a validator',
+    description: 'Stake tokens with a validator',
     rarityFraction: 0.038507,
     group: 'stake',
     composable: createBadgeComposable('badge-stake'),
   },
   {
     name: 'I am Web 3',
-    description: 'Deploy your first smart contract',
+    description: 'Deploy a smart contract',
     rarityFraction: 0.011375,
     group: 'contract',
     composable: createBadgeComposable('badge-deploy'),

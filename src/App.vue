@@ -84,17 +84,20 @@ export default defineComponent({
     watch(
       route,
       () => {
-        if (route.matched[0] && !route.query['t']) {
-          const { path } = route.matched[0];
-          if (path.includes(':account') || path.includes(':network')) {
-            router.replace(
-              path
-                .replace(':network', network.value)
-                .replace(':account', account.value) +
-                '?t=' +
-                timeframe.value,
-            );
-          }
+        const match = route.matched[route.matched.length - 1];
+        if (match && !route.query['t']) {
+          // const { path } = match;
+          // console.log(route.query);
+          // const params = new URLSearchParams(route.query);
+          // if (path.includes(':account') || path.includes(':network')) {
+          //   router.replace(
+          //     path
+          //       .replace(':network', network.value)
+          //       .replace(':account', account.value) +
+          //       '?t=' +
+          //       timeframe.value,
+          //   );
+          // }
         }
       },
       { immediate: true },

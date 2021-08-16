@@ -1,118 +1,116 @@
 <template>
-  <Page>
-    <main class="flex-grow flex flex-col space-y-3">
-      <DashboardCard title="Transactions">
-        <div class="flex flex-col space-y-3 p-3">
-          <!-- aggregate stats wrapper -->
-          <div class="flex flex-col md:flex-row space-x-3">
-            <!-- header + legend wrapper -->
-            <div class="flex-grow flex flex-col items-center space-y-3 my-24">
-              <!-- # transactions header -->
-              <h3 class="text-2xl font-bold">
-                {{ $filters.number.standard(actions.length) }} transaction{{
-                  actions.length !== 1 ? 's' : ''
-                }}
-              </h3>
-              <!-- legend -->
-              <div class="flex space-x-3 w-64">
-                <div class="w-10 h-6 bg-yellow-400 rounded"></div>
-                <span class="flex-grow">Incoming</span>
-                <span class="font-bold">{{
-                  $filters.number.standard(incoming)
-                }}</span>
-              </div>
-              <div class="flex space-x-3 w-64">
-                <div class="w-10 h-6 bg-blue-600 rounded"></div>
-                <span class="flex-grow">Outgoing</span>
-                <span class="font-bold">{{
-                  $filters.number.standard(outgoing)
-                }}</span>
-              </div>
+  <main class="flex-grow flex flex-col space-y-3">
+    <DashboardCard title="Transactions">
+      <div class="flex flex-col space-y-3 p-3">
+        <!-- aggregate stats wrapper -->
+        <div class="flex flex-col md:flex-row space-x-3">
+          <!-- header + legend wrapper -->
+          <div class="flex-grow flex flex-col items-center space-y-3 my-24">
+            <!-- # transactions header -->
+            <h3 class="text-2xl font-bold">
+              {{ $filters.number.standard(actions.length) }} transaction{{
+                actions.length !== 1 ? 's' : ''
+              }}
+            </h3>
+            <!-- legend -->
+            <div class="flex space-x-3 w-64">
+              <div class="w-10 h-6 bg-yellow-400 rounded"></div>
+              <span class="flex-grow">Incoming</span>
+              <span class="font-bold">{{
+                $filters.number.standard(incoming)
+              }}</span>
             </div>
-            <VChart
-              class="chart max-w-md"
-              theme="light"
-              :option="transactionTypeOption"
-              autosize
-            />
+            <div class="flex space-x-3 w-64">
+              <div class="w-10 h-6 bg-blue-600 rounded"></div>
+              <span class="flex-grow">Outgoing</span>
+              <span class="font-bold">{{
+                $filters.number.standard(outgoing)
+              }}</span>
+            </div>
           </div>
-          <!-- show filter -->
-          <div class="flex justify-end items-center space-x-2">
-            <span class="font-medium">Show:</span>
-            <ToggleButton
-              :modelValue="showFilter === 'all'"
-              @update:modelValue="showFilter = 'all'"
-              >All</ToggleButton
-            >
-            <ToggleButton
-              :modelValue="showFilter === 'incoming'"
-              @update:modelValue="showFilter = 'incoming'"
-              >Incoming</ToggleButton
-            >
-            <ToggleButton
-              :modelValue="showFilter === 'outgoing'"
-              @update:modelValue="showFilter = 'outgoing'"
-              >Outgoing</ToggleButton
-            >
-            <ToggleButton
-              :modelValue="showFilter === 'function_call'"
-              @update:modelValue="showFilter = 'function_call'"
-              >Function Call</ToggleButton
-            >
-          </div>
-          <!-- tx groups list wrapper -->
-          <div class="flex flex-col space-y-3">
-            <Disclosure
-              as="div"
-              v-for="group in groupedByDate"
-              :key="group.date"
-              class="flex flex-col"
-              defaultOpen
-            >
-              <DisclosureButton as="h4" class="flex">
-                <button
-                  class="
-                    flex-grow
-                    text-left
-                    cursor-pointer
-                    text-lg
-                    font-bold
-                    bg-gray-200
-                    hover:bg-gray-300
-                    rounded-md
-                    p-3
-                    border border-transparent
-                    focus:outline-none
-                    focus:ring-2
-                    focus:ring-offset-2
-                    focus:ring-gray-500
-                  "
-                >
-                  {{ group.dateText }}
-                </button>
-              </DisclosureButton>
-              <transition
-                enter-active-class="transition duration-100 ease-out"
-                enter-from-class="transform scale-95 opacity-0"
-                enter-to-class="transform scale-100 opacity-100"
-                leave-active-class="transition duration-75 ease-out"
-                leave-from-class="transform scale-100 opacity-100"
-                leave-to-class="transform scale-95 opacity-0"
-              >
-                <DisclosurePanel
-                  class="flex flex-col divide-y divide-gray-100 mt-2"
-                >
-                  <template v-for="(action, i) in group.actions" :key="i">
-                    <ActionLine v-if="filterAction(action)" :action="action" />
-                  </template>
-                </DisclosurePanel>
-              </transition>
-            </Disclosure>
-          </div>
+          <VChart
+            class="chart max-w-md"
+            theme="light"
+            :option="transactionTypeOption"
+            autosize
+          />
         </div>
-      </DashboardCard>
-    </main>
-  </Page>
+        <!-- show filter -->
+        <div class="flex justify-end items-center space-x-2">
+          <span class="font-medium">Show:</span>
+          <ToggleButton
+            :modelValue="showFilter === 'all'"
+            @update:modelValue="showFilter = 'all'"
+            >All</ToggleButton
+          >
+          <ToggleButton
+            :modelValue="showFilter === 'incoming'"
+            @update:modelValue="showFilter = 'incoming'"
+            >Incoming</ToggleButton
+          >
+          <ToggleButton
+            :modelValue="showFilter === 'outgoing'"
+            @update:modelValue="showFilter = 'outgoing'"
+            >Outgoing</ToggleButton
+          >
+          <ToggleButton
+            :modelValue="showFilter === 'function_call'"
+            @update:modelValue="showFilter = 'function_call'"
+            >Function Call</ToggleButton
+          >
+        </div>
+        <!-- tx groups list wrapper -->
+        <div class="flex flex-col space-y-3">
+          <Disclosure
+            as="div"
+            v-for="group in groupedByDate"
+            :key="group.date"
+            class="flex flex-col"
+            defaultOpen
+          >
+            <DisclosureButton as="h4" class="flex">
+              <button
+                class="
+                  flex-grow
+                  text-left
+                  cursor-pointer
+                  text-lg
+                  font-bold
+                  bg-gray-200
+                  hover:bg-gray-300
+                  rounded-md
+                  p-3
+                  border border-transparent
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-offset-2
+                  focus:ring-gray-500
+                "
+              >
+                {{ group.dateText }}
+              </button>
+            </DisclosureButton>
+            <transition
+              enter-active-class="transition duration-100 ease-out"
+              enter-from-class="transform scale-95 opacity-0"
+              enter-to-class="transform scale-100 opacity-100"
+              leave-active-class="transition duration-75 ease-out"
+              leave-from-class="transform scale-100 opacity-100"
+              leave-to-class="transform scale-95 opacity-0"
+            >
+              <DisclosurePanel
+                class="flex flex-col divide-y divide-gray-100 mt-2"
+              >
+                <template v-for="(action, i) in group.actions" :key="i">
+                  <ActionLine v-if="filterAction(action)" :action="action" />
+                </template>
+              </DisclosurePanel>
+            </transition>
+          </Disclosure>
+        </div>
+      </div>
+    </DashboardCard>
+  </main>
 </template>
 
 <style scoped></style>
@@ -130,14 +128,12 @@ import { DateTime } from 'luxon';
 import { defineComponent, ref, watch } from 'vue';
 import VChart from 'vue-echarts';
 import DashboardCard from './overview/DashboardCard.vue';
-import Page from './Page.vue';
 import ActionLine from './transactions/ActionLine.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 
 export default defineComponent({
   components: {
     DashboardCard,
-    Page,
     VChart,
     ToggleButton,
     ActionLine,

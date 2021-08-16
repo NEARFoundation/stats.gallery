@@ -29,7 +29,7 @@
       </span>
     </div>
     <div class="flex space-x-3 flex-grow">
-      <component :is="icon" :class="iconClass" class="w-12 h-12" />
+      <BadgeIcon :group="group" :gildClass="gildClass" class="w-12 h-12" />
       <div class="flex flex-col">
         <h4 class="font-bold text-lg">{{ name }}</h4>
         <p>{{ description }}</p>
@@ -51,7 +51,7 @@
     >
     <p v-if="fraction < 1" class="text-gray-600 text-sm mt-1">
       <strong>{{ $filters.number.compact(fraction * 100) }}%</strong> of users
-      have this achievement
+      have unlocked
     </p>
   </div>
 </template>
@@ -97,12 +97,15 @@
 </style>
 
 <script lang="ts">
+import { BadgeGroup } from '@/composables/badges/badges';
 import { CheckIcon } from 'heroicons-vue3/solid';
-import { Component, defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+import BadgeIcon from './BadgeIcon.vue';
 
 export default defineComponent({
   components: {
     CheckIcon,
+    BadgeIcon,
   },
   props: {
     name: {
@@ -117,13 +120,9 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    icon: {
-      type: Object as () => Component,
-      // required: true,
-    },
-    iconClass: {
-      type: String,
-      default: '',
+    group: {
+      type: String as () => BadgeGroup,
+      required: true,
     },
     achieved: {
       type: Boolean,
@@ -133,6 +132,7 @@ export default defineComponent({
   setup(props) {
     const rarityClass = ref('');
     const rarityName = ref('');
+    const gildClass = ref('');
 
     watch(
       props,
@@ -140,21 +140,27 @@ export default defineComponent({
         if (props.fraction <= 0.0001) {
           rarityName.value = 'Legendary';
           rarityClass.value = 'rainbow';
+          gildClass.value = 'to-gray-900';
         } else if (props.fraction <= 0.001) {
           rarityName.value = 'Epic';
           rarityClass.value = 'bg-purple-500';
+          gildClass.value = 'to-purple-500';
         } else if (props.fraction <= 0.01) {
           rarityName.value = 'Super Rare';
           rarityClass.value = 'bg-blue-500';
+          gildClass.value = 'to-blue-500';
         } else if (props.fraction <= 0.1) {
           rarityName.value = 'Rare';
           rarityClass.value = 'bg-yellow-500';
+          gildClass.value = 'to-yellow-500';
         } else if (props.fraction <= 0.25) {
           rarityName.value = 'Uncommon';
           rarityClass.value = 'bg-green-600';
+          gildClass.value = 'to-green-500';
         } else {
           rarityName.value = 'Common';
           rarityClass.value = 'text-gray-500 ring-1 ring-gray-300';
+          gildClass.value = '';
         }
       },
       { immediate: true },
@@ -163,6 +169,7 @@ export default defineComponent({
     return {
       rarityName,
       rarityClass,
+      gildClass,
     };
   },
 });
