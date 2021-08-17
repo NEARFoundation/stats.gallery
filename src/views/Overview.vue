@@ -3,7 +3,6 @@
     class="
       flex-grow flex flex-col
       space-y-3
-      overflow-x-auto
       pr-3
       md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
     "
@@ -63,11 +62,12 @@
     <StatsWidget class="col-span-1 xl:col-span-2 order-6 md:order-none" />
     <TransactionRateWidget
       class="col-span-2 xl:col-span-1 order-7 md:order-none"
+      style="min-height: 200px"
     />
-    <DashboardCard
+    <!-- <DashboardCard
       class="col-span-3 order-8 md:order-none"
       title="Transaction History"
-    ></DashboardCard>
+    ></DashboardCard> -->
   </main>
 </template>
 
@@ -89,7 +89,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { XIcon } from 'heroicons-vue3/solid';
 import { defineComponent } from 'vue';
 import BigChevron from './overview/BigChevron.vue';
-import DashboardCard from './overview/DashboardCard.vue';
 import EarnNear from './overview/EarnNear.vue';
 import BalanceWidget from './overview/widgets/BalanceWidget.vue';
 import LevelWidget from './overview/widgets/LevelWidget.vue';
@@ -102,7 +101,6 @@ use([CanvasRenderer, GaugeChart, TitleComponent]);
 
 export default defineComponent({
   components: {
-    DashboardCard,
     XIcon,
     BigChevron,
     EarnNear,
