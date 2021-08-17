@@ -20,23 +20,11 @@
     <div class="flex-grow flex flex-wrap items-center">
       <div class="flex-grow font-medium">
         {{ $filters.humanize.actionKind(action.action_kind) }}
-        <template v-if="otherAccount !== null">
-          <span class="text-gray-400">@</span>
-          <a
-            :href="'../' + otherAccount"
-            class="
-              align-bottom
-              inline-block
-              truncate
-              max-w-xs
-              text-blue-700
-              underline
-              hover:text-blue-500
-            "
-          >
-            {{ otherAccount }}
-          </a>
-        </template>
+        <account-link
+          v-if="otherAccount !== null"
+          :account="otherAccount"
+          class="truncate inline-block align-bottom max-w-xs"
+        />
       </div>
       <template v-if="nearValue !== null">
         <div v-if="incoming" class="font-bold text-green-500 flex items-center">

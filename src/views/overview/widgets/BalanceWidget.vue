@@ -18,7 +18,9 @@
         </template>
         <template #default>
           <template v-for="(transfer, i) in transfers" :key="i">
-            <span class="truncate">@{{ transfer.account }}</span>
+            <div class="truncate">
+              <account-link :account="transfer.account" />
+            </div>
             <div v-if="transfer.incoming" class="text-green-500 font-bold">
               +{{
                 $filters.number.standard(
