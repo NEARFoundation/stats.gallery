@@ -43,8 +43,9 @@
 <script lang="ts">
 import { BadgeGroup } from '@/composables/badges/badges';
 import { Component, defineComponent } from 'vue';
-import FunctionBadgeVue from './FunctionBadge.vue';
+import ContractBadgeVue from './ContractBadge.vue';
 import NftBadgeVue from './NftBadge.vue';
+import StakeBadgeVue from './StakeBadge.vue';
 import TransactionBadgeVue from './TransactionBadge.vue';
 
 export default defineComponent({
@@ -62,14 +63,14 @@ export default defineComponent({
     const icon: Record<BadgeGroup, Component> = {
       nft: NftBadgeVue,
       transfer: TransactionBadgeVue,
-      contract: FunctionBadgeVue,
-      stake: FunctionBadgeVue,
+      contract: ContractBadgeVue,
+      stake: StakeBadgeVue,
     };
 
     const iconClass: Record<BadgeGroup, string> = {
       nft: 'text-blue-500',
       transfer: 'text-red-500',
-      contract: 'text-green-500',
+      contract: 'text-green-700',
       stake: 'text-purple-500',
     };
 
