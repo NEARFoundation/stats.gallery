@@ -20,7 +20,7 @@
           class="dark:hidden sm:dark:hidden hidden sm:block h-5 mr-3"
           src="@/assets/near_brand.svg"
         />
-        <NearLogo class="h-12" />
+        <NearLogo class="hidden dark:block h-12" />
         <div class="italic font-medium text-lg whitespace-nowrap">
           stats gallery
         </div>
