@@ -58,8 +58,9 @@
           <div
             class="
               w-full
-              sm:my-8 sm:align-middle sm:max-w-lg sm:w-auto sm:p-6
-              lg:max-w-2xl
+              sm:my-8 sm:align-middle sm:max-w-screen-sm sm:w-auto sm:p-6
+              md:max-w-screen-md
+              lg:max-w-screen-lg
               inline-block
               align-bottom
               bg-gray-50
@@ -68,7 +69,7 @@
               pt-5
               pb-4
               text-left
-              overflow-hidden
+              overflow-auto
               shadow-xl
               transform
               transition-all

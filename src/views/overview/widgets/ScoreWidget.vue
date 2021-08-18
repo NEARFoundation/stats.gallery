@@ -6,7 +6,7 @@
     </template>
     <template #action>
       <button
-        @click="modalOpen = true"
+        @click="helpModalOpen = true"
         class="
           px-2
           py-1
@@ -28,6 +28,7 @@
         listTitle="Recent earnings"
         buttonText="View scores"
         :empty="scoringActions.length === 0"
+        @expand="viewModalOpen = true"
       >
         <template #header>
           <div
@@ -45,7 +46,7 @@
           </div>
         </template>
         <template #default>
-          <template v-for="(action, i) in scoringActions" :key="i">
+          <template v-for="(action, i) in scoringActions.slice(0, 4)" :key="i">
             <div class="truncate">
               {{ $filters.humanize.actionKind(action.actionKind) }}
             </div>
@@ -56,8 +57,8 @@
         </template>
       </HeaderListButtonTemplate>
       <Modal
-        :open="modalOpen"
-        @close="modalOpen = false"
+        :open="helpModalOpen"
+        @close="helpModalOpen = false"
         title="How to earn points"
       >
         <p>
@@ -79,6 +80,62 @@
           </tbody>
         </table>
       </Modal>
+      <Modal
+        :open="viewModalOpen"
+        @close="viewModalOpen = false"
+        title="Scores"
+      >
+        <p>
+          Total score: <strong>{{ $filters.number.standard(score) }}</strong>
+        </p>
+        <table class="whitespace-nowrap">
+          <thead>
+            <tr>
+              <th>Transaction Type</th>
+              <th>Sender</th>
+              <th>Receiver</th>
+              <th>Points</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(entry, i) in scoringActions" :key="i">
+              <td>{{ $filters.humanize.actionKind(entry.actionKind) }}</td>
+              <td class="truncate" style="max-width: 200px">
+                {{ entry.action.signer_account_id }}
+              </td>
+              <td class="truncate" style="max-width: 200px">
+                {{ entry.action.receiver_account_id }}
+              </td>
+              <td class="text-green-600 font-bold">+{{ entry.score }}</td>
+              <td class="italic">
+                <a
+                  :href="
+                    networks[network].explorer +
+                    '/transactions/' +
+                    entry.action.transaction_hash
+                  "
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <time
+                    :datetime="
+                      $filters.nearTimestampToISO(entry.action.block_timestamp)
+                    "
+                  >
+                    {{
+                      $filters.nearTimestampToLocaleString(
+                        entry.action.block_timestamp,
+                        DateTime.DATETIME_MED,
+                      )
+                    }}
+                  </time>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Modal>
     </template>
   </DashboardCard>
 </template>
@@ -88,8 +145,13 @@ import Modal from '@/components/Modal.vue';
 import { useNear } from '@/composables/useNear';
 import { useRecentActions } from '@/composables/useRecentActions';
 import { useScore } from '@/composables/useScore';
-import { ActionKind } from '@/services/near/indexer/types';
+import { networks } from '@/services/near/indexer/networks';
+import {
+  ActionKind,
+  UnifiedTransactionAction,
+} from '@/services/near/indexer/types';
 import { getActionScore } from '@/utils/score';
+import { DateTime } from 'luxon';
 import { defineComponent, ref, watch } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
 import HeaderListButtonTemplate from './HeaderListButtonTemplate.vue';
@@ -114,7 +176,11 @@ export default defineComponent({
     });
 
     const scoringActions = ref(
-      [] as { actionKind: ActionKind; score: number }[],
+      [] as {
+        actionKind: ActionKind;
+        score: number;
+        action: UnifiedTransactionAction;
+      }[],
     );
 
     watch([actions, account], ([actions, account]) => {
@@ -122,12 +188,12 @@ export default defineComponent({
         .map(action => ({
           actionKind: action.action_kind,
           score: getActionScore(action, account),
+          action,
         }))
-        .filter(a => a.score > 0)
-        .slice(0, 4);
+        .filter(a => a.score > 0);
     });
 
-    const modalOpen = ref(false);
+    const helpModalOpen = ref(false);
 
     const scoreTable: {
       name: string;
@@ -155,6 +221,8 @@ export default defineComponent({
       },
     ];
 
+    const viewModalOpen = ref(false);
+
     return {
       getActionScore,
       account,
@@ -163,8 +231,12 @@ export default defineComponent({
       actions,
       isActionsLoading,
       scoringActions,
-      modalOpen,
+      helpModalOpen,
       scoreTable,
+      viewModalOpen,
+      DateTime,
+      network,
+      networks,
     };
   },
 });
