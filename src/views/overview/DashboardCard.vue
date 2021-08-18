@@ -3,7 +3,6 @@
     <header
       class="
         bg-gray-50
-        py-2
         px-3
         border-b-2 border-gray-200
         rounded-t-md
@@ -11,7 +10,9 @@
         items-center
       "
     >
-      <span class="text-lg text-gray-800 font-bold truncate">{{ title }}</span>
+      <span class="py-2 text-lg text-gray-800 font-bold truncate">{{
+        title
+      }}</span>
       <Tooltip v-if="!!$slots.help">
         <template #trigger>
           <question-mark-icon
@@ -22,6 +23,12 @@
           <slot name="help" />
         </template>
       </Tooltip>
+      <template v-if="!!$slots.action">
+        <div class="flex-1 self-stretch flex items-center px-1 truncate">
+          <div class="flex-1"></div>
+          <slot name="action" />
+        </div>
+      </template>
     </header>
     <slot />
   </div>

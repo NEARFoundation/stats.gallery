@@ -3,6 +3,26 @@
     <template #help>
       Monitor your current balance of NEAR and review recent transactions.
     </template>
+    <template #action>
+      <a
+        href="https://wallet.near.org/"
+        target="_blank"
+        rel="noreferrer"
+        class="
+          text-sm
+          font-medium
+          underline
+          text-purple-700
+          hover:text-purple-500
+          inline-flex
+          items-center
+          whitespace-nowrap
+        "
+      >
+        <span>Open wallet</span>
+        <external-link-icon class="ml-1 text-gray-400" />
+      </a>
+    </template>
     <template #default>
       <HeaderListButtonTemplate
         listTitle="Recent transfers"
