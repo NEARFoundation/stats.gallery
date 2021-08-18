@@ -14,6 +14,11 @@ import IntakeHero from './about/IntakeHero.vue';
 import Overview from './about/Overview.vue';
 
 export default defineComponent({
-  components: { IntakeHero, Overview, TopBar, Footer },
+  components: {
+    IntakeHero,
+    Overview,
+    TopBar,
+    Footer,
+  },
 });
 </script>

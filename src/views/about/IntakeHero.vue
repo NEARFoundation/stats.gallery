@@ -1,5 +1,6 @@
 <template>
-  <div class="py-16 lg:py-64 flex flex-col items-center bg-gray-700">
+  <div class="py-16 lg:py-64 flex flex-col items-center relative">
+    <VChart :option="chartOption" class="bg-chart" />
     <h1 class="font-bold text-white text-4xl lg:text-6xl mb-5 mx-4 text-center">
       Investigate
       <span class="text-green-400 uppercase">your NEAR</span> account
@@ -43,29 +44,66 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.bg-chart {
+  @apply bg-gray-700;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+</style>
 
 <script lang="ts">
 import AccountInput from '@/components/form/AccountInput.vue';
 import NetworkInput from '@/components/form/NetworkInput.vue';
 import PrimaryButton from '@/components/form/PrimaryButton.vue';
 import TimeframeInput from '@/components/form/TimeframeInput.vue';
+import { useNetworkActivityChart } from '@/composables/charts/useNetworkActivityChart';
+import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, Ref, ref } from 'vue';
+import VChart from 'vue-echarts';
 
 export default defineComponent({
-  components: { AccountInput, TimeframeInput, NetworkInput, PrimaryButton },
+  components: {
+    AccountInput,
+    TimeframeInput,
+    NetworkInput,
+    PrimaryButton,
+    VChart,
+  },
   name: 'intake-hero',
   setup() {
     const accountInputValue = ref('');
     const timeframeInputValue = ref<Timeframe>(Timeframe.WEEK);
     const networkInputValue = ref<Network>(Network.MAINNET);
 
+    type NewAccountsEntry = {
+      new_accounts: number;
+      block_date: string;
+    };
+    const dataRef: Ref<NewAccountsEntry[]> = ref([]);
+    const chartOption = useNetworkActivityChart(dataRef);
+    IndexerClient.from(Network.MAINNET)
+      .getMultiple<NewAccountsEntry>('new-accounts-count', {
+        account: '',
+        after: 0,
+        before: 0,
+      })
+      .then(x => {
+        dataRef.value = x;
+      });
+
     return {
       accountInputValue,
       timeframeInputValue,
       networkInputValue,
+      chartOption,
     };
   },
 });
