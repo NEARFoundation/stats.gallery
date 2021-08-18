@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white p-6">
+  <nav class="bg-white p-6 dark:bg-gray-900 dark:text-gray-100">
     <div
       class="
         w-full
@@ -13,10 +13,14 @@
     >
       <div class="flex items-center">
         <img
-          class="h-9 mr-2 bg-green-600 rounded-full"
+          class="dark:hidden h-9 mr-2 bg-green-600 rounded-full"
           src="@/assets/near_icon_wht.svg"
         />
-        <img class="hidden sm:block h-5 mr-3" src="@/assets/near_brand.svg" />
+        <img
+          class="dark:hidden sm:dark:hidden hidden sm:block h-5 mr-3"
+          src="@/assets/near_brand.svg"
+        />
+        <NearLogo class="h-12" />
         <div class="italic font-medium text-lg whitespace-nowrap">
           stats gallery
         </div>
@@ -53,27 +57,29 @@
           >View</SmallPrimaryButton
         >
       </div>
-      <ToggleSwitch v-model="theme" />
+      <!-- <ToggleSwitch v-model="theme" /> -->
     </div>
   </nav>
 </template>
 
 <script lang="ts">
+import NearLogo from '@/components/icons/NearLogo.vue';
 import { useNear } from '@/composables/useNear';
 import { defineComponent, ref, watch } from 'vue';
 import SmallAccountInput from '../form/SmallAccountInput.vue';
 import SmallNetworkInput from '../form/SmallNetworkInput.vue';
 import SmallPrimaryButton from '../form/SmallPrimaryButton.vue';
 import SmallTimeframeInput from '../form/SmallTimeframeInput.vue';
-import ToggleSwitch from '../form/ToggleSwitch.vue';
+// import ToggleSwitch from '../form/ToggleSwitch.vue';
 
 export default defineComponent({
   components: {
-    ToggleSwitch,
+    // ToggleSwitch,
     SmallAccountInput,
     SmallNetworkInput,
     SmallTimeframeInput,
     SmallPrimaryButton,
+    NearLogo,
   },
   props: {
     showIntake: {

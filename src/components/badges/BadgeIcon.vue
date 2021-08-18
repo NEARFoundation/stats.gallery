@@ -1,6 +1,25 @@
 <template>
-  <div class="relative">
-    <component :is="icon[group]" :class="iconClass[group]"></component>
+  <div class="relative z-0">
+    <!-- Make sure they always have a white background -->
+    <div
+      class="
+        absolute
+        rounded-full
+        bg-white
+        top-0
+        left-0
+        w-full
+        h-full
+        z-0
+        transform
+        scale-75
+      "
+    ></div>
+    <component
+      :is="icon[group]"
+      :class="iconClass[group]"
+      class="z-10 absolute"
+    ></component>
     <!--
       Note: using transform/scale instead of border/ring because the component
       may be different sizes, and while relative widths & heights (e.g. w-1/4)
@@ -19,6 +38,7 @@
         h-1/4
         transform
         scale-150
+        z-10
       "
     ></div>
     <div
@@ -34,6 +54,7 @@
         h-1/4
         transform
         scale-110
+        z-10
       "
       :class="gildClass"
     ></div>

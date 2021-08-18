@@ -1,6 +1,6 @@
 <template>
   <main class="flex-grow flex flex-col space-y-3">
-    <h2 class="text-2xl text-gray-600 font-medium">
+    <h2 class="text-2xl text-gray-600 dark:text-gray-300 font-medium">
       Collect achievements and get rewarded!
     </h2>
     <div

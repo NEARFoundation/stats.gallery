@@ -4,8 +4,14 @@
 
 <style>
 body {
-  @apply text-gray-700;
   background-color: #f1f5f9;
+  @apply text-gray-700 dark:text-white;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: rgb(11, 18, 31);
+  }
 }
 </style>
 

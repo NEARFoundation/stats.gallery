@@ -4,8 +4,8 @@
       :modelValue="modelValue"
       :class="[
         modelValue
-          ? 'text-white bg-gray-600 hover:bg-gray-700'
-          : 'text-current bg-gray-200 hover:bg-gray-300',
+          ? 'text-white bg-gray-600 hover:bg-gray-700 dark:bg-gray-900 dark:hover:bg-gray-700'
+          : 'text-current bg-gray-200 hover:bg-gray-300 dark:text-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500',
       ]"
       class="
         inline-flex

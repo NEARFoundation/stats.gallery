@@ -15,9 +15,13 @@
           border border-gray-300
           text-left
           focus:ring-green-500 focus:ring-2 focus:outline-none
+          dark:bg-gray-700
+          dark:hover:bg-gray-800
+          dark:border-gray-600
+          dark:text-white
         "
       >
-        <span class="block truncate text-base text-black">{{
+        <span class="block truncate text-base text-black dark:text-white">{{
           selected.text
         }}</span>
         <span
@@ -55,6 +59,7 @@
             overflow-auto
             focus:outline-none
             text-base
+            dark:bg-gray-700
           "
         >
           <ListboxOption
@@ -66,7 +71,7 @@
           >
             <li
               :class="[
-                active ? 'bg-gray-100' : '',
+                active ? 'bg-gray-100 dark:bg-gray-800' : '',
                 'cursor-pointer select-none relative py-2 px-3',
               ]"
             >

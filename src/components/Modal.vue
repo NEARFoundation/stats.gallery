@@ -64,6 +64,7 @@
               inline-block
               align-bottom
               bg-gray-50
+              text-black
               rounded-lg
               px-4
               pt-5
@@ -79,7 +80,6 @@
               <button
                 type="button"
                 class="
-                  bg-white
                   rounded-md
                   text-gray-400
                   hover:text-gray-500

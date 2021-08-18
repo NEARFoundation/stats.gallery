@@ -1,18 +1,21 @@
 <template>
-  <div class="shadow-lg rounded-md bg-white flex flex-col">
+  <div class="shadow-lg rounded-md bg-white dark:bg-gray-800 flex flex-col">
     <header
       class="
         bg-gray-50
+        dark:bg-gray-900
         px-3
         border-b-2 border-gray-200
+        dark:border-gray-800
         rounded-t-md
         flex
         items-center
       "
     >
-      <span class="py-2 text-lg text-gray-800 font-bold truncate">{{
-        title
-      }}</span>
+      <span
+        class="py-2 text-lg text-gray-800 dark:text-white font-bold truncate"
+        >{{ title }}</span
+      >
       <Tooltip v-if="!!$slots.help">
         <template #trigger>
           <question-mark-icon

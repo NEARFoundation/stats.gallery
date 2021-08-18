@@ -2,8 +2,8 @@
   <a
     :class="[
       isActive
-        ? 'text-gray-700 bg-white'
-        : 'text-gray-500 hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-600',
+        ? 'text-gray-700 bg-white dark:text-white dark:bg-gray-600'
+        : 'text-gray-500 dark:text-gray-300 hover:bg-gray-400 hover:bg-opacity-10',
       'font-medium w-16 md:w-60 rounded-l-full lg:rounded-full flex',
     ]"
     :target="external ? '_blank' : undefined"

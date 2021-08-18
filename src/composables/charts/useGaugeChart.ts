@@ -31,7 +31,7 @@ export function useGaugeChart(
           axisLine: {
             lineStyle: {
               width: 10,
-              color: [[1, '#e2e8f0']],
+              color: [[1, 'rgba(127, 127, 127, 0.5)']],
             },
           },
           axisTick: {
@@ -39,7 +39,7 @@ export function useGaugeChart(
             splitNumber: 5,
             lineStyle: {
               width: 2,
-              color: '#e2e8f0',
+              color: 'rgba(127, 127, 127, 0.5)',
             },
           },
           splitLine: {
@@ -47,12 +47,13 @@ export function useGaugeChart(
             length: 14,
             lineStyle: {
               width: 3,
-              color: '#e2e8f0',
+              color: 'rgba(127, 127, 127, 0.5)',
             },
           },
           axisLabel: {
+            show: false,
             distance: -30,
-            color: '#334155',
+            color: 'rgba(187, 187, 187, 0.75)',
             fontSize: 14,
           },
           anchor: {

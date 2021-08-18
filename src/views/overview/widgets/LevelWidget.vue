@@ -22,13 +22,14 @@
           </div>
         </div>
         <div class="flex w-full items-center space-x-2">
-          <span class="text-gray-500 text-lg">{{
+          <span class="text-gray-500 dark:text-gray-300 text-lg">{{
             $filters.number.standard(accountLevel.creditToNextLevel)
           }}</span>
           <div
             class="
               flex-grow
               bg-gray-200
+              dark:bg-gray-700
               h-2
               rounded-full
               relative
@@ -37,7 +38,7 @@
             "
           >
             <div
-              class="bg-purple-500 rounded-full"
+              class="bg-purple-500 dark:bg-purple-400 rounded-full"
               :style="`width: ${
                 (accountLevel.creditToNextLevel /
                   accountLevel.requiredToNextLevel) *
@@ -45,7 +46,7 @@
               }%`"
             ></div>
           </div>
-          <span class="text-gray-500 text-lg">{{
+          <span class="text-gray-500 dark:text-gray-300 text-lg">{{
             $filters.number.standard(accountLevel.requiredToNextLevel)
           }}</span>
         </div>

@@ -11,13 +11,16 @@
           px-2
           py-1
           bg-white
+          dark:bg-gray-800
           rounded-md
           text-sm
           font-medium
           text-gray-500
+          dark:text-gray-300
           shadow
           whitespace-nowrap
           hover:text-gray-800
+          dark:hover:text-gray-400
         "
       >
         How to score?

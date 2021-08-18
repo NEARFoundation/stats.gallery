@@ -37,7 +37,16 @@
           {{ $filters.number.standard(score) }}
         </div>
         <div
-          class="py-1 px-4 bg-white rounded-full flex justify-center font-bold"
+          class="
+            py-1
+            px-4
+            bg-white
+            text-black
+            rounded-full
+            flex
+            justify-center
+            font-bold
+          "
         >
           <near-symbol class="w-5" />&nbsp;{{
             $filters.number.standard(+$filters.toNear(view.amount))
@@ -87,7 +96,7 @@
           :icon="LeaderboardsIcon"
           name="Leaderboards"
         /> -->
-        <hr class="w-64" />
+        <hr class="w-64 dark:border-gray-700" />
         <SectionLink
           to="https://learnnear.club/"
           :icon="AcademicCapIcon"

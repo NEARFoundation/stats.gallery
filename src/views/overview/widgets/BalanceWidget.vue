@@ -13,7 +13,9 @@
           font-medium
           underline
           text-purple-700
+          dark:text-purple-400
           hover:text-purple-500
+          dark:hover:text-purple-300
           inline-flex
           items-center
           whitespace-nowrap

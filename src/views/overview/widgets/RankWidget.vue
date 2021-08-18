@@ -24,7 +24,7 @@
             :thickness="10"
             lineCap="round"
             color="rgb(124, 58, 237)"
-            trackColor="rgb(226, 232, 240)"
+            trackColor="rgba(126, 132, 140, 0.2)"
             class="w-24 h-24"
           />
           <div

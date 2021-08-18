@@ -16,6 +16,7 @@
         border border-gray-300
         p-2
         z-10
+        dark:bg-gray-700 dark:border-gray-600 dark:text-white
       "
       placeholder="account-name"
     />

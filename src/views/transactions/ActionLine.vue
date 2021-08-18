@@ -42,12 +42,15 @@
         v-if="textValue !== null"
         class="
           bg-gray-200
+          dark:bg-gray-900
           truncate
           max-w-xs
           px-1
           font-mono
           rounded
-          text-gray-500 text-sm
+          text-gray-500
+          dark:text-gray-300
+          text-sm
         "
       >
         {{ textValue }}
@@ -58,13 +61,13 @@
           :href="transactionExplorerUrl"
           target="_blank"
           rel="noreferrer"
-          class="truncate text-sm text-gray-500"
+          class="truncate text-sm text-gray-500 dark:text-gray-400"
         >
           {{ action.transaction_hash }}
         </a>
       </div>
       <time
-        class="text-sm text-gray-500"
+        class="text-sm text-gray-500 dark:text-gray-400"
         :datetime="$filters.nearTimestampToISO(action.block_timestamp)"
         >{{
           $filters.nearTimestampToLocaleString(

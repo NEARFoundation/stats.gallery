@@ -7,7 +7,12 @@
         account,
       },
     }"
-    class="whitespace-nowrap text-blue-700 hover:text-blue-500"
+    class="
+      whitespace-nowrap
+      text-blue-700
+      hover:text-blue-500
+      dark:text-blue-400 dark:hover:text-blue-300
+    "
   >
     <span class="text-gray-400">@</span>
     <span class="underline">{{ account }}</span>
