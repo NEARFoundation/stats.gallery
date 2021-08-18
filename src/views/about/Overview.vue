@@ -10,24 +10,58 @@
     </div>
     <div class="prose-2xl text-center">
       <h2 class="font-bold">Informative overview</h2>
-      <img src="https://via.placeholder.com/1278x885" />
+      <picture>
+        <source
+          media="(min-width: 768px)"
+          srcset="@/assets/landing/lg/overview.png"
+        />
+        <source
+          media="(min-width: 480px)"
+          srcset="@/assets/landing/md/overview.png"
+        />
+        <source
+          media="(min-width: 0px)"
+          srcset="@/assets/landing/sm/overview.png"
+        />
+        <img src="@/assets/landing/sm/overview.png" style="margin: 0 auto" />
+      </picture>
     </div>
     <div class="prose-2xl text-center">
       <h2 class="font-bold">Descriptive charts & graphs</h2>
-      <img src="https://via.placeholder.com/1278x885" />
+      <picture>
+        <source
+          media="(min-width: 768px)"
+          srcset="@/assets/landing/lg/charts.png"
+        />
+        <source
+          media="(min-width: 480px)"
+          srcset="@/assets/landing/md/charts.png"
+        />
+        <source
+          media="(min-width: 0px)"
+          srcset="@/assets/landing/sm/charts.png"
+        />
+        <img src="@/assets/landing/sm/charts.png" style="margin: 0 auto" />
+      </picture>
     </div>
     <div class="prose-2xl">
       <h2 class="font-bold text-center">Also,</h2>
-      <div
-        class="
-          flex flex-wrap-reverse
-          space-x-8
-          w-full
-          items-start
-          justify-center
-        "
-      >
-        <img src="https://via.placeholder.com/338x358" />
+      <div class="flex flex-wrap space-x-8 w-full items-start justify-center">
+        <picture>
+          <source
+            media="(min-width: 768px)"
+            srcset="@/assets/landing/lg/gizmo.png"
+          />
+          <source
+            media="(min-width: 480px)"
+            srcset="@/assets/landing/md/gizmo.png"
+          />
+          <source
+            media="(min-width: 0px)"
+            srcset="@/assets/landing/sm/gizmo.png"
+          />
+          <img src="@/assets/landing/sm/gizmo.png" style="" />
+        </picture>
         <div class="flex flex-wrap max-w-2xl">
           <Card title="History">
             <h3 class="font-bold">History</h3>

@@ -1,6 +1,6 @@
 <template>
   <div class="py-16 lg:py-64 flex flex-col items-center relative">
-    <VChart :option="chartOption" class="bg-chart" />
+    <VChart :option="chartOption" class="bg-chart" autoresize />
     <h1 class="font-bold text-white text-4xl lg:text-6xl mb-5 mx-4 text-center">
       Investigate
       <span class="text-green-400 uppercase">your NEAR</span> account
