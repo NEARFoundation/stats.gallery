@@ -19,7 +19,7 @@
       "
     >
       <div class="flex flex-col flex-shrink-0">
-        <AccountInput class="shadow-md" v-model="accountInputValue" />
+        <AccountInput autofocus class="shadow-md" v-model="accountInputValue" />
         <small class="text-sm text-gray-400 text-center font-medium m-3"
           >Enter account name</small
         >
@@ -39,7 +39,7 @@
           >Select network</small
         >
       </div>
-      <PrimaryButton>Show stats</PrimaryButton>
+      <PrimaryButton @click="go">Show stats</PrimaryButton>
     </div>
   </div>
 </template>
@@ -68,6 +68,7 @@ import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, Ref, ref } from 'vue';
 import VChart from 'vue-echarts';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -99,11 +100,27 @@ export default defineComponent({
         dataRef.value = x;
       });
 
+    const router = useRouter();
+
+    const go = () => {
+      router.push({
+        name: 'overview',
+        params: {
+          network: networkInputValue.value,
+          account: accountInputValue.value,
+        },
+        query: {
+          t: timeframeInputValue.value,
+        },
+      });
+    };
+
     return {
       accountInputValue,
       timeframeInputValue,
       networkInputValue,
       chartOption,
+      go,
     };
   },
 });

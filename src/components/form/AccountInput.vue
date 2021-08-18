@@ -4,6 +4,7 @@
       :value="modelValue.toLowerCase()"
       @input="$emit('update:modelValue', $event.target.value.toLowerCase())"
       @keydown.enter="$emit('submit', $event.target.value.toLowerCase())"
+      :autofocus="autofocus"
       type="text"
       :class="[
         modelValue.length ? 'bg-white' : 'bg-gray-100',
@@ -32,6 +33,10 @@ export default defineComponent({
     modelValue: {
       type: String,
       required: true,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue', 'submit'],
