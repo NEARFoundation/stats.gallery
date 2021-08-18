@@ -12,6 +12,7 @@
     <BalanceWidget class="row-span-2 order-4 md:order-none" />
     <RankWidget class="row-span-1 order-3 md:order-none" />
     <div
+      v-if="!hideEarnBanner"
       class="
         col-span-3
         order-5
@@ -31,7 +32,10 @@
         sm:justify-between
       "
     >
-      <button class="absolute top-0 right-0 p-1 hover:opacity-75">
+      <button
+        @click="hideEarnBanner = 'true'"
+        class="absolute top-0 right-0 p-1 hover:opacity-75"
+      >
         <XIcon class="w-6 h-6 text-white" />
       </button>
       <img
@@ -46,7 +50,10 @@
       <BigChevron class="hidden md:block h-full flex-shrink py-6 text-white" />
       <div class="flex flex-col items-center space-y-4 w-64 text-white">
         <EarnNear />
-        <button
+        <a
+          href="https://learnnear.club/"
+          target="_blank"
+          rel="noreferrer"
           class="
             border-2 border-white
             rounded
@@ -56,7 +63,7 @@
           "
         >
           Learn more
-        </button>
+        </a>
       </div>
     </div>
     <StatsWidget class="col-span-1 xl:col-span-2 order-6 md:order-none" />
@@ -82,6 +89,7 @@
 </style>
 
 <script lang="ts">
+import { usePreference } from '@/composables/usePreference';
 import { GaugeChart } from 'echarts/charts';
 import { TitleComponent } from 'echarts/components';
 import { use } from 'echarts/core';
@@ -110,6 +118,13 @@ export default defineComponent({
     BalanceWidget,
     StatsWidget,
     TransactionRateWidget,
+  },
+  setup() {
+    const hideEarnBanner = usePreference('hide-earn-banner', '');
+
+    return {
+      hideEarnBanner,
+    };
   },
 });
 </script>
