@@ -98,7 +98,6 @@ import { SelectorIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref, toRef, toRefs, watch } from 'vue';
 
 export default defineComponent({
-  name: 'timeframe-input',
   components: {
     Listbox,
     ListboxButton,
@@ -139,8 +138,8 @@ export default defineComponent({
 
     const selected = ref(timeframes.find(t => t.value === props.modelValue)!);
 
-    watch(toRefs(props), () => {
-      selected.value = timeframes.find(t => t.value === props.modelValue)!;
+    watch(toRefs(props).modelValue, modelValue => {
+      selected.value = timeframes.find(t => t.value === modelValue)!;
     });
 
     watch(selected, () => {

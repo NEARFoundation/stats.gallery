@@ -116,7 +116,6 @@ import { SelectorIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  name: 'network-input',
   components: {
     Listbox,
     ListboxButton,

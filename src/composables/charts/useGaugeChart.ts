@@ -1,5 +1,5 @@
-import { color, ComposeOption, GaugeSeriesOption } from 'echarts';
-import { ref, Ref, watch } from 'vue';
+import { ComposeOption, GaugeSeriesOption } from 'echarts';
+import { isRef, ref, Ref, watch } from 'vue';
 
 type Option = ComposeOption<GaugeSeriesOption>;
 
@@ -129,9 +129,12 @@ export function useGaugeChart(
 
   const option = ref(genOption());
 
-  watch([value, options?.max, options?.min], () => {
-    option.value = genOption();
-  });
+  watch(
+    [value, options?.max, options?.min].filter(x => isRef(x)),
+    () => {
+      option.value = genOption();
+    },
+  );
 
   return option;
 }

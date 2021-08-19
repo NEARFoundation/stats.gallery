@@ -106,7 +106,6 @@ import { CheckIcon, SelectorIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
-  name: 'timeframe-input',
   components: {
     Listbox,
     ListboxButton,

@@ -28,7 +28,6 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'account-input',
   props: {
     modelValue: {
       type: String,
