@@ -20,24 +20,24 @@
     >
       <div class="flex flex-col flex-shrink-0">
         <AccountInput autofocus class="shadow-md" v-model="accountInputValue" />
-        <small class="text-sm text-gray-400 text-center font-medium m-3"
-          >Enter account name</small
-        >
+        <small class="text-sm text-gray-400 text-center font-medium m-3">
+          Enter account name
+        </small>
       </div>
       <div class="flex flex-col flex-shrink-0">
         <TimeframeInput
           class="shadow-md lg:w-48"
           v-model="timeframeInputValue"
         />
-        <small class="text-sm text-gray-400 text-center font-medium m-3"
-          >Select range</small
-        >
+        <small class="text-sm text-gray-400 text-center font-medium m-3">
+          Select range
+        </small>
       </div>
       <div class="flex flex-col flex-shrink-0">
         <NetworkInput class="shadow-md lg:w-48" v-model="networkInputValue" />
-        <small class="text-sm text-gray-400 text-center font-medium m-3"
-          >Select network</small
-        >
+        <small class="text-sm text-gray-400 text-center font-medium m-3">
+          Select network
+        </small>
       </div>
       <PrimaryButton @click="go">Show stats</PrimaryButton>
     </div>
@@ -64,10 +64,9 @@ import PrimaryButton from '@/components/form/PrimaryButton.vue';
 import TimeframeInput from '@/components/form/TimeframeInput.vue';
 import { useNetworkActivityChart } from '@/composables/charts/useNetworkActivityChart';
 import { useMultiple } from '@/composables/useMultiple';
-import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
-import { defineComponent, Ref, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import VChart from 'vue-echarts';
 import { useRouter } from 'vue-router';
 
