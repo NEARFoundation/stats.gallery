@@ -30,7 +30,7 @@ export default defineComponent({
       required: true,
     },
     icon: {
-      type: Object as () => Component,
+      type: [Object, Function],
       required: true,
     },
     name: {
