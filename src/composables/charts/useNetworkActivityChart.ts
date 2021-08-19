@@ -71,8 +71,6 @@ export function useNetworkActivityChart(
   watch(
     [data].filter(x => isRef(x)),
     () => {
-      const o = genOption();
-      console.log(o);
       option.value = genOption();
     },
   );
