@@ -10,8 +10,8 @@
 import Footer from '@/components/Footer.vue';
 import TopBar from '@/components/navigation/TopBar.vue';
 import { defineComponent } from 'vue';
-import IntakeHero from './about/IntakeHero.vue';
-import Overview from './about/Overview.vue';
+import IntakeHero from './landing/IntakeHero.vue';
+import Overview from './landing/Overview.vue';
 
 export default defineComponent({
   components: {

@@ -11,7 +11,7 @@
         justify-between
       "
     >
-      <div class="flex items-center">
+      <router-link :to="{ name: 'landing' }" class="flex items-center">
         <img
           class="dark:hidden h-9 mr-2 bg-green-600 rounded-full"
           src="@/assets/near_icon_wht.svg"
@@ -21,10 +21,10 @@
           src="@/assets/near_brand.svg"
         />
         <NearLogo class="hidden dark:block h-12" />
-        <div class="italic font-medium text-lg whitespace-nowrap">
+        <span class="italic font-medium text-lg whitespace-nowrap">
           stats gallery
-        </div>
-      </div>
+        </span>
+      </router-link>
       <div
         v-if="showIntake"
         class="
