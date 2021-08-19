@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { useStat } from '@/composables/useStat';
+import { useStat } from '@/composables/useSingle';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, toRefs } from 'vue';

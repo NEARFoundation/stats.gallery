@@ -63,6 +63,7 @@ import NetworkInput from '@/components/form/NetworkInput.vue';
 import PrimaryButton from '@/components/form/PrimaryButton.vue';
 import TimeframeInput from '@/components/form/TimeframeInput.vue';
 import { useNetworkActivityChart } from '@/composables/charts/useNetworkActivityChart';
+import { useMultiple } from '@/composables/useMultiple';
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
@@ -88,17 +89,11 @@ export default defineComponent({
       new_accounts: number;
       block_date: string;
     };
-    const dataRef: Ref<NewAccountsEntry[]> = ref([]);
-    const chartOption = useNetworkActivityChart(dataRef);
-    IndexerClient.from(Network.MAINNET)
-      .getMultiple<NewAccountsEntry>('new-accounts-count', {
-        account: '',
-        after: 0,
-        before: 0,
-      })
-      .then(x => {
-        dataRef.value = x;
-      });
+    const { value: newAccounts } = useMultiple<NewAccountsEntry>(
+      'new-accounts-count',
+      { network: networkInputValue },
+    );
+    const chartOption = useNetworkActivityChart(newAccounts);
 
     const router = useRouter();
 

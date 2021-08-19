@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
-import { useStat } from '@/composables/useStat';
+import { useSingle } from '@/composables/useSingle';
 import { defineComponent, ref, watch } from 'vue';
 import { ArrowSmDownIcon, ArrowSmUpIcon } from 'heroicons-vue3/outline';
 import BriefStat from '../BriefStat.vue';
@@ -90,29 +90,29 @@ export default defineComponent({
   components: { DashboardCard, BriefStat, ArrowSmDownIcon, ArrowSmUpIcon },
   setup() {
     const { account, network, timeframe } = useNear();
-    const { value: sentCount, isLoading: isSentLoading } = useStat(
+    const { value: sentCount, isLoading: isSentLoading } = useSingle(
       'sent-transaction-count',
-      0,
       { account, network, timeframe },
+      0,
     );
-    const { value: receivedCount, isLoading: isReceivedLoading } = useStat(
+    const { value: receivedCount, isLoading: isReceivedLoading } = useSingle(
       'received-transaction-count',
-      0,
       { account, network, timeframe },
+      0,
     );
-    const { value: creationDate, isLoading: isCreationLoading } = useStat(
+    const { value: creationDate, isLoading: isCreationLoading } = useSingle(
       'account-creation',
-      0,
       { account, network, timeframe },
+      0,
     );
 
-    const { value: gasSpent, isLoading: isGasSpentLoading } = useStat(
+    const { value: gasSpent, isLoading: isGasSpentLoading } = useSingle(
       'gas-spent',
-      0,
       { account, network, timeframe },
+      0,
     );
     const { value: gasTokensSpent, isLoading: isGasTokensSpentLoading } =
-      useStat('gas-tokens-spent', 0, { account, network, timeframe });
+      useSingle('gas-tokens-spent', { account, network, timeframe }, 0);
 
     const durationDays = ref(0);
 

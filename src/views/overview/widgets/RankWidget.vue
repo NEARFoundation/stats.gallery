@@ -52,7 +52,7 @@
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
 import { usePromise } from '@/composables/usePromise';
-import { useStat } from '@/composables/useStat';
+import { useSingle } from '@/composables/useSingle';
 import { Await } from '@/utils/types';
 import { defineComponent, ref, watch } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
@@ -69,11 +69,15 @@ export default defineComponent({
         total: 0,
       } as Await<ReturnType<typeof indexer.getDistribution>>,
     );
-    const { value: transactionCount } = useStat('sent-transaction-count', 0, {
-      account,
-      network,
-      timeframe,
-    });
+    const { value: transactionCount } = useSingle(
+      'sent-transaction-count',
+      {
+        account,
+        network,
+        timeframe,
+      },
+      0,
+    );
     const percentile = ref(0.7);
     const ranking = ref(0);
 
