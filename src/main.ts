@@ -1,5 +1,6 @@
 import App from '@/App.vue';
 import AccountLink from '@/components/AccountLink.vue';
+import ExternalLink from '@/components/ExternalLink.vue';
 import ExternalLinkIcon from '@/components/ExternalLinkIcon.vue';
 import NearSymbol from '@/components/NearSymbol.vue';
 import QuestionMarkIcon from '@/components/QuestionMarkIcon.vue';
@@ -28,6 +29,7 @@ if (process.env['NODE_ENV'] === 'production') {
 const app = createApp(App);
 app.component('near-symbol', NearSymbol);
 app.component('account-link', AccountLink);
+app.component('external-link', ExternalLink);
 app.component('external-link-icon', ExternalLinkIcon);
 app.component('question-mark-icon', QuestionMarkIcon);
 

@@ -1,8 +1,9 @@
 import Landing from '@/views/Landing.vue';
 import Overview from '@/views/Overview.vue';
+import Page from '@/views/Page.vue';
 import Quests from '@/views/Quests.vue';
 import Stats from '@/views/Stats.vue';
-import Page from '@/views/Page.vue';
+import Story from '@/views/Story.vue';
 import Transactions from '@/views/Transactions.vue';
 import {
   createRouter,
@@ -38,6 +39,15 @@ const routes: Array<RouteRecordRaw> = [
     component: Landing,
     meta: {
       title: 'near stats.gallery',
+      noTitleSuffix: true,
+    },
+  },
+  {
+    path: '/story',
+    name: 'story',
+    component: Story,
+    meta: {
+      title: 'the story behind stats.gallery',
       noTitleSuffix: true,
     },
   },
