@@ -6,7 +6,7 @@
       <span class="text-green-400 uppercase">your NEAR</span> account
     </h1>
     <p class="text-2xl text-white lg:text-4xl mb-8">
-      and 314,071 other accounts
+      and {{ $filters.number.standard(allAccounts) }} other accounts
     </p>
     <div
       class="
@@ -64,6 +64,7 @@ import PrimaryButton from '@/components/form/PrimaryButton.vue';
 import TimeframeInput from '@/components/form/TimeframeInput.vue';
 import { useNetworkActivityChart } from '@/composables/charts/useNetworkActivityChart';
 import { useMultiple } from '@/composables/useMultiple';
+import { useSingle } from '@/composables/useSingle';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref } from 'vue';
@@ -83,6 +84,16 @@ export default defineComponent({
     const accountInputValue = ref('');
     const timeframeInputValue = ref<Timeframe>(Timeframe.WEEK);
     const networkInputValue = ref<Network>(Network.MAINNET);
+
+    const { value: allAccounts } = useSingle(
+      'all-accounts',
+      {
+        account: '',
+        network: networkInputValue,
+        timeframe: Timeframe.ALL,
+      },
+      314071,
+    );
 
     type NewAccountsEntry = {
       new_accounts: number;
@@ -115,6 +126,7 @@ export default defineComponent({
       networkInputValue,
       chartOption,
       go,
+      allAccounts,
     };
   },
 });
