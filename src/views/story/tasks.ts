@@ -15,6 +15,12 @@ export const tasks: RoadmapTask[] = [
     link: '',
   },
   {
+    name: 'Make everything sharable!',
+    date: DateTime.fromObject({ year: 2021, month: 9, day: 20 }).toJSDate(),
+    done: false,
+    link: '',
+  },
+  {
     name: 'Leaderboards page',
     date: DateTime.fromObject({ year: 2021, month: 9, day: 20 }).toJSDate(),
     done: false,

@@ -1,59 +1,102 @@
 <template>
   <TopBar />
-  <div class="prose prose-xl md:max-w-4xl mx-auto px-3 my-5">
-    <h1>story</h1>
-    <blockquote>
-      Building software isn't just a job, it's a
-      <strong><span class="text-purple-500">journey</span></strong
-      >.
-    </blockquote>
-    <h2>the <span class="text-blue-500">problem</span></h2>
-    <p>
-      NEAR was still a new project, hot off the presses and lunging forward at
-      full-steam, and people knew it. It seemed that every week there was a new
-      development:
-      <external-link href="https://aurora.dev/">Aurora</external-link>,
-      <external-link href="https://oct.network/">Octopus</external-link>,
-      <external-link href="https://skyward.finance/">Skyward</external-link>,
-      <external-link href="https://app.ref.finance/">Ref Finance</external-link
-      >,
-      <external-link href="https://berryclub.io/">Berry Club</external-link
-      >&hellip; the list goes on.
-    </p>
-    <p>
-      Developers were adopting the platform at breakneck speed, and the team at
-      NEAR worked tirelessly on Explorer and Wallet to make sure that the core
-      ecosystem tools could support the influx of developer interest.
-    </p>
-    <p>
-      Hi. I'm Jacob, the developer of
-      <strong><span class="text-purple-500">stats.gallery</span></strong
-      >. I saw NEAR as a great, burgeoning platform that was extremely
-      developer-friendly and was poised to make some big waves in the crypto
-      space.
-    </p>
-    <p>
-      However, developer adoption is just one step in the process to going
-      mainstream. Wallet and Explorer are great tools for everybody to clearly
-      see the spicy details of their accounts and the whole network, but they're
-      a specific type of tool: indicators that provide information, but don't
-      necessarily delineate a path forward.
-    </p>
-    <p>
-      <strong><span class="text-purple-500">stats.gallery</span></strong>
-      strives to be that friendly guide.
-    </p>
-    <h2>the <span class="text-pink-500">guide</span></h2>
-    <p class="italic">[Description of the software and how to use it.]</p>
-    <h2>the <span class="text-yellow-500">future</span></h2>
-    <p>
-      There's a lot we have planned for this project which you can explore in
-      the project roadmap below. If you see something you'd like to help with or
-      if you think something's missing, give us a holler!
-    </p>
-    <div class="flex flex-col md:flex-row justify-around md:space-x-5">
+  <div class="md:max-w-4xl mx-auto px-3 my-5 space-y-7">
+    <div class="prose prose-xl">
+      <h1>story</h1>
+      <blockquote>
+        Building software isn't just a job, it's a
+        <strong><span class="text-purple-500">journey</span></strong
+        >.
+      </blockquote>
+    </div>
+    <div class="prose prose-xl">
+      <h2>the <span class="text-blue-500">problem</span></h2>
+      <p>
+        NEAR was still a new project, hot off the presses and lunging forward at
+        full-steam, and people knew it. It seemed that every week there was a
+        new development:
+        <external-link href="https://aurora.dev/">Aurora</external-link>,
+        <external-link href="https://oct.network/">Octopus</external-link>,
+        <external-link href="https://skyward.finance/">Skyward</external-link>,
+        <external-link href="https://app.ref.finance/"
+          >Ref Finance</external-link
+        >,
+        <external-link href="https://berryclub.io/">Berry Club</external-link
+        >&hellip; the list goes on.
+      </p>
+      <p>
+        Developers were adopting the platform at breakneck speed, and the team
+        at NEAR worked tirelessly on Explorer and Wallet to make sure that the
+        core ecosystem tools could support the influx of developer interest.
+      </p>
+      <p>
+        Hi. I'm Jacob, the developer of
+        <strong><span class="text-purple-500">stats.gallery</span></strong
+        >. I saw NEAR as a great, burgeoning platform that was extremely
+        developer-friendly and was poised to make some big waves in the crypto
+        space.
+      </p>
+      <p>
+        However, developer adoption is just one step in the process to going
+        mainstream. Wallet and Explorer are great tools for everybody to clearly
+        see the spicy details of their accounts and the whole network, but
+        they're a specific type of tool: indicators that provide information,
+        but don't necessarily delineate a path forward.
+      </p>
+      <p>
+        <strong><span class="text-purple-500">stats.gallery</span></strong>
+        strives to be that friendly guide.
+      </p>
+    </div>
+    <div class="prose prose-xl">
+      <h2>the <span class="text-pink-500">guide</span></h2>
+      <p>
+        I work in tech all day, and I understand it can get a <em>little</em>
+        tiring for everything to be so technical all the time. That's why
+        <strong><span class="text-purple-500">stats.gallery</span></strong>
+        tries to ease that burden a little bit by adding some color back into
+        the equation.
+      </p>
+      <p>
+        When you explore an account, you'll see a few base metrics about the
+        account's activity: How much gas has been spent? How long has the
+        account existed?
+      </p>
+      <p>
+        Take a look at the Badges page to see some goals to work towards.
+        Receive an NFT or deploy a smart contract and you'll be rewarded with a
+        shiny badge below your name. Stay active to see your score and level
+        grow!
+      </p>
+      <p>
+        You'll also find some useful charts and graphs, as well as a
+        comprehensive and easy-to-digest list of transactions.
+      </p>
+      <p>
+        All of this is wrapped up in one nice, tidy, and beautiful package: your
+        <strong><span class="text-purple-500">stats.gallery</span></strong
+        >.
+      </p>
+    </div>
+    <div class="prose prose-xl">
+      <h2>the <span class="text-yellow-500">future</span></h2>
+      <p>
+        There's a lot we have planned for this project, which you can explore in
+        the project roadmap below. If you see something you'd like to help with
+        or if you think something's missing, give us a holler!
+      </p>
+    </div>
+    <div
+      class="
+        flex flex-col
+        md:flex-row
+        justify-around
+        space-y-5
+        md:space-y-0 md:space-x-5
+      "
+    >
       <div class="flex-1 flex flex-col space-y-3">
-        <h3 class="text-center font-bold text-3xl">Done</h3>
+        <h3 class="text-center font-bold text-2xl">Done</h3>
         <RoadmapCard
           dateClass="bg-pink-500"
           v-for="(task, i) in completedTasks"
@@ -65,7 +108,7 @@
         />
       </div>
       <div class="flex-1 flex flex-col space-y-3">
-        <h3 class="text-center font-bold text-3xl">Doing</h3>
+        <h3 class="text-center font-bold text-2xl">Doing</h3>
         <RoadmapCard
           dateClass="bg-green-500"
           v-for="(task, i) in currentTasks"
@@ -77,7 +120,7 @@
         />
       </div>
       <div class="flex-1 flex flex-col space-y-3">
-        <h3 class="text-center font-bold text-3xl">To Do</h3>
+        <h3 class="text-center font-bold text-2xl">To Do</h3>
         <RoadmapCard
           v-for="(task, i) in futureTasks"
           :dateClass="futureTaskColor(task)"
@@ -89,8 +132,55 @@
         />
       </div>
     </div>
-    <h2>the <span class="text-green-600">team</span></h2>
-    <p class="italic">[Bios and overview of the current development team.]</p>
+    <div class="prose prose-xl">
+      <h2>the <span class="text-green-600">team</span></h2>
+    </div>
+    <div class="flex flex-col md:flex-row">
+      <TeamMemberCard name="Jacob Lindahl (USA)" title="PO, senior developer">
+        <template #default>
+          With over a decade of programming experience, Jacob has worked with
+          everything from web applications to CAD software, and currently spends
+          his time writing code to support Web 3 ecosystems. When he's not
+          working, you can find him reading, ballroom dancing, or hiking in the
+          Tetons.
+        </template>
+        <template #quote>
+          If you need a full-stack developer for your new DeFi project, I'm your
+          man!
+        </template>
+        <template #contact>
+          <external-link href="https://github.com/encody">
+            <ContactGithubIcon class="w-9 text-indigo-900" />
+          </external-link>
+          <external-link href="https://t.me/encody">
+            <ContactTelegramIcon class="w-9" style="color: #039be5" />
+          </external-link>
+          <external-link href="mailto:jacob@near.org">
+            <ContactEmailIcon class="w-9 text-green-500" />
+          </external-link>
+        </template>
+      </TeamMemberCard>
+      <TeamMemberCard name="Dan Podkovko (RU)" title="UX/UI designer">
+        <template #default>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloremque
+          totam doloribus suscipit fugit labore, quos quasi culpa ducimus
+          impedit aut. Totam vero esse inventore suscipit nulla doloremque
+          exercitationem vitae officiis.
+        </template>
+        <template #quote>
+          I would be happy to assist you with the web design for your websites
+          and landing pages and UX/UI design for your dApps and smart contracts!
+        </template>
+        <template #contact>
+          <external-link href="https://t.me/danpodkovko">
+            <ContactTelegramIcon class="w-9" style="color: #039be5" />
+          </external-link>
+          <external-link href="#">
+            <ContactEmailIcon class="w-9 text-green-500" />
+          </external-link>
+        </template>
+      </TeamMemberCard>
+    </div>
   </div>
   <Footer />
 </template>
@@ -103,6 +193,10 @@
   @apply dark:text-gray-100;
 }
 
+.prose h2 {
+  @apply mt-24;
+}
+
 .prose a {
   @apply dark:text-white;
 }
@@ -110,17 +204,25 @@
 
 <script lang="ts">
 import Footer from '@/components/Footer.vue';
+import ContactEmailIcon from '@/components/icons/ContactEmailIcon.vue';
+import ContactGithubIcon from '@/components/icons/ContactGithubIcon.vue';
+import ContactTelegramIcon from '@/components/icons/ContactTelegramIcon.vue';
 import TopBar from '@/components/navigation/TopBar.vue';
 import { DateTime } from 'luxon';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import RoadmapCard from './story/RoadmapCard.vue';
 import { RoadmapTask, tasks } from './story/tasks';
+import TeamMemberCard from './story/TeamMemberCard.vue';
 
 export default defineComponent({
   components: {
     TopBar,
     Footer,
     RoadmapCard,
+    TeamMemberCard,
+    ContactGithubIcon,
+    ContactEmailIcon,
+    ContactTelegramIcon,
   },
   setup() {
     const futureTasks: RoadmapTask[] = [];

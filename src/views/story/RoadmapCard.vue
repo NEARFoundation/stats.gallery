@@ -11,7 +11,7 @@
       :class="dateClass"
       class="inline-block text-sm text-white uppercase px-3 rounded font-bold"
     >
-      {{ monthName }}
+      {{ monthName }} {{ year }}
     </div>
     <external-link v-if="href !== ''" :href="href" class="float-right">
       <span class="inline-flex items-center text-sm text-blue-600 underline">
@@ -55,17 +55,21 @@ export default defineComponent({
   },
   setup(props) {
     const monthName = ref('');
+    const year = ref('');
 
     watch(
       toRefs(props).date,
       date => {
-        monthName.value = DateTime.fromJSDate(date).monthLong;
+        const d = DateTime.fromJSDate(date);
+        monthName.value = d.monthLong;
+        year.value = d.year + '';
       },
       { immediate: true },
     );
 
     return {
       monthName,
+      year,
     };
   },
 });

@@ -57,6 +57,17 @@
           >View</SmallPrimaryButton
         >
       </div>
+      <router-link :to="{ name: 'story' }" v-slot="{ isActive }">
+        <span
+          :class="[
+            isActive
+              ? 'text-gray-700 bg-gray-400'
+              : 'text-gray-500 hover:text-gray-700',
+          ]"
+          class="font-medium rounded px-3 py-1 bg-opacity-20"
+          >story</span
+        >
+      </router-link>
       <!-- <ToggleSwitch v-model="theme" /> -->
     </div>
   </nav>
