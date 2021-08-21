@@ -31,8 +31,6 @@ export function useSingle<T>(
 
     const rid = requestId(stat, _account, _network, _timeframe);
 
-    console.log(stat, rid);
-
     return debounceRequest(rid, () =>
       IndexerClient.from(_network).getSingle<T>(stat, {
         account: _account,

@@ -51,8 +51,9 @@
     <div class="prose prose-xl">
       <h2>the <span class="text-pink-500">guide</span></h2>
       <p>
-        I work in tech all day, and I understand it can get a <em>little</em>
-        tiring for everything to be so technical all the time. That's why
+        I work in tech all day, and I understand it can get a
+        <em>little</em> tiring for everything to be so&hellip;
+        <em>technical</em> all the time. That's why
         <strong><span class="text-purple-500">stats.gallery</span></strong>
         tries to ease that burden a little bit by adding some color back into
         the equation.
@@ -135,8 +136,11 @@
     <div class="prose prose-xl">
       <h2>the <span class="text-green-600">team</span></h2>
     </div>
-    <div class="flex flex-col md:flex-row">
+    <div class="flex flex-col md:flex-row items-start">
       <TeamMemberCard name="Jacob Lindahl (USA)" title="PO, senior developer">
+        <template #image>
+          <img src="./story/JacobFrame.svg" class="transform scale-75" />
+        </template>
         <template #default>
           With over a decade of programming experience, Jacob has worked with
           everything from web applications to CAD software, and currently spends
@@ -161,25 +165,65 @@
         </template>
       </TeamMemberCard>
       <TeamMemberCard name="Dan Podkovko (RU)" title="UX/UI designer">
+        <template #image>
+          <img src="./story/DanFrame.svg" class="transform scale-75" />
+        </template>
         <template #default>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloremque
-          totam doloribus suscipit fugit labore, quos quasi culpa ducimus
-          impedit aut. Totam vero esse inventore suscipit nulla doloremque
-          exercitationem vitae officiis.
+          Dan is a web, graphic, and UX/UI designer with 13 years of experience
+          in these fields. Besides, he used to work as a marketing director on a
+          civil weapons manufacturer, was a product manager, and ran several own
+          e-commerce projects. Currently, working on his own psychological
+          assessment service as a pet project. Loves entrepreneurship, music,
+          psychology, and design.
         </template>
         <template #quote>
-          I would be happy to assist you with the web design for your websites
-          and landing pages and UX/UI design for your dApps and smart contracts!
+          I would be happy to assist you with UX/UI design for your dApps, smart
+          contracts, and DAOs, as well as web design for your websites and
+          landing pages! Feel free to reach me
+          <span class="not-italic">&#x1F447;</span>
         </template>
         <template #contact>
           <external-link href="https://t.me/danpodkovko">
             <ContactTelegramIcon class="w-9" style="color: #039be5" />
           </external-link>
-          <external-link href="#">
+          <external-link href="mailto:danpodkovko@gmail.com">
             <ContactEmailIcon class="w-9 text-green-500" />
           </external-link>
         </template>
       </TeamMemberCard>
+    </div>
+    <hr />
+    <div class="py-36 space-y-6 flex flex-col items-center">
+      <h2 class="text-2xl font-bold text-center">
+        Want to create projects with NEAR?
+      </h2>
+      <h1 class="text-3xl font-bold text-center">We're hiring!</h1>
+      <p class="text-xl text-center">
+        NEAR is growing and we're looking for talent who wants to work with the
+        future, today. If you are a <strong>developer</strong>,
+        <strong>creator</strong>, <strong>entrepreneur</strong>, or
+        <strong>educator</strong>, apply today! Let's make great things
+        together!
+      </p>
+      <external-link
+        href="https://near.org/careers/"
+        class="
+          px-8
+          py-3
+          font-medium
+          text-xl
+          whitespace-nowrap
+          text-white
+          bg-green-600
+          hover:bg-green-700
+          rounded-sm
+          shadow
+          inline-flex
+          items-center
+        "
+      >
+        <span>Apply now</span>
+      </external-link>
     </div>
   </div>
   <Footer />

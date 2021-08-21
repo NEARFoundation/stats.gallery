@@ -10,24 +10,28 @@
       space-y-3
       items-center
       relative
-      pt-24
+      pt-32
       mt-24
       mx-3
       mb-8
     "
   >
-    <img
-      class="
-        filter
-        drop-shadow-md
-        absolute
-        h-44
-        transform
-        -translate-y-1/2
-        top-0
-      "
-      src="@/assets/person_placeholder.png"
-    />
+    <div class="absolute w-full h-0 top-0">
+      <div
+        class="
+          absolute
+          w-full
+          transform
+          -translate-y-1/2
+          top-0
+          flex
+          justify-center
+        "
+      >
+        <slot name="image" />
+      </div>
+    </div>
+
     <header class="text-xl font-medium">{{ name }}</header>
     <p class="font-medium">{{ title }}</p>
     <p>
@@ -57,6 +61,10 @@ export default defineComponent({
     title: {
       type: String,
       required: true,
+    },
+    imageSrc: {
+      type: String,
+      default: '',
     },
   },
 });
