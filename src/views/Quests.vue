@@ -19,7 +19,9 @@
           justify-center
           items-center
           p-3
-          border-2 border-gray-300 border-dashed
+          border-2 border-gray-300
+          dark:border-gray-700
+          border-dashed
           rounded-md
         "
       >

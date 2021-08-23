@@ -120,7 +120,9 @@
           <div
             class="
               p-3
-              border-gray-300 border-2 border-dashed
+              border-gray-300
+              dark:border-gray-700
+              border-2 border-dashed
               rounded-md
               flex flex-wrap
               justify-center
