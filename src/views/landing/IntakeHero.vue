@@ -19,7 +19,12 @@
       "
     >
       <div class="flex flex-col flex-shrink-0">
-        <AccountInput autofocus class="shadow-md" v-model="accountInputValue" />
+        <AccountInput
+          autofocus
+          class="shadow-md"
+          v-model="accountInputValue"
+          @submit="go"
+        />
         <small class="text-sm text-gray-400 text-center font-medium m-3">
           Enter account name
         </small>

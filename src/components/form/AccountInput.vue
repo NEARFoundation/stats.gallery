@@ -19,7 +19,7 @@
         p-3
         z-10`,
       ]"
-      placeholder="account-name"
+      placeholder="my-account.near"
     />
   </div>
 </template>
