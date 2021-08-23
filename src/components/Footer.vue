@@ -66,9 +66,6 @@
       </div>
       <div class="md:order-2">
         <p class="text-center text-base text-gray-400">
-          &copy; 2021 Near Foundation, All Rights Reserved.
-        </p>
-        <p class="text-center text-base text-gray-400">
           Built with ♥ by
           <a href="https://twitter.com/sudo_build" class="underline"
             >Jacob Lindahl</a

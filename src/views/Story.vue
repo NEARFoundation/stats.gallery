@@ -153,14 +153,20 @@
           man!
         </template>
         <template #contact>
+          <external-link href="https://twitter.com/sudo_build">
+            <ContactTwitterIcon class="w-9" style="color: #1da1f2" />
+          </external-link>
           <external-link href="https://github.com/encody">
             <ContactGithubIcon class="w-9 text-indigo-900" />
           </external-link>
           <external-link href="https://t.me/encody">
-            <ContactTelegramIcon class="w-9" style="color: #039be5" />
+            <ContactTelegramIcon class="w-9" style="color: #0088cc" />
           </external-link>
           <external-link href="mailto:jacob@near.org">
             <ContactEmailIcon class="w-9 text-green-500" />
+          </external-link>
+          <external-link href="https://youtube.com/c/GeekLaunch">
+            <ContactYouTubeIcon class="w-9" style="color: #ff0000" />
           </external-link>
         </template>
       </TeamMemberCard>
@@ -184,7 +190,7 @@
         </template>
         <template #contact>
           <external-link href="https://t.me/danpodkovko">
-            <ContactTelegramIcon class="w-9" style="color: #039be5" />
+            <ContactTelegramIcon class="w-9" style="color: #0088cc" />
           </external-link>
           <external-link href="mailto:danpodkovko@gmail.com">
             <ContactEmailIcon class="w-9 text-green-500" />
@@ -194,10 +200,9 @@
     </div>
     <hr />
     <div class="py-36 space-y-6 flex flex-col items-center">
-      <h2 class="text-2xl font-bold text-center">
+      <h2 class="text-3xl font-bold text-center">
         Want to create projects with NEAR?
       </h2>
-      <h1 class="text-3xl font-bold text-center">We're hiring!</h1>
       <p class="text-xl text-center">
         NEAR is growing and we're looking for talent who wants to work with the
         future, today. If you are a <strong>developer</strong>,
@@ -249,8 +254,10 @@
 <script lang="ts">
 import Footer from '@/components/Footer.vue';
 import ContactEmailIcon from '@/components/icons/ContactEmailIcon.vue';
+import ContactYouTubeIcon from '@/components/icons/ContactYouTubeIcon.vue';
 import ContactGithubIcon from '@/components/icons/ContactGithubIcon.vue';
 import ContactTelegramIcon from '@/components/icons/ContactTelegramIcon.vue';
+import ContactTwitterIcon from '@/components/icons/ContactTwitterIcon.vue';
 import TopBar from '@/components/navigation/TopBar.vue';
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
@@ -267,6 +274,8 @@ export default defineComponent({
     ContactGithubIcon,
     ContactEmailIcon,
     ContactTelegramIcon,
+    ContactTwitterIcon,
+    ContactYouTubeIcon,
   },
   setup() {
     const futureTasks: RoadmapTask[] = [];
