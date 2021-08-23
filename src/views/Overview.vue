@@ -12,7 +12,6 @@
     <BalanceWidget class="row-span-2 order-4 md:order-none" />
     <RankWidget class="row-span-1 order-3 md:order-none" />
     <div
-      v-if="!hideEarnBanner"
       class="
         col-span-3
         order-5
@@ -32,12 +31,6 @@
         sm:justify-between
       "
     >
-      <button
-        @click="hideEarnBanner = 'true'"
-        class="absolute top-0 right-0 p-1 hover:opacity-75"
-      >
-        <XIcon class="w-6 h-6 text-white" />
-      </button>
       <img
         class="pt-3 h-full self-end hidden lg:block"
         src="@/assets/nearkat_prompt.png"
@@ -89,12 +82,10 @@
 </style>
 
 <script lang="ts">
-import { usePreference } from '@/composables/usePreference';
 import { GaugeChart } from 'echarts/charts';
 import { TitleComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { XIcon } from 'heroicons-vue3/solid';
 import { defineComponent } from 'vue';
 import BigChevron from './overview/BigChevron.vue';
 import EarnNear from './overview/EarnNear.vue';
@@ -109,7 +100,6 @@ use([CanvasRenderer, GaugeChart, TitleComponent]);
 
 export default defineComponent({
   components: {
-    XIcon,
     BigChevron,
     EarnNear,
     ScoreWidget,
@@ -118,13 +108,6 @@ export default defineComponent({
     BalanceWidget,
     StatsWidget,
     TransactionRateWidget,
-  },
-  setup() {
-    const hideEarnBanner = usePreference('hide-earn-banner', '');
-
-    return {
-      hideEarnBanner,
-    };
   },
 });
 </script>
