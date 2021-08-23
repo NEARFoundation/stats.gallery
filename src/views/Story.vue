@@ -157,7 +157,9 @@
             <ContactTwitterIcon class="w-9" style="color: #1da1f2" />
           </external-link>
           <external-link href="https://github.com/encody">
-            <ContactGithubIcon class="w-9 text-indigo-900" />
+            <ContactGithubIcon
+              class="w-9 text-indigo-900 dark:text-indigo-400"
+            />
           </external-link>
           <external-link href="https://t.me/encody">
             <ContactTelegramIcon class="w-9" style="color: #0088cc" />

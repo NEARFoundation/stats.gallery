@@ -3,6 +3,7 @@
     class="
       flex-1
       bg-white
+      dark:bg-gray-800
       rounded-md
       shadow-md
       p-5

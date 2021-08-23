@@ -1,7 +1,9 @@
 <template>
   <div
     :class="[
-      done ? 'bg-gray-400 bg-opacity-20 shadow-inner' : 'bg-white shadow-md',
+      done
+        ? 'bg-gray-400 bg-opacity-20 dark:bg-gray-100 shadow-inner'
+        : 'bg-white dark:bg-gray-800 shadow-md',
     ]"
     class="rounded-md py-3 px-5 relative"
   >
