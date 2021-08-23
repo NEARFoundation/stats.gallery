@@ -46,52 +46,52 @@
     </div>
     <div class="prose-2xl">
       <h2 class="font-bold text-center">Also,</h2>
-      <div class="flex flex-wrap space-x-8 w-full items-start justify-center">
-        <picture>
-          <source
-            media="(min-width: 768px)"
-            srcset="@/assets/landing/lg/gizmo.png"
-          />
-          <source
-            media="(min-width: 480px)"
-            srcset="@/assets/landing/md/gizmo.png"
-          />
-          <source
-            media="(min-width: 0px)"
-            srcset="@/assets/landing/sm/gizmo.png"
-          />
-          <img src="@/assets/landing/sm/gizmo.png" style="" />
-        </picture>
-        <div class="flex flex-wrap max-w-2xl">
-          <Card title="History">
-            <h3 class="font-bold">History</h3>
-            <p>
-              Get and complete quests to receive more NEAR points and pump your
-              account up!
-            </p>
-          </Card>
-          <Card title="History">
-            <h3 class="font-bold">Services</h3>
-            <p>
-              Get and complete quests to receive more NEAR points and pump your
-              account up!
-            </p>
-          </Card>
-          <Card title="History">
-            <h3 class="font-bold">Quests</h3>
-            <p>
-              Get and complete quests to receive more NEAR points and pump your
-              account up!
-            </p>
-          </Card>
-          <Card title="History">
-            <h3 class="font-bold">Transactions</h3>
-            <p>
-              Get and complete quests to receive more NEAR points and pump your
-              account up!
-            </p>
-          </Card>
-        </div>
+    </div>
+    <div class="flex flex-wrap space-x-8 w-full items-start justify-center">
+      <picture>
+        <source
+          media="(min-width: 768px)"
+          srcset="@/assets/landing/lg/gizmo.png"
+        />
+        <source
+          media="(min-width: 480px)"
+          srcset="@/assets/landing/md/gizmo.png"
+        />
+        <source
+          media="(min-width: 0px)"
+          srcset="@/assets/landing/sm/gizmo.png"
+        />
+        <img src="@/assets/landing/sm/gizmo.png" style="" />
+      </picture>
+      <div class="flex flex-wrap max-w-2xl">
+        <Card title="History">
+          <h3 class="font-bold">History</h3>
+          <p>
+            Get and complete quests to receive more NEAR points and pump your
+            account up!
+          </p>
+        </Card>
+        <Card title="History">
+          <h3 class="font-bold">Services</h3>
+          <p>
+            Get and complete quests to receive more NEAR points and pump your
+            account up!
+          </p>
+        </Card>
+        <Card title="History">
+          <h3 class="font-bold">Quests</h3>
+          <p>
+            Get and complete quests to receive more NEAR points and pump your
+            account up!
+          </p>
+        </Card>
+        <Card title="History">
+          <h3 class="font-bold">Transactions</h3>
+          <p>
+            Get and complete quests to receive more NEAR points and pump your
+            account up!
+          </p>
+        </Card>
       </div>
     </div>
   </div>

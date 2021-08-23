@@ -1,5 +1,8 @@
 <template>
-  <div class="py-16 lg:py-64 flex flex-col items-center relative">
+  <!-- overflow: hidden because the VChart autoresize isn't terribly precise and rounds up -->
+  <div
+    class="py-16 lg:py-64 flex flex-col items-center relative overflow-hidden"
+  >
     <VChart :option="chartOption" class="bg-chart" autoresize />
     <h1 class="font-bold text-white text-4xl lg:text-6xl mb-5 mx-4 text-center">
       Investigate
