@@ -12,18 +12,7 @@
       "
     >
       <router-link :to="{ name: 'landing' }" class="flex items-center">
-        <img
-          class="dark:hidden h-9 mr-2 bg-green-600 rounded-full"
-          src="@/assets/near_icon_wht.svg"
-        />
-        <img
-          class="dark:hidden sm:dark:hidden hidden sm:block h-5 mr-3"
-          src="@/assets/near_brand.svg"
-        />
-        <NearLogo class="hidden dark:block h-12" />
-        <span class="italic font-medium text-lg whitespace-nowrap">
-          stats gallery
-        </span>
+        <StatsGalleryLogo class="p-1 h-9" />
       </router-link>
       <div
         v-if="showIntake"
@@ -74,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import NearLogo from '@/components/icons/NearLogo.vue';
+import StatsGalleryLogo from '@/components/icons/StatsGalleryLogo.vue';
 import { useNear } from '@/composables/useNear';
 import { defineComponent, ref, watch } from 'vue';
 import SmallAccountInput from '../form/SmallAccountInput.vue';
@@ -90,7 +79,7 @@ export default defineComponent({
     SmallNetworkInput,
     SmallTimeframeInput,
     SmallPrimaryButton,
-    NearLogo,
+    StatsGalleryLogo,
   },
   props: {
     showIntake: {

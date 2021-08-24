@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'landing',
     component: Landing,
     meta: {
-      title: 'near stats.gallery',
+      title: 'stats.gallery',
       noTitleSuffix: true,
     },
   },

@@ -21,7 +21,6 @@ import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { defineComponent, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
-import { useScore } from './composables/useScore';
 
 export default defineComponent({
   components: {
@@ -54,7 +53,7 @@ export default defineComponent({
       { immediate: true },
     );
 
-    const titleSuffix = ' - near stats.gallery';
+    const titleSuffix = ' - stats.gallery';
 
     useTitle(route => {
       const suffix = route.meta.noTitleSuffix ? '' : titleSuffix;
@@ -86,28 +85,6 @@ export default defineComponent({
         }
       }
     });
-
-    watch(
-      route,
-      () => {
-        const match = route.matched[route.matched.length - 1];
-        if (match && !route.query['t']) {
-          // const { path } = match;
-          // console.log(route.query);
-          // const params = new URLSearchParams(route.query);
-          // if (path.includes(':account') || path.includes(':network')) {
-          //   router.replace(
-          //     path
-          //       .replace(':network', network.value)
-          //       .replace(':account', account.value) +
-          //       '?t=' +
-          //       timeframe.value,
-          //   );
-          // }
-        }
-      },
-      { immediate: true },
-    );
 
     return {
       account,
