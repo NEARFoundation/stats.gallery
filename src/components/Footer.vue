@@ -1,45 +1,33 @@
 <template>
-  <footer class="px-4 mt-8">
+  <footer class="p-4 bg-gray-800">
     <div
       class="
-        border-t border-gray-200
         max-w-7xl
+        space-y-4
+        md:space-y-0
         mx-auto
-        py-12
-        px-4
         sm:px-6
         md:flex md:items-center md:justify-between
         lg:px-8
       "
     >
-      <div class="flex justify-center space-x-6 md:order-2">
+      <div class="md:order-1 flex justify-center">
         <a href="https://near.org/" class="text-gray-400 hover:text-gray-500">
           <span class="sr-only">NEAR.org</span>
-          <svg class="h-6 w-6" viewBox="0 0 176 176" aria-hidden="true">
-            <linearGradient
-              id="prefix__a"
-              x1="76.81"
-              x2="211.16"
-              y1="211.17"
-              y2="76.81"
-              gradientTransform="translate(-56 -56)"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stop-color="currentColor" offset=".21" />
-              <stop stop-color="currentColor" stop-opacity="0" offset=".42" />
-              <stop stop-color="currentColor" stop-opacity="0" offset=".59" />
-              <stop stop-color="currentColor" offset=".81" />
-            </linearGradient>
-            <path
-              d="M32.46 160a16.45 16.45 0 0012.46-5.71L157.48 23.72A16.42 16.42 0 00143.54 16a16.46 16.46 0 00-12.41 5.65L18 151.45A16.46 16.46 0 0032.46 160z"
-              fill="url(#prefix__a)"
-            />
-            <path
-              d="M32.46 160a16.46 16.46 0 007.54-1.83v-109l87.45 104.94a16.44 16.44 0 0012.64 5.89h3.45A16.46 16.46 0 00160 143.54V32.46A16.46 16.46 0 00143.54 16a16.36 16.36 0 00-7.54 1.81v109.05L48.55 21.92A16.44 16.44 0 0035.91 16h-3.45A16.46 16.46 0 0016 32.46v111.08A16.46 16.46 0 0032.46 160z"
-              fill="currentColor"
-            />
+          <svg
+            class="h-12"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 414 162"
+          >
+            <g fill="currentColor">
+              <path
+                d="M207.21 54.75v52.5a.76.76 0 01-.75.75H201a7.49 7.49 0 01-6.3-3.43l-24.78-38.3.85 19.13v21.85a.76.76 0 01-.75.75h-7.22a.76.76 0 01-.75-.75v-52.5a.76.76 0 01.75-.75h5.43a7.52 7.52 0 016.3 3.42l24.78 38.24-.77-19.06V54.75a.75.75 0 01.75-.75h7.22a.76.76 0 01.7.75zM281 108h-7.64a.75.75 0 01-.7-1l20.24-52.28A1.14 1.14 0 01294 54h9.57a1.14 1.14 0 011.05.72L324.8 107a.75.75 0 01-.7 1h-7.64a.76.76 0 01-.71-.48l-16.31-43a.75.75 0 00-1.41 0l-16.31 43a.76.76 0 01-.72.48zM377.84 106.79L362.66 87.4c8.57-1.62 13.58-7.4 13.58-16.27 0-10.19-6.63-17.13-18.36-17.13h-21.17a1.12 1.12 0 00-1.12 1.12 7.2 7.2 0 007.2 7.2H357c7.09 0 10.49 3.63 10.49 8.87s-3.32 9-10.49 9h-20.29a1.13 1.13 0 00-1.12 1.13v26a.75.75 0 00.75.75h7.22a.76.76 0 00.75-.75V87.87h8.33l13.17 17.19a7.51 7.51 0 006 2.94h5.48a.75.75 0 00.55-1.21zM258.17 54h-33.5a1 1 0 00-1 1 7.33 7.33 0 007.33 7.33h27.17a.74.74 0 00.75-.75v-6.83a.75.75 0 00-.75-.75zm0 45.67h-25a.76.76 0 01-.75-.75V85.38a.75.75 0 01.75-.75h23.11a.75.75 0 00.75-.75V77a.75.75 0 00-.75-.75h-31.49a1.13 1.13 0 00-1.12 1.13v29.46a1.12 1.12 0 001.12 1.12h33.38a.75.75 0 00.75-.75v-6.83a.74.74 0 00-.75-.71zM108.24 40.57L89.42 68.5a2 2 0 003 2.63l18.52-16a.74.74 0 011.24.56v50.29a.75.75 0 01-1.32.48l-56-67A9.59 9.59 0 0047.54 36h-1.95A9.59 9.59 0 0036 45.59v70.82a9.59 9.59 0 009.59 9.59 9.59 9.59 0 008.17-4.57L72.58 93.5a2 2 0 00-3-2.63l-18.52 16a.74.74 0 01-1.24-.56V56.07a.75.75 0 011.32-.48l56 67a9.59 9.59 0 007.33 3.4h2a9.59 9.59 0 009.59-9.59V45.59a9.59 9.59 0 00-9.65-9.59 9.59 9.59 0 00-8.17 4.57z"
+              />
+            </g>
           </svg>
         </a>
+      </div>
+      <div class="flex justify-center space-x-6 md:order-3">
         <a
           href="https://twitter.com/NEARProtocol"
           class="text-gray-400 hover:text-gray-500"
@@ -76,9 +64,16 @@
           </svg>
         </a>
       </div>
-      <div class="mt-8 md:mt-0 md:order-1">
+      <div class="md:order-2">
         <p class="text-center text-base text-gray-400">
-          &copy; 2021 Near Foundation, All Rights Reserved.
+          Built with ♥ by
+          <a href="https://twitter.com/sudo_build" class="underline"
+            >Jacob Lindahl</a
+          >
+        </p>
+        <p class="text-center text-base text-gray-400">
+          Designed with ♥ by
+          <a href="https://t.me/danpodkovko" class="underline">Dan Podkovko</a>
         </p>
       </div>
     </div>

@@ -3,28 +3,29 @@ import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { UnifiedTransactionAction } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
-import { Ref, WatchSource } from 'vue';
+import { deref, OptionalRef } from '@/utils/deref';
+import { isRef, Ref, WatchSource } from 'vue';
 
 export function useRecentActions({
   account,
   network,
   timeframe,
 }: {
-  account: Ref<string>;
-  network: Ref<Network>;
-  timeframe: Ref<Timeframe>;
+  account: OptionalRef<string>;
+  network: OptionalRef<Network>;
+  timeframe: OptionalRef<Timeframe>;
 }): {
   actions: Ref<UnifiedTransactionAction[]>;
   isLoading: Ref<boolean>;
 } {
   const f = () =>
-    IndexerClient.from(network.value).getRecentTransactionActions({
-      account: account.value,
-      after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
+    IndexerClient.from(deref(network)).getRecentTransactionActions({
+      account: deref(account),
+      after: timeframeToPastTimestamp(deref(timeframe)) * 1_000_000,
       before: Date.now() * 1_000_000,
     });
   const { value: actions, isLoading } = usePromise(
-    [account, network, timeframe] as WatchSource[],
+    [account, timeframe, network].filter(w => isRef(w)) as WatchSource[],
     f,
     [],
   );

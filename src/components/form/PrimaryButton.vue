@@ -1,0 +1,22 @@
+<template>
+  <button
+    class="
+      w-full
+      flex
+      items-center
+      justify-center
+      px-8
+      py-3
+      font-medium
+      text-xl
+      whitespace-nowrap
+      text-white
+      bg-green-600
+      hover:bg-green-700
+      rounded-sm
+      shadow
+    "
+  >
+    <slot />
+  </button>
+</template>

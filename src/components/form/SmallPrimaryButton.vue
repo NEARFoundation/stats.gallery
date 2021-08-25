@@ -1,0 +1,21 @@
+<template>
+  <button
+    class="
+      w-full
+      flex
+      items-center
+      justify-center
+      p-2
+      font-medium
+      text-base
+      whitespace-nowrap
+      text-white
+      bg-green-600
+      hover:bg-green-700
+      rounded-sm
+      shadow
+    "
+  >
+    <slot />
+  </button>
+</template>
