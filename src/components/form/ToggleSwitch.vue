@@ -38,7 +38,6 @@ import { defineComponent } from '@vue/runtime-core';
 import { MoonIcon, SunIcon } from 'heroicons-vue3/outline';
 
 export default defineComponent({
-  name: 'toggle-switch',
   components: {
     Switch,
     SwitchGroup,

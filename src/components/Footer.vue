@@ -66,7 +66,14 @@
       </div>
       <div class="md:order-2">
         <p class="text-center text-base text-gray-400">
-          &copy; 2021 Near Foundation, All Rights Reserved.
+          Built with ♥ by
+          <a href="https://twitter.com/sudo_build" class="underline"
+            >Jacob Lindahl</a
+          >
+        </p>
+        <p class="text-center text-base text-gray-400">
+          Designed with ♥ by
+          <a href="https://t.me/danpodkovko" class="underline">Dan Podkovko</a>
         </p>
       </div>
     </div>

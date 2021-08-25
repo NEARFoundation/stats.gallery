@@ -4,19 +4,21 @@
     <header class="lg:ml-64 xl:ml-80 flex-grow flex flex-wrap">
       <h1
         class="
+          order-1
           font-display font-extrabold
           text-4xl
           truncate
           md:text-5xl
           my-1
-          flex-grow
+          mr-3
+          lg:flex-grow
         "
       >
         {{ account }}
       </h1>
 
       <div class="sr-only">Metrics</div>
-      <div class="self-center flex space-x-3">
+      <div class="order-3 self-center flex space-x-3">
         <Star class="text-blue-500">{{
           $filters.number.standard(accountLevel.level)
         }}</Star>
@@ -35,7 +37,16 @@
           {{ $filters.number.standard(score) }}
         </div>
         <div
-          class="py-1 px-4 bg-white rounded-full flex justify-center font-bold"
+          class="
+            py-1
+            px-4
+            bg-white
+            text-black
+            rounded-full
+            flex
+            justify-center
+            font-bold
+          "
         >
           <near-symbol class="w-5" />&nbsp;{{
             $filters.number.standard(+$filters.toNear(view.amount))
@@ -43,10 +54,12 @@
         </div>
       </div>
 
-      <div class="w-full mt-2"></div>
+      <div class="hidden lg:block order-4 w-full mt-2"></div>
 
       <div class="sr-only">Badges</div>
-      <div class="flex space-x-1">
+      <div
+        class="order-2 lg:order-5 flex-grow flex items-center space-x-1 mr-5"
+      >
         <BadgeTooltip
           v-for="badge in badgeGroups"
           :key="badge.name"
@@ -78,26 +91,100 @@
           name="Transactions"
         />
         <SectionLink to="./quests" :icon="QuestsIcon" name="Quests" />
-        <SectionLink
+        <!-- <SectionLink
           to="./leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
-        />
-        <hr class="w-64" />
+        /> -->
+        <hr class="w-64 dark:border-gray-700" />
         <SectionLink
-          to="./exchange"
-          :icon="ExchangeIcon"
-          name="Exchange NEAR"
+          to="https://learnnear.club/"
+          :icon="AcademicCapIcon"
+          name="Learn NEAR"
           external
         />
-        <SectionLink to="./send" :icon="SendIcon" name="Send NEAR" external />
         <SectionLink
-          to="./receive"
-          :icon="ReceiveIcon"
-          name="Receive NEAR"
+          to="https://near-in-minutes.com/"
+          :icon="ClockIcon"
+          name="NEAR in Minutes"
           external
         />
-        <SectionLink to="./nft" :icon="NftIcon" name="Buy NFT" external />
+        <SectionLink
+          to="https://paras.id/"
+          :icon="NftIcon"
+          name="Buy NFTs"
+          external
+        />
+        <div class="flex-grow"></div>
+        <div class="hidden md:block">
+          <div
+            class="
+              p-3
+              border-gray-300
+              dark:border-gray-700
+              border-2 border-dashed
+              rounded-md
+              flex flex-wrap
+              justify-center
+              items-center
+              font-medium
+              text-base text-gray-400 text-center
+            "
+          >
+            <strong>Have a suggestion?</strong>
+            <p>Share your experience!</p>
+            <a
+              href="https://forms.gle/VsuVJsqdChBuhDdM7"
+              target="_blank"
+              rel="noreferrer"
+              class="
+                whitespace-nowrap
+                m-1
+                border-2 border-gray-400
+                px-3
+                py-1
+                rounded-md
+                font-medium
+                flex
+                items-center
+                space-x-2
+                hover:bg-gray-400 hover:bg-opacity-10
+                focus:outline-none
+                focus:ring-2
+                focus:ring-offset-2
+                focus:ring-gray-500
+              "
+            >
+              <AnnotationIcon class="w-4 h-4" />
+              <span>Feedback</span>
+            </a>
+            <a
+              href="https://github.com/NEAR-Edu/stats.gallery/issues/new/choose"
+              target="_blank"
+              rel="noreferrer"
+              class="
+                whitespace-nowrap
+                m-1
+                border-2 border-gray-400
+                px-3
+                py-1
+                rounded-md
+                font-medium
+                flex
+                items-center
+                space-x-2
+                hover:bg-gray-400 hover:bg-opacity-10
+                focus:outline-none
+                focus:ring-2
+                focus:ring-offset-2
+                focus:ring-gray-500
+              "
+            >
+              <ContactIcon class="w-4 h-4" />
+              <span>Reports</span>
+            </a>
+          </div>
+        </div>
       </nav>
 
       <slot />
@@ -113,6 +200,7 @@ import FunctionBadge from '@/components/badges/FunctionBadge.vue';
 import NftBadge from '@/components/badges/NftBadge.vue';
 import TransactionBadge from '@/components/badges/TransactionBadge.vue';
 import Footer from '@/components/Footer.vue';
+import ContactIcon from '@/components/icons/ContactIcon.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
 import {
   BadgeGroup,
@@ -123,14 +211,16 @@ import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
 import { useScore } from '@/composables/useScore';
-import { Component, defineComponent, ref, watch } from 'vue';
-import ExchangeIcon from './overview/icons/ExchangeIcon.vue';
+import {
+  AcademicCapIcon,
+  ClockIcon,
+  AnnotationIcon,
+} from 'heroicons-vue3/solid';
+import { defineComponent, ref, watch } from 'vue';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
 import OverviewIcon from './overview/icons/OverviewIcon.vue';
 import QuestsIcon from './overview/icons/QuestsIcon.vue';
-import ReceiveIcon from './overview/icons/ReceiveIcon.vue';
-import SendIcon from './overview/icons/SendIcon.vue';
 import StatsIcon from './overview/icons/StatsIcon.vue';
 import TransactionsIcon from './overview/icons/TransactionsIcon.vue';
 import SectionLink from './overview/SectionLink.vue';
@@ -143,6 +233,8 @@ export default defineComponent({
     SectionLink,
     Star,
     BadgeTooltip,
+    ContactIcon,
+    AnnotationIcon,
   },
   setup() {
     const { account, network, timeframe } = useNear();
@@ -196,10 +288,9 @@ export default defineComponent({
       TransactionsIcon,
       QuestsIcon,
       LeaderboardsIcon,
-      ExchangeIcon,
-      SendIcon,
-      ReceiveIcon,
       NftIcon,
+      ClockIcon,
+      AcademicCapIcon,
       TransactionBadge,
       FunctionBadge,
       NftBadge,

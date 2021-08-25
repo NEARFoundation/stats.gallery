@@ -3,7 +3,6 @@
     class="
       flex-grow flex flex-col
       space-y-3
-      overflow-x-auto
       pr-3
       md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
     "
@@ -32,9 +31,6 @@
         sm:justify-between
       "
     >
-      <button class="absolute top-0 right-0 p-1 hover:opacity-75">
-        <XIcon class="w-6 h-6 text-white" />
-      </button>
       <img
         class="pt-3 h-full self-end hidden lg:block"
         src="@/assets/nearkat_prompt.png"
@@ -47,7 +43,10 @@
       <BigChevron class="hidden md:block h-full flex-shrink py-6 text-white" />
       <div class="flex flex-col items-center space-y-4 w-64 text-white">
         <EarnNear />
-        <button
+        <a
+          href="https://learnnear.club/"
+          target="_blank"
+          rel="noreferrer"
           class="
             border-2 border-white
             rounded
@@ -57,17 +56,18 @@
           "
         >
           Learn more
-        </button>
+        </a>
       </div>
     </div>
     <StatsWidget class="col-span-1 xl:col-span-2 order-6 md:order-none" />
     <TransactionRateWidget
       class="col-span-2 xl:col-span-1 order-7 md:order-none"
+      style="min-height: 200px"
     />
-    <DashboardCard
+    <!-- <DashboardCard
       class="col-span-3 order-8 md:order-none"
       title="Transaction History"
-    ></DashboardCard>
+    ></DashboardCard> -->
   </main>
 </template>
 
@@ -86,10 +86,8 @@ import { GaugeChart } from 'echarts/charts';
 import { TitleComponent } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { XIcon } from 'heroicons-vue3/solid';
 import { defineComponent } from 'vue';
 import BigChevron from './overview/BigChevron.vue';
-import DashboardCard from './overview/DashboardCard.vue';
 import EarnNear from './overview/EarnNear.vue';
 import BalanceWidget from './overview/widgets/BalanceWidget.vue';
 import LevelWidget from './overview/widgets/LevelWidget.vue';
@@ -102,8 +100,6 @@ use([CanvasRenderer, GaugeChart, TitleComponent]);
 
 export default defineComponent({
   components: {
-    DashboardCard,
-    XIcon,
     BigChevron,
     EarnNear,
     ScoreWidget,

@@ -1,6 +1,6 @@
 import { Timeframe } from '@/services/timeframe';
 import { ref, watch } from 'vue';
-import { useStat } from '../useStat';
+import { useSingle } from '../useSingle';
 import { BadgeComposable } from './BadgeComposable';
 
 export function createBadgeComposable(
@@ -10,10 +10,14 @@ export function createBadgeComposable(
   return args => {
     const achieved = ref(false);
 
-    const { value, isLoading } = useStat(path, 0, {
-      ...args,
-      timeframe: Timeframe.ALL,
-    });
+    const { value, isLoading } = useSingle(
+      path,
+      {
+        ...args,
+        timeframe: Timeframe.ALL,
+      },
+      0,
+    );
 
     watch(value, value => {
       achieved.value = value >= level;

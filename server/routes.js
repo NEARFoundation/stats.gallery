@@ -3,6 +3,7 @@ const accountActivityDistributionSql = require('./queries/account-activity-distr
 const accountCreationSql = require('./queries/account-creation.sql');
 const accountRelationStrengthSql = require('./queries/account-relation-strength.sql');
 const actionsSql = require('./queries/actions.sql');
+const allAccountsSql = require('./queries/all-accounts.sql');
 const badgeDeploySql = require('./queries/badge-deploy.sql');
 const badgeNftSql = require('./queries/badge-nft.sql');
 const badgeStakeSql = require('./queries/badge-stake.sql');
@@ -47,6 +48,11 @@ module.exports = [
   {
     path: 'actions',
     query: actionsSql,
+  },
+  {
+    path: 'all-accounts',
+    query: allAccountsSql,
+    poll: HOUR,
   },
   {
     path: 'badge-deploy',

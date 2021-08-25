@@ -7,7 +7,7 @@
       <img class="max-h-12" :src="bannerImagePath" alt="Announcement banner" />
     </a>
   </div>
-  <nav class="bg-white p-6">
+  <nav class="bg-white p-6 dark:bg-gray-900 dark:text-gray-100">
     <div
       class="
         w-full
@@ -19,16 +19,9 @@
         justify-between
       "
     >
-      <div class="flex items-center">
-        <img
-          class="h-9 mr-2 bg-green-600 rounded-full"
-          src="@/assets/near_icon_wht.svg"
-        />
-        <img class="hidden sm:block h-5 mr-3" src="@/assets/near_brand.svg" />
-        <div class="italic font-medium text-lg whitespace-nowrap">
-          stats gallery
-        </div>
-      </div>
+      <router-link :to="{ name: 'landing' }" class="flex items-center">
+        <StatsGalleryLogo class="p-1 h-9" />
+      </router-link>
       <div
         v-if="showIntake"
         class="
@@ -61,27 +54,40 @@
           >View</SmallPrimaryButton
         >
       </div>
-      <ToggleSwitch v-model="theme" />
+      <router-link :to="{ name: 'story' }" v-slot="{ isActive }">
+        <span
+          :class="[
+            isActive
+              ? 'text-gray-700 bg-gray-400 dark:text-gray-50'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-50',
+          ]"
+          class="font-medium rounded px-3 py-1 bg-opacity-20"
+          >story</span
+        >
+      </router-link>
+      <!-- <ToggleSwitch v-model="theme" /> -->
     </div>
   </nav>
 </template>
 
 <script lang="ts">
+import StatsGalleryLogo from '@/components/icons/StatsGalleryLogo.vue';
 import { useNear } from '@/composables/useNear';
 import { defineComponent, ref, watch } from 'vue';
 import SmallAccountInput from '../form/SmallAccountInput.vue';
 import SmallNetworkInput from '../form/SmallNetworkInput.vue';
 import SmallPrimaryButton from '../form/SmallPrimaryButton.vue';
 import SmallTimeframeInput from '../form/SmallTimeframeInput.vue';
-import ToggleSwitch from '../form/ToggleSwitch.vue';
+// import ToggleSwitch from '../form/ToggleSwitch.vue';
 
 export default defineComponent({
   components: {
-    ToggleSwitch,
+    // ToggleSwitch,
     SmallAccountInput,
     SmallNetworkInput,
     SmallTimeframeInput,
     SmallPrimaryButton,
+    StatsGalleryLogo,
   },
   props: {
     showIntake: {

@@ -4,6 +4,7 @@
       :value="modelValue.toLowerCase()"
       @input="$emit('update:modelValue', $event.target.value.toLowerCase())"
       @keydown.enter="$emit('submit', $event.target.value.toLowerCase())"
+      :autofocus="autofocus"
       type="text"
       :class="[
         modelValue.length ? 'bg-white' : 'bg-gray-100',
@@ -18,7 +19,7 @@
         p-3
         z-10`,
       ]"
-      placeholder="account-name"
+      placeholder="my-account.near"
     />
   </div>
 </template>
@@ -27,11 +28,14 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'account-input',
   props: {
     modelValue: {
       type: String,
       required: true,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue', 'submit'],

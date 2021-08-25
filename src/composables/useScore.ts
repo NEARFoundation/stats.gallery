@@ -3,7 +3,7 @@ import { Timeframe } from '@/services/timeframe';
 import { OptionalRef } from '@/utils/deref';
 import { AccountLevel, currentLevel } from '@/utils/level';
 import { ref, Ref, watch } from 'vue';
-import { useStat } from './useStat';
+import { useSingle } from './useSingle';
 
 export function useScore({
   account,
@@ -18,11 +18,15 @@ export function useScore({
   accountLevel: Ref<AccountLevel>;
   isLoading: Ref<boolean>;
 } {
-  const { value: score, isLoading } = useStat('score', 0, {
-    account,
-    network,
-    timeframe,
-  });
+  const { value: score, isLoading } = useSingle(
+    'score',
+    {
+      account,
+      network,
+      timeframe,
+    },
+    0,
+  );
   const accountLevel = ref({
     level: 0,
     requiredToNextLevel: 0,

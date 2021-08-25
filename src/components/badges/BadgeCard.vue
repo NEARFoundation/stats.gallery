@@ -5,6 +5,7 @@
       relative
       overflow-hidden
       bg-white
+      dark:bg-gray-800
       shadow-lg
       rounded-md
       p-3
@@ -49,7 +50,10 @@
       "
       >{{ rarityName }}</span
     >
-    <p v-if="fraction < 1" class="text-gray-600 text-sm mt-1">
+    <p
+      v-if="fraction < 1"
+      class="text-gray-600 dark:text-gray-300 text-sm mt-1"
+    >
       <strong>{{ $filters.number.compact(fraction * 100) }}%</strong> of users
       have unlocked
     </p>
@@ -159,7 +163,8 @@ export default defineComponent({
           gildClass.value = 'to-green-500';
         } else {
           rarityName.value = 'Common';
-          rarityClass.value = 'text-gray-500 ring-1 ring-gray-300';
+          rarityClass.value =
+            'text-gray-500 ring-1 ring-gray-300 dark:text-gray-200 dark:bg-gray-700';
           gildClass.value = '';
         }
       },

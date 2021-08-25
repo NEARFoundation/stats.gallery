@@ -1,5 +1,5 @@
 <template>
-  <Listbox as="div" v-model="selected">
+  <Listbox as="div" v-model="selectedItem">
     <div class="relative">
       <ListboxButton
         class="
@@ -16,7 +16,7 @@
         "
       >
         <span class="block truncate text-xl text-black text-center">{{
-          selected.text
+          selectedItem.text
         }}</span>
         <span
           class="
@@ -103,10 +103,9 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { CheckIcon, SelectorIcon } from 'heroicons-vue3/outline';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
-  name: 'timeframe-input',
   components: {
     Listbox,
     ListboxButton,
@@ -122,7 +121,7 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue'],
-  setup() {
+  setup(props, { emit }) {
     const timeframes = [
       {
         text: 'day',
@@ -146,11 +145,18 @@ export default defineComponent({
       },
     ];
 
-    const selected = ref(timeframes[3]);
+    const findTimeframe = (search: Timeframe) =>
+      timeframes.find(t => t.value === search)!;
+
+    const selectedItem = ref(findTimeframe(props.modelValue));
+
+    watch(selectedItem, selectedItem => {
+      emit('update:modelValue', selectedItem.value);
+    });
 
     return {
       timeframes,
-      selected,
+      selectedItem,
     };
   },
 });

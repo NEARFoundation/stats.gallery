@@ -17,6 +17,10 @@
           border border-gray-300
           flex
           items-center
+          dark:bg-gray-700
+          dark:hover:bg-gray-800
+          dark:border-gray-600
+          dark:text-white
         "
       >
         <span
@@ -26,9 +30,10 @@
             'flex-shrink-0 inline-block h-2 w-2 rounded-full mr-2',
           ]"
         />
-        <span class="block truncate text-base text-black flex-grow">{{
-          selected.text
-        }}</span>
+        <span
+          class="block truncate text-base text-black dark:text-white flex-grow"
+          >{{ selected.text }}</span
+        >
         <span
           class="
             absolute
@@ -64,6 +69,7 @@
             overflow-auto
             focus:outline-none
             text-base
+            dark:bg-gray-700
           "
         >
           <ListboxOption
@@ -75,7 +81,7 @@
           >
             <li
               :class="[
-                active ? 'bg-gray-100' : '',
+                active ? 'bg-gray-100 dark:bg-gray-800' : '',
                 'cursor-pointer select-none relative py-2 pl-3 pr-9 flex items-center',
               ]"
             >
@@ -110,7 +116,6 @@ import { SelectorIcon } from 'heroicons-vue3/outline';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  name: 'network-input',
   components: {
     Listbox,
     ListboxButton,
