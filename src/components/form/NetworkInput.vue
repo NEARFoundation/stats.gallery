@@ -119,7 +119,7 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { CheckIcon, SelectorIcon } from 'heroicons-vue3/outline';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, toRefs, watch } from 'vue';
 
 export default defineComponent({
   components: {
@@ -137,7 +137,7 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue'],
-  setup() {
+  setup(props, { emit }) {
     const networks = [
       {
         text: 'mainnet',
@@ -151,7 +151,17 @@ export default defineComponent({
       },
     ];
 
-    const selected = ref(networks[0]);
+    const selected = ref(
+      networks.find(network => network.value === props.modelValue),
+    );
+
+    watch(toRefs(props).modelValue, modelValue => {
+      selected.value = networks.find(network => network.value === modelValue);
+    });
+
+    watch(selected, selected => {
+      emit('update:modelValue', selected?.value);
+    });
 
     return {
       networks,
