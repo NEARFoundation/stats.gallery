@@ -61,36 +61,24 @@
           media="(min-width: 0px)"
           srcset="@/assets/landing/sm/gizmo.png"
         />
-        <img src="@/assets/landing/sm/gizmo.png" style="" />
+        <img src="@/assets/landing/sm/gizmo.png" />
       </picture>
       <div class="flex flex-wrap max-w-2xl">
         <Card title="History">
           <h3 class="font-bold">History</h3>
-          <p>
-            Get and complete quests to receive more NEAR points and pump your
-            account up!
-          </p>
+          <p>See all of your progress in one place!</p>
         </Card>
-        <Card title="History">
-          <h3 class="font-bold">Services</h3>
-          <p>
-            Get and complete quests to receive more NEAR points and pump your
-            account up!
-          </p>
+        <Card title="Resources">
+          <h3 class="font-bold">Resources</h3>
+          <p>Guides and tutorials from around the network!</p>
         </Card>
-        <Card title="History">
+        <Card title="Quests">
           <h3 class="font-bold">Quests</h3>
-          <p>
-            Get and complete quests to receive more NEAR points and pump your
-            account up!
-          </p>
+          <p>Get and complete quests to pump your account up!</p>
         </Card>
-        <Card title="History">
+        <Card title="Transactions">
           <h3 class="font-bold">Transactions</h3>
-          <p>
-            Get and complete quests to receive more NEAR points and pump your
-            account up!
-          </p>
+          <p>Meticulous records of each and every on-chain action!</p>
         </Card>
       </div>
     </div>
