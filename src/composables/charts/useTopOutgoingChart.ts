@@ -1,4 +1,5 @@
 import { Action } from '@/services/near/indexer/types';
+import { clipString } from '@/utils/clipString';
 import {
   BarSeriesOption,
   ComposeOption,
@@ -51,6 +52,11 @@ export function useTopOutgoingChart(actions: Ref<Action[]>): Ref<Option> {
       yAxis: {
         type: 'category',
         data: g.category,
+        axisLabel: {
+          formatter: (name: string) => {
+            return clipString(name, 22, 2);
+          },
+        },
       },
       series: [
         {

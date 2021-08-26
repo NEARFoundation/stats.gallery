@@ -10,7 +10,7 @@
         class="chart"
         theme="light"
         :option="balanceHistoryOption"
-        autosize
+        autoresize
       />
     </DashboardCard>
     <DashboardCard title="Action Types">
@@ -20,7 +20,7 @@
         class="chart"
         theme="light"
         :option="actionTypeOption"
-        autosize
+        autoresize
       />
     </DashboardCard>
     <DashboardCard title="Top 10 Senders">
@@ -30,7 +30,7 @@
         class="chart"
         theme="light"
         :option="topIncomingOption"
-        autosize
+        autoresize
     /></DashboardCard>
     <DashboardCard title="Top 10 Receivers">
       <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
@@ -39,7 +39,7 @@
         class="chart"
         theme="light"
         :option="topOutgoingOption"
-        autosize
+        autoresize
     /></DashboardCard>
   </main>
 </template>
