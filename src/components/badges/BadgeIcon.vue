@@ -17,7 +17,7 @@
     ></div>
     <component
       :is="icon[group]"
-      :class="iconClass[group]"
+      :style="'color:' + iconColor[group]"
       class="z-10 absolute"
     ></component>
     <!--
@@ -88,16 +88,16 @@ export default defineComponent({
       stake: StakeBadgeVue,
     };
 
-    const iconClass: Record<BadgeGroup, string> = {
-      nft: 'text-blue-500',
-      transfer: 'text-red-500',
-      contract: 'text-green-700',
-      stake: 'text-purple-500',
+    const iconColor: Record<BadgeGroup, string> = {
+      nft: '#3B82F6',
+      transfer: '#EF5DA8',
+      contract: '#059669',
+      stake: '#0369A1',
     };
 
     return {
       icon,
-      iconClass,
+      iconColor,
     };
   },
 });
