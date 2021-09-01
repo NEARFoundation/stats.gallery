@@ -35,7 +35,7 @@ export const tasks: RoadmapTask[] = [
   {
     name: 'Beta release',
     date: DateTime.fromObject({ year: 2021, month: 8, day: 20 }).toJSDate(),
-    done: false,
+    done: true,
     link: '',
   },
   {
