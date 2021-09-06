@@ -1,13 +1,6 @@
 import { Action } from '@/services/near/indexer/types';
 import { clipString } from '@/utils/clipString';
-// import {
-//   BarSeriesOption,
-//   ComposeOption,
-//   TooltipComponentOption,
-// } from 'echarts';
 import { ref, Ref, watch } from 'vue';
-
-// type Option = ComposeOption<BarSeriesOption | TooltipComponentOption>;
 
 export function useTopIncomingChart(
   actions: Ref<Action[]>,
@@ -29,7 +22,7 @@ export function useTopIncomingChart(
 
     ordered.sort((a, b) => b.value - a.value);
 
-    const slice = ordered.slice(0, 10).reverse();
+    const slice = ordered.slice(0, 10);
 
     return {
       category: slice.map(x => x.name),
@@ -40,29 +33,62 @@ export function useTopIncomingChart(
   const genOption: () => Highcharts.Options = () => {
     const g = makeData();
     return {
-      grid: {
-        left: '13%',
-        containLabel: true,
+      chart: {
+        type: 'bar',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+        style: {
+          fontFamily: 'DM Sans',
+          fontWeight: '700',
+          fontSize: '18px',
+        },
       },
       tooltip: {
-        // trigger: 'item',
+        headerFormat: '{point.key}<br />',
+        style: {
+          fontSize: '16px',
+          fontWeight: '400',
+        },
+      },
+      title: {
+        text: '',
+      },
+      legend: {
+        enabled: false,
       },
       xAxis: {
-        type: 'linear',
         boundaryGap: [0, 0.01],
+        categories: g.category,
+        labels: {
+          overflow: 'allow',
+          style: {
+            width: 200,
+            textOverflow: 'ellipsis',
+            fontSize: '16px',
+          },
+        },
+        lineColor: 'rgba(128, 128, 128, 0.2)',
       },
       yAxis: {
-        type: 'category',
-        data: g.category,
-        axisLabel: {
-          formatter: (name: string) => {
-            return clipString(name, 22, 2);
+        title: {
+          text: '',
+        },
+        labels: {
+          style: {
+            fontSize: '16px',
           },
+        },
+        gridLineColor: 'rgba(128, 128, 128, 0.1)',
+      },
+      plotOptions: {
+        bar: {
+          borderWidth: 0,
+          borderRadius: 5,
+          color: '#12b981',
         },
       },
       series: [
         {
-          name: 'Accounts',
+          name: 'Transactions',
           type: 'bar',
           data: g.data,
         },
