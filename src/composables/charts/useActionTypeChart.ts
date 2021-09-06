@@ -1,21 +1,18 @@
 import { Action, ActionKind } from '@/services/near/indexer/types';
-// import {
-//   ComposeOption,
-//   PieSeriesOption,
-//   TooltipComponentOption,
-// } from 'echarts';
-import { ref, Ref, watch } from 'vue';
 import Highcharts from 'highcharts';
-
-// type Option = ComposeOption<PieSeriesOption | TooltipComponentOption>;
+import { ref, Ref, watch } from 'vue';
 
 export function useActionTypeChart(
   actions: Ref<Action[]>,
 ): Ref<Highcharts.Options> {
-  const pieSlice = (name: string, value: number, color: string) => ({
+  const pieSlice = (
+    name: string,
+    value: number,
+    color: string,
+  ): Highcharts.PointOptionsObject => ({
     name,
-    value,
-    itemStyle: { color },
+    y: value,
+    color,
   });
 
   const makeData = () => {
@@ -29,36 +26,53 @@ export function useActionTypeChart(
     }, {} as Record<ActionKind, number>);
 
     return [
-      pieSlice(
-        'Function Call',
-        groups[ActionKind.FUNCTION_CALL],
-        'rgb(251, 191, 36)',
-      ),
-      pieSlice('Transfer', groups[ActionKind.TRANSFER], 'rgb(31, 41, 55)'),
-      pieSlice('Add Key', groups[ActionKind.ADD_KEY], 'rgb(16, 185, 129)'),
-      pieSlice('Delete Key', groups[ActionKind.DELETE_KEY], 'rgb(220, 38, 38)'),
-      pieSlice(
-        'Create Account',
-        groups[ActionKind.CREATE_ACCOUNT],
-        'rgb(16, 185, 129)',
-      ),
-      pieSlice(
-        'Delete Account',
-        groups[ActionKind.DELETE_ACCOUNT],
-        'rgb(220, 38, 38)',
-      ),
+      pieSlice('Function Call', groups[ActionKind.FUNCTION_CALL], '#fbbf24'),
+      pieSlice('Transfer', groups[ActionKind.TRANSFER], '#ef5da8'),
+      pieSlice('Add Key', groups[ActionKind.ADD_KEY], '#60a5fa'),
+      pieSlice('Delete Key', groups[ActionKind.DELETE_KEY], '#ef4444'),
+      pieSlice('Create Account', groups[ActionKind.CREATE_ACCOUNT], '#12b981'),
+      pieSlice('Delete Account', groups[ActionKind.DELETE_ACCOUNT], '#ef4444'),
       pieSlice(
         'Deploy Contract',
         groups[ActionKind.DEPLOY_CONTRACT],
-        'rgb(29, 78, 216)',
+        '#1c4ed8',
       ),
-      pieSlice('Stake', groups[ActionKind.STAKE], 'rgb(109, 40, 217)'),
+      pieSlice('Stake', groups[ActionKind.STAKE], '#8b5cf6'),
     ];
   };
 
   const genOption: () => Highcharts.Options = () => ({
+    chart: {
+      type: 'pie',
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      style: {
+        fontFamily: 'DM Sans',
+        fontWeight: '700',
+        fontSize: '18px',
+      },
+    },
     tooltip: {
-      // trigger: 'item',
+      headerFormat: '{point.key}<br />',
+      style: {
+        fontSize: '16px',
+        fontWeight: '400',
+      },
+    },
+    title: {
+      text: '',
+    },
+    plotOptions: {
+      pie: {
+        dataLabels: {
+          style: {
+            color: 'rgba(128, 128, 128, 1)',
+            fontSize: '16px',
+            textOutline: '',
+          },
+        },
+        borderWidth: 0.5,
+        borderColor: 'white',
+      },
     },
     series: [
       {
@@ -66,13 +80,6 @@ export function useActionTypeChart(
         type: 'pie',
         radius: '50%',
         data: makeData(),
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        },
       },
     ],
   });
