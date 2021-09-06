@@ -87,18 +87,15 @@ export default defineComponent({
         if (p) {
           obs.observe(p);
         }
-        // chart.value.options = (props.option);
+
+        chart.value.update(props.option);
       }
     });
 
     watch([option, chart], ([option, chart]) => {
-      console.log('updated, doing nothing');
-      // if (chart !== null) {
-      //   console.log('setting chart option', chart, option);
-      //   chart.setOption(option, {
-      //     lazyUpdate: true,
-      //   });
-      // }
+      if (chart !== null) {
+        chart.update(option);
+      }
     });
 
     return {
