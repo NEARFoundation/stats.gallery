@@ -23,7 +23,6 @@ export function useMultiple<T>(
   isLoading: Ref<boolean>;
 } {
   const f: () => Promise<T[]> = () => {
-    console.log('useMultiple call');
     const [_account, _network, _timeframe] = [
       deref(account),
       deref(network),

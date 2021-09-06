@@ -30,8 +30,6 @@ export default defineComponent({
     const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
 
-    console.log(process.env);
-
     // Account exists RPC call watcher
     onMounted(() => {
       watch(

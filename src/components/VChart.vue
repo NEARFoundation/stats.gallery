@@ -75,7 +75,6 @@ export default defineComponent({
               resizeWidth = entry.contentRect.width;
             }
 
-            console.log('resized width', resizeWidth);
             width.value = resizeWidth;
 
             requestAnimationFrame(() => {

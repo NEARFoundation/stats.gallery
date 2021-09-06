@@ -20,14 +20,13 @@ import {
   standardNumber,
 } from '@/utils/numberFormat';
 import 'tailwindcss/tailwind.css';
-import { createSSRApp, App as VueApp } from 'vue';
+import { App as VueApp, createSSRApp } from 'vue';
 import { Router } from 'vue-router';
 
 export default function createApp(): {
   app: VueApp<Element>;
   router: Router;
 } {
-  console.log('app.ts', process.env);
   const app = createSSRApp(App);
   app.component('client-only', ClientOnly);
   app.component('near-symbol', NearSymbol);
