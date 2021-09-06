@@ -66,6 +66,18 @@ export function useBalanceHistoryChart({
       chart: {
         type: 'area',
         backgroundColor: 'rgba(0, 0, 0, 0)',
+        style: {
+          fontFamily: 'DM Sans',
+          fontWeight: '700',
+          fontSize: '18px',
+        },
+      },
+      tooltip: {
+        headerFormat: '{point.key}<br />',
+        style: {
+          fontSize: '16px',
+          fontWeight: '400',
+        },
       },
       title: {
         text: '',
@@ -87,8 +99,11 @@ export function useBalanceHistoryChart({
         labels: {
           style: {
             color: 'rgba(128, 128, 128, 1)',
+            fontSize: '16px',
           },
         },
+        lineColor: 'rgba(128, 128, 128, 0.3)',
+        tickColor: 'rgba(128, 128, 128, 0.3)',
       },
       yAxis: {
         type: 'linear',
@@ -101,6 +116,7 @@ export function useBalanceHistoryChart({
         labels: {
           style: {
             color: 'rgba(128, 128, 128, 1)',
+            fontSize: '16px',
           },
         },
         gridLineColor: 'rgba(128, 128, 128, 0.1)',
