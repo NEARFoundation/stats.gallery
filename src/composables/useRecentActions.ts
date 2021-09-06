@@ -24,6 +24,7 @@ export function useRecentActions({
       after: timeframeToPastTimestamp(deref(timeframe)) * 1_000_000,
       before: Date.now() * 1_000_000,
     });
+
   const { value: actions, isLoading } = usePromise(
     [account, timeframe, network].filter(w => isRef(w)) as WatchSource[],
     f,

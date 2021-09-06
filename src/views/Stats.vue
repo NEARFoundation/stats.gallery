@@ -5,41 +5,19 @@
         v-if="viewsIsLoading || actionsIsLoading"
         class="chart"
       />
-      <VChart
-        v-else
-        class="chart"
-        theme="light"
-        :option="balanceHistoryOption"
-        autoresize
-      />
+      <VChart v-else class="chart" :option="balanceHistoryOption" autoresize />
     </DashboardCard>
     <DashboardCard title="Action Types">
       <PieChartLoader v-if="actionsIsLoading" class="chart" />
-      <VChart
-        v-else
-        class="chart"
-        theme="light"
-        :option="actionTypeOption"
-        autoresize
-      />
+      <VChart v-else class="chart" :option="actionTypeOption" autoresize />
     </DashboardCard>
     <DashboardCard title="Top 10 Senders">
       <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
-      <VChart
-        v-else
-        class="chart"
-        theme="light"
-        :option="topIncomingOption"
-        autoresize
+      <VChart v-else class="chart" :option="topIncomingOption" autoresize
     /></DashboardCard>
     <DashboardCard title="Top 10 Receivers">
       <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
-      <VChart
-        v-else
-        class="chart"
-        theme="light"
-        :option="topOutgoingOption"
-        autoresize
+      <VChart v-else class="chart" :option="topOutgoingOption" autoresize
     /></DashboardCard>
   </main>
 </template>
@@ -47,7 +25,6 @@
 <style scoped>
 .chart {
   height: 450px;
-  width: 100%;
 }
 </style>
 
@@ -64,22 +41,22 @@ import { useActions } from '@/composables/useActions';
 import { useNear } from '@/composables/useNear';
 import { ActionKind } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
-import { defineComponent, reactive, watch } from '@vue/runtime-core';
-import { BarChart, LineChart, PieChart } from 'echarts/charts';
-import { GridComponent, TooltipComponent } from 'echarts/components';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import VChart from 'vue-echarts';
+import { defineComponent, onMounted, reactive, watch } from '@vue/runtime-core';
+// import { BarChart, LineChart, PieChart } from 'echarts/charts';
+// import { GridComponent, TooltipComponent } from 'echarts/components';
+// import { use } from 'echarts';
+// import { CanvasRenderer } from 'echarts/renderers';
+import VChart from '@/components/VChart.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 
-use([
-  CanvasRenderer,
-  LineChart,
-  PieChart,
-  BarChart,
-  TooltipComponent,
-  GridComponent,
-]);
+// use([
+//   CanvasRenderer,
+//   LineChart,
+//   PieChart,
+//   BarChart,
+//   TooltipComponent,
+//   GridComponent,
+// ] as any[]);
 
 export default defineComponent({
   components: {
@@ -108,23 +85,25 @@ export default defineComponent({
       timestamp: Date.now() * 1_000_000,
       amount: '0',
     });
-    watch(
-      [account, network],
-      async () => {
-        const res = await rpc.viewAccount({
-          account: account.value,
-          finality: 'final',
-        });
+    onMounted(() => {
+      watch(
+        [account, network],
+        async () => {
+          const res = await rpc.viewAccount({
+            account: account.value,
+            finality: 'final',
+          });
 
-        if ('result' in res) {
-          finalBalance.amount = res.result.amount;
-        } else {
-          finalBalance.amount = '0';
-        }
-        finalBalance.timestamp = Date.now() * 1_000_000;
-      },
-      { immediate: true },
-    );
+          if ('result' in res) {
+            finalBalance.amount = res.result.amount;
+          } else {
+            finalBalance.amount = '0';
+          }
+          finalBalance.timestamp = Date.now() * 1_000_000;
+        },
+        { immediate: true },
+      );
+    });
     const initialBalance = reactive({
       timestamp: 0,
       amount: '0',

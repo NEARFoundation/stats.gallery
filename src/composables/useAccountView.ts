@@ -2,7 +2,8 @@ import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { AccountView } from '@/services/near/rpc/types';
 import { deref, OptionalRef } from '@/utils/deref';
-import { isRef, ref, Ref, watch } from 'vue';
+import { isRef, Ref, WatchSource } from 'vue';
+import { usePromise } from './usePromise';
 
 export function useAccountView({
   account,
@@ -18,14 +19,13 @@ export function useAccountView({
   view: Ref<AccountView | Record<string, never>>;
   isLoading: Ref<boolean>;
 } {
-  const isLoading = ref(true);
-  const view = ref({} as AccountView | Record<string, never>);
-
-  watch(
-    [account, network, blockId ? blockId : finality].filter(x => isRef(x)),
+  const { value: view, isLoading } = usePromise<
+    AccountView | Record<string, never>
+  >(
+    [account, network, blockId ? blockId : finality].filter(x =>
+      isRef(x),
+    ) as WatchSource[],
     async () => {
-      isLoading.value = true;
-
       const viewRequest = await RpcClient.from(deref(network)).viewAccount({
         account: deref(account),
         ...(blockId
@@ -34,12 +34,12 @@ export function useAccountView({
       });
 
       if ('result' in viewRequest) {
-        view.value = viewRequest.result;
+        return viewRequest.result;
+      } else {
+        return {};
       }
-
-      isLoading.value = false;
     },
-    { immediate: true },
+    {},
   );
 
   return { view, isLoading };

@@ -82,10 +82,10 @@
 </style>
 
 <script lang="ts">
-import { GaugeChart } from 'echarts/charts';
-import { TitleComponent } from 'echarts/components';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+// import { GaugeChart } from 'echarts/charts';
+// import { TitleComponent } from 'echarts/components';
+// import { use } from 'echarts';
+// import { CanvasRenderer } from 'echarts/renderers';
 import { defineComponent } from 'vue';
 import BigChevron from './overview/BigChevron.vue';
 import EarnNear from './overview/EarnNear.vue';
@@ -96,7 +96,7 @@ import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import StatsWidget from './overview/widgets/StatsWidget.vue';
 import TransactionRateWidget from './overview/widgets/TransactionRateWidget.vue';
 
-use([CanvasRenderer, GaugeChart, TitleComponent]);
+// use([CanvasRenderer, GaugeChart, TitleComponent] as any[]);
 
 export default defineComponent({
   components: {

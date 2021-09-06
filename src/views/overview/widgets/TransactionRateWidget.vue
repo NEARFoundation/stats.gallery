@@ -26,7 +26,7 @@ import { useNear } from '@/composables/useNear';
 import { useRecentActions } from '@/composables/useRecentActions';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref, watch } from 'vue';
-import VChart from 'vue-echarts';
+import VChart from '@/components/VChart.vue';
 import DashboardCard from '../DashboardCard.vue';
 
 export default defineComponent({

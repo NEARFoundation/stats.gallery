@@ -1,12 +1,12 @@
 import { deref, OptionalRef } from '@/utils/deref';
-import {
-  ComposeOption,
-  PieSeriesOption,
-  TooltipComponentOption,
-} from 'echarts';
+// import {
+//   ComposeOption,
+//   PieSeriesOption,
+//   TooltipComponentOption,
+// } from 'echarts';
 import { isRef, ref, Ref, watch } from 'vue';
 
-type Option = ComposeOption<PieSeriesOption | TooltipComponentOption>;
+// type Option = ComposeOption<PieSeriesOption | TooltipComponentOption>;
 
 export interface DonutSlice {
   name: string;
@@ -14,10 +14,12 @@ export interface DonutSlice {
   color: string;
 }
 
-export function useDonutChart(items: OptionalRef<DonutSlice[]>): Ref<Option> {
-  const genOption: () => Option = () => ({
+export function useDonutChart(
+  items: OptionalRef<DonutSlice[]>,
+): Ref<Highcharts.Options> {
+  const genOption: () => Highcharts.Options = () => ({
     tooltip: {
-      trigger: 'item',
+      // trigger: 'item',
     },
     series: [
       {

@@ -1,13 +1,13 @@
-import { ComposeOption, GaugeSeriesOption } from 'echarts';
+// import { ComposeOption, GaugeSeriesOption } from 'echarts';
 import { isRef, ref, Ref, watch } from 'vue';
 
-type Option = ComposeOption<GaugeSeriesOption>;
+// type Option = ComposeOption<GaugeSeriesOption>;
 
 export function useGaugeChart(
   value: Ref<number>,
   options?: { min?: Ref<number>; max?: Ref<number> },
-): Ref<Option> {
-  const genOption: () => Option = () => {
+): Ref<Highcharts.Options> {
+  const genOption: () => Highcharts.Options = () => {
     return {
       series: [
         {

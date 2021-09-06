@@ -1,13 +1,13 @@
 import { deref, OptionalRef } from '@/utils/deref';
-import {
-  ComposeOption,
-  LineSeriesOption,
-  TooltipComponentOption,
-} from 'echarts';
+// import {
+//   ComposeOption,
+//   LineSeriesOption,
+//   TooltipComponentOption,
+// } from 'echarts';
 import { DateTime } from 'luxon';
 import { isRef, ref, Ref, watch } from 'vue';
 
-type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
+// type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
 
 export function useNetworkActivityChart(
   data: OptionalRef<
@@ -16,7 +16,7 @@ export function useNetworkActivityChart(
       block_date: string;
     }[]
   >,
-): Ref<Option> {
+): Ref<Highcharts.Options> {
   const makeData = () => {
     return deref(data).map(x => [
       DateTime.fromSQL(x.block_date).toMillis(),
@@ -24,7 +24,7 @@ export function useNetworkActivityChart(
     ]);
   };
 
-  const genOption: () => Option = () => {
+  const genOption: () => Highcharts.Options = () => {
     const g = makeData();
     return {
       grid: {
@@ -34,7 +34,7 @@ export function useNetworkActivityChart(
         bottom: 0,
       },
       xAxis: {
-        type: 'time',
+        type: 'datetime',
         axisLabel: {
           show: false,
         },
@@ -43,7 +43,7 @@ export function useNetworkActivityChart(
         },
       },
       yAxis: {
-        type: 'value',
+        type: 'linear',
         axisLabel: {
           show: false,
         },
@@ -63,7 +63,7 @@ export function useNetworkActivityChart(
           data: g,
         },
       ],
-    } as Option;
+    };
   };
 
   const option = ref(genOption());

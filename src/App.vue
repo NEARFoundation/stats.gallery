@@ -19,7 +19,7 @@ body {
 import { useTitle } from '@/composables/useTitle';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -30,28 +30,32 @@ export default defineComponent({
     const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
 
+    console.log(process.env);
+
     // Account exists RPC call watcher
-    watch(
-      [account, network],
-      async ([account]) => {
-        // Only bother checking if the user has actually entered an account
-        if (account.length) {
-          // Hide the alert during loading
-          accountExists.value = true;
-          const r = await rpc.viewAccount({
-            account,
-            finality: 'final',
-          });
-          accountExists.value = !(
-            'error' in r &&
-            r.error.data.includes('does not exist while viewing')
-          );
-        } else {
-          accountExists.value = true;
-        }
-      },
-      { immediate: true },
-    );
+    onMounted(() => {
+      watch(
+        [account, network],
+        async ([account]) => {
+          // Only bother checking if the user has actually entered an account
+          if (account.length) {
+            // Hide the alert during loading
+            accountExists.value = true;
+            const r = await rpc.viewAccount({
+              account,
+              finality: 'final',
+            });
+            accountExists.value = !(
+              'error' in r &&
+              r.error.data.includes('does not exist while viewing')
+            );
+          } else {
+            accountExists.value = true;
+          }
+        },
+        { immediate: true },
+      );
+    });
 
     const titleSuffix = ' - stats.gallery';
 
@@ -68,22 +72,16 @@ export default defineComponent({
     const router = useRouter();
 
     watch([account, network, timeframe], () => {
-      if (route.matched[0]) {
-        const { path } = route.matched[0];
-        if (path.includes(':account') || path.includes(':network')) {
-          router.push(
-            path
-              .replace(':network', network.value)
-              .replace(':account', account.value) +
-              '?t=' +
-              timeframe.value,
-          );
-        } else if (account.value) {
-          router.push(
-            `/${network.value}/${account.value}?t=${timeframe.value}`,
-          );
-        }
-      }
+      router.push({
+        name: route.name ?? 'overview',
+        params: {
+          network: network.value,
+          account: account.value,
+        },
+        query: {
+          t: timeframe.value,
+        },
+      });
     });
 
     return {

@@ -1,14 +1,17 @@
 import { Action, ActionKind } from '@/services/near/indexer/types';
-import {
-  ComposeOption,
-  PieSeriesOption,
-  TooltipComponentOption,
-} from 'echarts';
+// import {
+//   ComposeOption,
+//   PieSeriesOption,
+//   TooltipComponentOption,
+// } from 'echarts';
 import { ref, Ref, watch } from 'vue';
+import Highcharts from 'highcharts';
 
-type Option = ComposeOption<PieSeriesOption | TooltipComponentOption>;
+// type Option = ComposeOption<PieSeriesOption | TooltipComponentOption>;
 
-export function useActionTypeChart(actions: Ref<Action[]>): Ref<Option> {
+export function useActionTypeChart(
+  actions: Ref<Action[]>,
+): Ref<Highcharts.Options> {
   const pieSlice = (name: string, value: number, color: string) => ({
     name,
     value,
@@ -53,9 +56,9 @@ export function useActionTypeChart(actions: Ref<Action[]>): Ref<Option> {
     ];
   };
 
-  const genOption: () => Option = () => ({
+  const genOption: () => Highcharts.Options = () => ({
     tooltip: {
-      trigger: 'item',
+      // trigger: 'item',
     },
     series: [
       {

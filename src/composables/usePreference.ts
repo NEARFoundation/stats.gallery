@@ -1,6 +1,9 @@
 import { ref, Ref, watch } from 'vue';
 
-const storage: Storage = localStorage;
+const storage: Storage | undefined =
+  typeof window !== 'undefined' && 'localStorage' in window
+    ? window.localStorage
+    : undefined;
 
 function put(key: string, value: string): void {
   if (storage) {

@@ -76,7 +76,7 @@ import { useSingle } from '@/composables/useSingle';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref } from 'vue';
-import VChart from 'vue-echarts';
+import VChart from '@/components/VChart.vue';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({

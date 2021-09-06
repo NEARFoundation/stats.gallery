@@ -1,15 +1,17 @@
 import { Action } from '@/services/near/indexer/types';
 import { clipString } from '@/utils/clipString';
-import {
-  BarSeriesOption,
-  ComposeOption,
-  TooltipComponentOption,
-} from 'echarts';
+// import {
+//   BarSeriesOption,
+//   ComposeOption,
+//   TooltipComponentOption,
+// } from 'echarts';
 import { ref, Ref, watch } from 'vue';
 
-type Option = ComposeOption<BarSeriesOption | TooltipComponentOption>;
+// type Option = ComposeOption<BarSeriesOption | TooltipComponentOption>;
 
-export function useTopIncomingChart(actions: Ref<Action[]>): Ref<Option> {
+export function useTopIncomingChart(
+  actions: Ref<Action[]>,
+): Ref<Highcharts.Options> {
   const makeData = () => {
     const groups = actions.value.reduce((acc, current) => {
       const account = current.predecessor_account_id;
@@ -35,7 +37,7 @@ export function useTopIncomingChart(actions: Ref<Action[]>): Ref<Option> {
     };
   };
 
-  const genOption: () => Option = () => {
+  const genOption: () => Highcharts.Options = () => {
     const g = makeData();
     return {
       grid: {
@@ -43,10 +45,10 @@ export function useTopIncomingChart(actions: Ref<Action[]>): Ref<Option> {
         containLabel: true,
       },
       tooltip: {
-        trigger: 'item',
+        // trigger: 'item',
       },
       xAxis: {
-        type: 'value',
+        type: 'linear',
         boundaryGap: [0, 0.01],
       },
       yAxis: {

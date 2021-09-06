@@ -1,7 +1,7 @@
-import { ref, Ref, watch, WatchSource } from 'vue';
+import { onMounted, ref, Ref, watch, WatchSource } from 'vue';
 
-export function usePromise<T, U>(
-  source: WatchSource<U> | WatchSource<U>[],
+export function usePromise<T>(
+  source: WatchSource | WatchSource[],
   f: () => Promise<T>,
   initialValue: T,
 ): {
@@ -11,15 +11,17 @@ export function usePromise<T, U>(
   const value = ref(initialValue) as Ref<T>;
   const isLoading = ref(true);
 
-  watch(
-    source,
-    async () => {
-      isLoading.value = true;
-      value.value = await f();
-      isLoading.value = false;
-    },
-    { immediate: true },
-  );
+  onMounted(() => {
+    watch(
+      source,
+      async () => {
+        isLoading.value = true;
+        value.value = await f();
+        isLoading.value = false;
+      },
+      { immediate: true },
+    );
+  });
 
   return { value, isLoading };
 }
