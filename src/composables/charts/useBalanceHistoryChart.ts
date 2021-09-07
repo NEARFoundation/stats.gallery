@@ -110,7 +110,8 @@ export function useBalanceHistoryChart({
         title: {
           text: 'Balance',
           style: {
-            color: 'rgba(128, 128, 128, 1)',
+            color: 'black',
+            textOutline: '2px white',
           },
         },
         labels: {

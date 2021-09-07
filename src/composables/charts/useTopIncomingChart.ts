@@ -1,5 +1,4 @@
 import { Action } from '@/services/near/indexer/types';
-import { clipString } from '@/utils/clipString';
 import { ref, Ref, watch } from 'vue';
 
 export function useTopIncomingChart(
@@ -64,6 +63,8 @@ export function useTopIncomingChart(
             width: 200,
             textOverflow: 'ellipsis',
             fontSize: '16px',
+            color: 'black',
+            textOutline: '2px white',
           },
         },
         lineColor: 'rgba(128, 128, 128, 0.2)',

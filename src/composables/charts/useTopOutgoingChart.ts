@@ -63,6 +63,8 @@ export function useTopOutgoingChart(
             width: 200,
             textOverflow: 'ellipsis',
             fontSize: '16px',
+            color: 'black',
+            textOutline: '2px white',
           },
         },
         lineColor: 'rgba(128, 128, 128, 0.2)',

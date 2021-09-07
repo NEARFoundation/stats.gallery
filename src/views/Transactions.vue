@@ -29,12 +29,7 @@
             </div>
           </div>
           <div class="w-1/2">
-            <VChart
-              class="chart"
-              theme="light"
-              :option="transactionTypeOption"
-              autoresize
-            />
+            <VChart class="chart" :option="transactionTypeOption" autoresize />
           </div>
         </div>
         <!-- show filter -->

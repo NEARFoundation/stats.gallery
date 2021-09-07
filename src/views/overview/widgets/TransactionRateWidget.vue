@@ -11,7 +11,6 @@
       <div class="flex flex-1">
         <VChart
           class="chart flex-shrink"
-          theme="light"
           :option="weeklyTransactionRateOption"
           autoresize
         />

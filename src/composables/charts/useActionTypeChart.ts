@@ -65,9 +65,9 @@ export function useActionTypeChart(
       pie: {
         dataLabels: {
           style: {
-            color: 'rgba(128, 128, 128, 1)',
+            color: 'black',
             fontSize: '16px',
-            textOutline: '',
+            textOutline: '2px white',
           },
         },
         borderWidth: 0.5,
