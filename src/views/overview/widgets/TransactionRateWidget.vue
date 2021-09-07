@@ -8,7 +8,7 @@
       you cookin', cruisin', or crawlin'?
     </template>
     <template #default>
-      <div class="flex flex-1">
+      <div class="flex flex-1" style="min-height: 250px">
         <VChart
           class="chart flex-shrink"
           :option="weeklyTransactionRateOption"

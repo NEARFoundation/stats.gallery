@@ -8,7 +8,6 @@
     ></div>
   </div>
   <div v-else ref="container"></div>
-  <!-- <div ref="container"></div> -->
 </template>
 
 <style scoped>
@@ -25,12 +24,9 @@
 
 <script lang="ts">
 import Highcharts from 'highcharts';
-// import HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
 import HighchartsMore from 'highcharts/highcharts-more';
+import HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
 import { defineComponent, onMounted, PropType, ref, toRefs, watch } from 'vue';
-
-// console.log(HighchartsSolidGauge);
-// HighchartsSolidGauge(Highcharts);
 
 export default defineComponent({
   props: {
@@ -52,6 +48,7 @@ export default defineComponent({
 
     onMounted(() => {
       HighchartsMore(Highcharts);
+      HighchartsSolidGauge(Highcharts);
 
       if (container.value !== null) {
         chart.value = Highcharts.chart(container.value, props.option);

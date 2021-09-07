@@ -39,6 +39,7 @@ export function useDonutChart(
     },
     series: [
       {
+        name: 'Transactions',
         type: 'pie',
         size: '70%',
         innerSize: '45%',

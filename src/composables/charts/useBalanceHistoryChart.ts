@@ -1,9 +1,9 @@
 import { Action } from '@/services/near/indexer/types';
+import { AccountView } from '@/services/near/rpc/types';
 import { toNear } from '@/utils/near';
 import Highcharts from 'highcharts';
 import { DateTime } from 'luxon';
 import { ref, Ref, watch } from 'vue';
-import { AccountView } from '../../services/near/rpc/types';
 
 export function useBalanceHistoryChart({
   actions,
@@ -61,7 +61,6 @@ export function useBalanceHistoryChart({
 
   const genOption: () => Highcharts.Options = () => {
     const g = makeData();
-    console.log('useBalanceHistoryChart', g);
     return {
       chart: {
         type: 'area',
