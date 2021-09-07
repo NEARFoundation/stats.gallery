@@ -10,7 +10,7 @@
     "build:ssr-client": "vue-cli-service build --dest dist/client --mode development",
     "build:ssr-server": "cross-env SSR=1 vue-cli-service build --dest dist/ssr --mode development",
     "build:ssr": "npm run build:ssr-server && npm run build:ssr-client",
-    "serve:ssr": "node -r dotenv/config ./server.js",
+    "serve:ssr": "cross-env DOTENV_CONFIG_PATH=./.env.development node -r dotenv/config ./server.js",
     "prod:build:ssr-client": "vue-cli-service build --dest dist/client",
     "prod:build:ssr-server": "cross-env SSR=1 vue-cli-service build --dest dist/ssr",
     "prod:build:ssr": "npm run prod:build:ssr-server && npm run prod:build:ssr-client",

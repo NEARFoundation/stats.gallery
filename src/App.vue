@@ -55,7 +55,8 @@ export default defineComponent({
       );
     });
 
-    const titleSuffix = ' - stats.gallery';
+    const titleSuffix =
+      process.env['VUE_APP_TITLE_SUFFIX'] ?? ' - stats.gallery';
 
     useTitle(route => {
       const suffix = route.meta.noTitleSuffix ? '' : titleSuffix;
