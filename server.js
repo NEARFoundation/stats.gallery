@@ -1,17 +1,9 @@
-// import Koa from 'koa';
-// import Router from '@koa/router';
-// import fs from 'fs';
-// import path from 'path';
-// import { renderToString } from '@vue/server-renderer';
-// import serve from 'koa-static';
 const Koa = require('koa');
 const fs = require('fs');
 const path = require('path');
 const { renderToString } = require('@vue/server-renderer');
-// const manifest = require('./dist/ssr/ssr-manifest.json');
 const serve = require('koa-static');
-
-console.log(Object.keys(process.env));
+const { performance } = require('perf_hooks');
 
 (async () => {
   const distPath = './dist/';
@@ -23,15 +15,11 @@ console.log(Object.keys(process.env));
     fs.readFileSync(path.join(ssrPath, './ssr-manifest.json')),
   );
   const appPath = path.join(ssrPath, manifest['index.js']);
-  console.log('appPath', appPath);
   const createApp = require(path.join(__dirname, appPath)).default;
-  console.log(createApp);
 
   const server = new Koa();
 
   const htmlPath = path.join(clientPath, './index.html');
-
-  console.log(htmlPath);
 
   const html = fs.readFileSync(htmlPath, {
     encoding: 'utf-8',
@@ -39,13 +27,8 @@ console.log(Object.keys(process.env));
 
   server.use(async (ctx, next) => {
     console.log(ctx.path);
-    // // TODO: 404
-    console.log(
-      'server.js',
-      Object.keys(process.env).find(x => x.startsWith('VUE_APP_')),
-    );
+    // TODO: 404
     const { app, router: appRouter } = createApp();
-    console.log('done');
 
     const matched = appRouter.resolve(ctx.path).matched;
     const matches = matched.length > 0;
@@ -55,10 +38,10 @@ console.log(Object.keys(process.env));
       await appRouter.isReady();
 
       console.log('rendering...');
+      const start = performance.now();
       const rendered = (await renderToString(app)).toString() + '';
-      console.log('rendered');
-
-      // const trimmed = rendered.replace(/(^<!--\[-->)|(<!--\]-->$)/g, '');
+      const end = performance.now();
+      console.log('rendered in ', end - start);
 
       const injected = html.replace(
         '<div id="app">',
@@ -70,8 +53,6 @@ console.log(Object.keys(process.env));
     } else {
       await next();
     }
-
-    // await next();
   });
 
   server.use(serve(clientPath, { defer: true }));
