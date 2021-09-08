@@ -2,7 +2,7 @@
 name: Badge request
 about: Suggest a badge to be added to stats.gallery
 title: "[BADGE] My cool badge"
-labels: enhancement, idea
+labels: enhancement, badge-request
 assignees: ''
 
 ---
