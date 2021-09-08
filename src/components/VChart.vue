@@ -22,6 +22,22 @@
 }
 </style>
 
+<style>
+@media (prefers-color-scheme: dark) {
+  .highcharts-axis-title {
+    fill: theme('colors.gray.300') !important;
+  }
+
+  .highcharts-axis-labels > text {
+    fill: theme('colors.gray.300') !important;
+  }
+
+  .highcharts-data-label > text {
+    fill: theme('colors.gray.300') !important;
+  }
+}
+</style>
+
 <script lang="ts">
 import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';

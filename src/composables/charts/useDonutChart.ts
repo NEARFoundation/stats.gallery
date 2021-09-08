@@ -20,6 +20,9 @@ export function useDonutChart(
         fontSize: '18px',
       },
     },
+    credits: {
+      enabled: false,
+    },
     tooltip: {
       headerFormat: '{point.key}<br />',
       style: {

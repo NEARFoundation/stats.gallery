@@ -51,6 +51,9 @@ export function useActionTypeChart(
         fontSize: '18px',
       },
     },
+    credits: {
+      enabled: false,
+    },
     tooltip: {
       headerFormat: '{point.key}<br />',
       style: {
@@ -67,7 +70,7 @@ export function useActionTypeChart(
           style: {
             color: 'black',
             fontSize: '16px',
-            textOutline: '2px white',
+            textOutline: '',
           },
         },
         borderWidth: 0.5,

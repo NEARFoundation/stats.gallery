@@ -41,6 +41,9 @@ export function useTopOutgoingChart(
           fontSize: '18px',
         },
       },
+      credits: {
+        enabled: false,
+      },
       tooltip: {
         headerFormat: '{point.key}<br />',
         style: {
@@ -64,7 +67,7 @@ export function useTopOutgoingChart(
             textOverflow: 'ellipsis',
             fontSize: '16px',
             color: 'black',
-            textOutline: '2px white',
+            textOutline: '',
           },
         },
         lineColor: 'rgba(128, 128, 128, 0.2)',
@@ -75,7 +78,8 @@ export function useTopOutgoingChart(
         },
         labels: {
           style: {
-            fontSize: '16px',
+            fontSize: '12px',
+            fontWeight: '400',
           },
         },
         gridLineColor: 'rgba(128, 128, 128, 0.1)',

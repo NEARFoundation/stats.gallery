@@ -71,6 +71,9 @@ export function useBalanceHistoryChart({
           fontSize: '18px',
         },
       },
+      credits: {
+        enabled: false,
+      },
       tooltip: {
         headerFormat: '{point.key}<br />',
         style: {
@@ -98,7 +101,8 @@ export function useBalanceHistoryChart({
         labels: {
           style: {
             color: 'rgba(128, 128, 128, 1)',
-            fontSize: '16px',
+            fontSize: '12px',
+            fontWeight: '400',
           },
         },
         lineColor: 'rgba(128, 128, 128, 0.3)',
@@ -110,13 +114,13 @@ export function useBalanceHistoryChart({
           text: 'Balance',
           style: {
             color: 'black',
-            textOutline: '2px white',
           },
         },
         labels: {
           style: {
             color: 'rgba(128, 128, 128, 1)',
-            fontSize: '16px',
+            fontSize: '12px',
+            fontWeight: '400',
           },
         },
         gridLineColor: 'rgba(128, 128, 128, 0.1)',

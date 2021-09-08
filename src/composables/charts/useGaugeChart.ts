@@ -15,6 +15,9 @@ export function useGaugeChart(
           fontSize: '18px',
         },
       },
+      credits: {
+        enabled: false,
+      },
       tooltip: {
         enabled: false,
       },
@@ -40,7 +43,7 @@ export function useGaugeChart(
             y: -50,
             style: {
               fontSize: '300%',
-              textOutline: '2px white',
+              textOutline: '',
             },
           },
         },
