@@ -5,19 +5,19 @@
         v-if="viewsIsLoading || actionsIsLoading"
         class="chart"
       />
-      <VChart v-else class="chart" :option="balanceHistoryOption" autoresize />
+      <Chart v-else class="chart" :option="balanceHistoryOption" autoresize />
     </DashboardCard>
     <DashboardCard title="Action Types">
       <PieChartLoader v-if="actionsIsLoading" class="chart" />
-      <VChart v-else class="chart" :option="actionTypeOption" autoresize />
+      <Chart v-else class="chart" :option="actionTypeOption" autoresize />
     </DashboardCard>
     <DashboardCard title="Top 10 Senders">
       <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
-      <VChart v-else class="chart" :option="topIncomingOption" autoresize
+      <Chart v-else class="chart" :option="topIncomingOption" autoresize
     /></DashboardCard>
     <DashboardCard title="Top 10 Receivers">
       <HorizontalBarChartLoader v-if="actionsIsLoading" class="chart" />
-      <VChart v-else class="chart" :option="topOutgoingOption" autoresize
+      <Chart v-else class="chart" :option="topOutgoingOption" autoresize
     /></DashboardCard>
   </main>
 </template>
@@ -42,25 +42,12 @@ import { useNear } from '@/composables/useNear';
 import { ActionKind } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
 import { defineComponent, onMounted, reactive, watch } from '@vue/runtime-core';
-// import { BarChart, LineChart, PieChart } from 'echarts/charts';
-// import { GridComponent, TooltipComponent } from 'echarts/components';
-// import { use } from 'echarts';
-// import { CanvasRenderer } from 'echarts/renderers';
-import VChart from '@/components/VChart.vue';
+import Chart from '@/components/Chart.vue';
 import DashboardCard from './overview/DashboardCard.vue';
-
-// use([
-//   CanvasRenderer,
-//   LineChart,
-//   PieChart,
-//   BarChart,
-//   TooltipComponent,
-//   GridComponent,
-// ] as any[]);
 
 export default defineComponent({
   components: {
-    VChart,
+    Chart,
     BalanceHistoryLoader,
     PieChartLoader,
     HorizontalBarChartLoader,

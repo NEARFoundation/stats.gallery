@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="w-1/2">
-            <VChart class="chart" :option="transactionTypeOption" autoresize />
+            <Chart class="chart" :option="transactionTypeOption" autoresize />
           </div>
         </div>
         <!-- show filter -->
@@ -125,7 +125,7 @@ import {
 } from '@/services/near/indexer/types';
 import { DateTime } from 'luxon';
 import { defineComponent, ref, watch } from 'vue';
-import VChart from '@/components/VChart.vue';
+import Chart from '@/components/Chart.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import ActionLine from './transactions/ActionLine.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
@@ -133,7 +133,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 export default defineComponent({
   components: {
     DashboardCard,
-    VChart,
+    Chart,
     ToggleButton,
     ActionLine,
     Disclosure,
