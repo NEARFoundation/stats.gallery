@@ -1,1 +1,2 @@
-server
+server.js
+*.config.js

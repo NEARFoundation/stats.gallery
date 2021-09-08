@@ -1,3 +1,4 @@
+import { networks } from '@/services/near/indexer/networks';
 import Landing from '@/views/Landing.vue';
 import Overview from '@/views/Overview.vue';
 import Page from '@/views/Page.vue';
@@ -8,6 +9,7 @@ import Transactions from '@/views/Transactions.vue';
 import {
   createRouter,
   createWebHistory,
+  createMemoryHistory,
   NavigationGuardWithThis,
   RouteLocationNormalizedLoaded,
   RouteRecordRaw,
@@ -52,7 +54,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/:network/:account',
+    path: '/:network(' + Object.keys(networks).join('|') + ')/:account',
     component: Page,
     children: [
       {
@@ -129,9 +131,13 @@ const routes: Array<RouteRecordRaw> = [
   // },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
-
-export default router;
+export function initRouter() {
+  return createRouter({
+    history:
+      // Are we doing SSR right now?
+      typeof window === 'undefined'
+        ? createMemoryHistory()
+        : createWebHistory(),
+    routes,
+  });
+}

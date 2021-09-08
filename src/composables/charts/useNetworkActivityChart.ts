@@ -1,13 +1,6 @@
 import { deref, OptionalRef } from '@/utils/deref';
-import {
-  ComposeOption,
-  LineSeriesOption,
-  TooltipComponentOption,
-} from 'echarts';
 import { DateTime } from 'luxon';
 import { isRef, ref, Ref, watch } from 'vue';
-
-type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
 
 export function useNetworkActivityChart(
   data: OptionalRef<
@@ -16,54 +9,63 @@ export function useNetworkActivityChart(
       block_date: string;
     }[]
   >,
-): Ref<Option> {
-  const makeData = () => {
-    return deref(data).map(x => [
-      DateTime.fromSQL(x.block_date).toMillis(),
-      x.new_accounts,
-    ]);
+): Ref<Highcharts.Options> {
+  const makeData: () => Highcharts.PointOptionsObject[] = () => {
+    return deref(data).map(point => ({
+      x: DateTime.fromSQL(point.block_date).toMillis(),
+      y: point.new_accounts,
+    }));
   };
 
-  const genOption: () => Option = () => {
+  const genOption: () => Highcharts.Options = () => {
     const g = makeData();
     return {
-      grid: {
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
+      chart: {
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+        margin: 0,
+      },
+      credits: {
+        enabled: false,
+      },
+      title: {
+        text: '',
+      },
+      legend: {
+        enabled: false,
       },
       xAxis: {
-        type: 'time',
-        axisLabel: {
-          show: false,
+        type: 'datetime',
+        labels: {
+          enabled: false,
         },
-        splitLine: {
-          show: false,
-        },
+        tickWidth: 0,
+        lineWidth: 0,
+        maxPadding: 0,
+        minPadding: 0,
       },
       yAxis: {
-        type: 'value',
-        axisLabel: {
-          show: false,
+        type: 'linear',
+        labels: {
+          enabled: false,
         },
-        splitLine: {
-          show: false,
+        title: {
+          text: '',
         },
+        gridLineWidth: 0,
       },
       series: [
         {
           name: 'Accounts',
-          type: 'line',
+          type: 'area',
           color: 'rgba(130, 130, 130, 0.2)',
-          areaStyle: {
-            color: 'rgba(130, 130, 130, 0.2)',
+          fillColor: 'rgba(130, 130, 130, 0.2)',
+          marker: {
+            enabled: false,
           },
-          showSymbol: false,
           data: g,
         },
       ],
-    } as Option;
+    };
   };
 
   const option = ref(genOption());

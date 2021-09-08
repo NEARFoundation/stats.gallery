@@ -8,10 +8,9 @@
       you cookin', cruisin', or crawlin'?
     </template>
     <template #default>
-      <div class="flex flex-1">
-        <VChart
+      <div class="flex flex-1" style="min-height: 250px">
+        <Chart
           class="chart flex-shrink"
-          theme="light"
           :option="weeklyTransactionRateOption"
           autoresize
         />
@@ -26,13 +25,13 @@ import { useNear } from '@/composables/useNear';
 import { useRecentActions } from '@/composables/useRecentActions';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref, watch } from 'vue';
-import VChart from 'vue-echarts';
+import Chart from '@/components/Chart.vue';
 import DashboardCard from '../DashboardCard.vue';
 
 export default defineComponent({
   components: {
     DashboardCard,
-    VChart,
+    Chart,
   },
   setup() {
     const { account, network } = useNear();

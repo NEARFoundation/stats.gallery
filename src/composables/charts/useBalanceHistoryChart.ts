@@ -1,15 +1,9 @@
 import { Action } from '@/services/near/indexer/types';
+import { AccountView } from '@/services/near/rpc/types';
 import { toNear } from '@/utils/near';
-import {
-  ComposeOption,
-  LineSeriesOption,
-  TooltipComponentOption,
-} from 'echarts';
+import Highcharts from 'highcharts';
 import { DateTime } from 'luxon';
 import { ref, Ref, watch } from 'vue';
-import { AccountView } from '../../services/near/rpc/types';
-
-type Option = ComposeOption<LineSeriesOption | TooltipComponentOption>;
 
 export function useBalanceHistoryChart({
   actions,
@@ -27,75 +21,120 @@ export function useBalanceHistoryChart({
     amount: string;
     timestamp: number;
   };
-}): Ref<Option> {
+}): Ref<Highcharts.Options> {
   const makeData = () => {
-    const recorded = actions.value.flatMap((action, i) => {
-      const view = views.value[i];
-      if (action && view) {
-        const time = DateTime.fromMillis(action.block_timestamp / 1_000_000);
-        return [
-          {
-            name: time.toLocaleString(DateTime.DATETIME_MED),
-            value: [time.toISO(), toNear(view.amount).toString()],
-          },
-        ];
-      } else {
-        return [];
-      }
-    });
+    const recorded: { x: number; y: number }[] = actions.value.flatMap(
+      (action, i) => {
+        const view = views.value[i];
+        if (action && view) {
+          const time = DateTime.fromMillis(action.block_timestamp / 1_000_000);
+          return [
+            {
+              x: time.toMillis(),
+              y: +toNear(view.amount).toString(),
+            },
+          ];
+        } else {
+          return [];
+        }
+      },
+    );
 
     if (initial) {
       const time = DateTime.fromMillis(initial.timestamp / 1_000_000);
       recorded.push({
-        name: time.toLocaleString(DateTime.DATETIME_MED),
-        value: [time.toISO(), toNear(initial.amount).toString()],
+        x: time.toMillis(),
+        y: +toNear(initial.amount).toString(),
       });
     }
 
     if (final) {
       const time = DateTime.fromMillis(final.timestamp / 1_000_000);
-      recorded.unshift({
-        name: time.toLocaleString(DateTime.DATETIME_MED),
-        value: [time.toISO(), toNear(final.amount).toString()],
+      recorded.push({
+        x: time.toMillis(),
+        y: +toNear(final.amount).toString(),
       });
     }
 
-    return recorded;
+    return recorded.sort((a, b) => a.x - b.x);
   };
 
-  const genOption: () => Option = () => {
+  const genOption: () => Highcharts.Options = () => {
     const g = makeData();
     return {
-      tooltip: {
-        trigger: 'axis',
+      chart: {
+        type: 'area',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+        style: {
+          fontFamily: 'DM Sans',
+          fontWeight: '700',
+          fontSize: '18px',
+        },
       },
-      xAxis: {
-        type: 'time',
-        axisLabel: {
-          formatter(value: number) {
-            return DateTime.fromMillis(value).toLocaleString(
-              DateTime.DATE_SHORT,
-            );
+      credits: {
+        enabled: false,
+      },
+      tooltip: {
+        headerFormat: '{point.key}<br />',
+        style: {
+          fontSize: '16px',
+          fontWeight: '400',
+        },
+      },
+      title: {
+        text: '',
+      },
+      legend: {
+        enabled: false,
+      },
+      plotOptions: {
+        series: {
+          states: {
+            inactive: {
+              enabled: false,
+            },
           },
         },
       },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          style: {
+            color: 'rgba(128, 128, 128, 1)',
+            fontSize: '12px',
+            fontWeight: '400',
+          },
+        },
+        lineColor: 'rgba(128, 128, 128, 0.3)',
+        tickColor: 'rgba(128, 128, 128, 0.3)',
+      },
       yAxis: {
-        type: 'value',
+        type: 'linear',
+        title: {
+          text: 'Balance',
+          style: {
+            color: 'black',
+          },
+        },
+        labels: {
+          style: {
+            color: 'rgba(128, 128, 128, 1)',
+            fontSize: '12px',
+            fontWeight: '400',
+          },
+        },
+        gridLineColor: 'rgba(128, 128, 128, 0.1)',
       },
       series: [
         {
-          name: 'Accounts',
-          type: 'line',
-          step: 'start',
-          showSymbol: false,
+          name: 'Balance',
+          type: 'area',
+          step: 'right',
           color: 'rgb(124, 58, 237)',
-          areaStyle: {
-            color: 'rgb(139, 92, 246)',
-          },
           data: g,
         },
       ],
-    } as Option;
+    };
   };
 
   const option = ref(genOption());
