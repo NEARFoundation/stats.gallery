@@ -14,7 +14,7 @@
     "prod:build:ssr-client": "vue-cli-service build --dest dist/client",
     "prod:build:ssr-server": "cross-env SSR=1 vue-cli-service build --dest dist/ssr",
     "prod:build:ssr": "npm run prod:build:ssr-server && npm run prod:build:ssr-client",
-    "prod:serve:ssr": "node ./server.js"
+    "prod:serve:ssr": "node -r dotenv/config ./server.js"
   },
   "dependencies": {
     "@headlessui/vue": "^1.3.0",
