@@ -1,5 +1,5 @@
 <template>
-  <DashboardCard title="Brief Stats">
+  <DashboardCard title="Brief Stats" embed="embed:stats">
     <template #help>
       A quick look at your account across time. What a journey!
     </template>

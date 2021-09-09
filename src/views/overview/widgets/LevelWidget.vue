@@ -1,5 +1,5 @@
 <template>
-  <DashboardCard title="Level">
+  <DashboardCard title="Level" embed="embed:level">
     <template #help>
       Complete quests and earn points to increase your level. Try to reach the
       max!

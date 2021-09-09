@@ -23,6 +23,7 @@
     "@vue/server-renderer": "^3.2.8",
     "axios": "^0.21.1",
     "big.js": "^5.2.2",
+    "clipboard-copy": "^4.0.1",
     "core-js": "^3.6.5",
     "dotenv": "^8.6.0",
     "heroicons-vue3": "^1.0.1",

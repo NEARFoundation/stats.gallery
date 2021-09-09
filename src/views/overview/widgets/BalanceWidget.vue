@@ -1,5 +1,5 @@
 <template>
-  <DashboardCard title="Balance">
+  <DashboardCard title="Balance" embed="embed:balance">
     <template #help>
       Monitor your current balance of NEAR and review recent transactions.
     </template>
@@ -144,6 +144,7 @@ import {
 } from '@/services/near/indexer/types';
 import { DateTime } from 'luxon';
 import { defineComponent, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import DashboardCard from '../DashboardCard.vue';
 import HeaderListButtonTemplate from './HeaderListButtonTemplate.vue';
 
@@ -180,6 +181,21 @@ export default defineComponent({
     });
 
     const expandModalOpen = ref(false);
+
+    const router = useRouter();
+
+    const r = router.resolve({
+      name: 'embed:balance',
+      params: {
+        network: network.value,
+        account: account.value,
+      },
+      query: {
+        t: timeframe.value,
+      },
+    });
+
+    console.log(r.href, r.path, r.fullPath);
 
     return {
       transfers,

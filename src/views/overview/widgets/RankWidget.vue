@@ -1,5 +1,5 @@
 <template>
-  <DashboardCard title="Activity Rank">
+  <DashboardCard title="Activity Rank" embed="embed:rank">
     <template #help>How do you stack up against other accounts?</template>
     <template #default>
       <div

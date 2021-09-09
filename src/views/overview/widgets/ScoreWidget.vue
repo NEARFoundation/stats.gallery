@@ -1,5 +1,5 @@
 <template>
-  <DashboardCard title="Score">
+  <DashboardCard title="Score" embed="embed:score">
     <template #help>
       Track your activity across the network with a unified score. The more you
       participate, the higher your score grows!
