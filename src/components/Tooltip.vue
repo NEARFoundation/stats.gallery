@@ -13,6 +13,7 @@
         leave-to-class="translate-y-1 opacity-0"
       >
         <PopoverPanel
+          ref="panelRef"
           class="
             absolute
             sm:top-full
@@ -26,6 +27,7 @@
           "
         >
           <div
+            ref="elRef"
             class="
               overflow-hidden
               rounded-md
@@ -48,13 +50,40 @@
 
 <script lang="ts">
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, ref, VNode, watch } from 'vue';
 
 export default defineComponent({
   components: {
     Popover,
     PopoverButton,
     PopoverPanel,
+  },
+  setup() {
+    const panelRef = ref<VNode | null>(null);
+    const elRef = ref<HTMLElement | null>(null);
+
+    onMounted(() => {
+      const fit = () => {
+        if (panelRef.value && panelRef.value.el) {
+          panelRef.value.el.style.marginLeft = '';
+          const rect = panelRef.value.el.getBoundingClientRect();
+          if (rect.x < 0) {
+            panelRef.value.el.style.marginLeft = -rect.x + 5 + 'px';
+          }
+        }
+      };
+
+      fit();
+
+      window.addEventListener('resize', fit);
+
+      watch(elRef, fit);
+    });
+
+    return {
+      panelRef,
+      elRef,
+    };
   },
 });
 </script>

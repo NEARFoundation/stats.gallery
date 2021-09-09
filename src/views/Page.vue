@@ -1,24 +1,49 @@
 <template>
   <CombinedTopBar :showIntake="true" />
   <div class="p-3 mx-auto max-w-7xl flex flex-col">
-    <header class="lg:ml-64 xl:ml-80 flex-grow flex flex-wrap">
+    <header class="md:ml-52 lg:ml-64 xl:ml-80 flex-grow flex flex-wrap pr-3">
       <h1
         class="
-          order-1
           font-display font-extrabold
           text-4xl
           truncate
           md:text-5xl
           my-1
           mr-3
-          lg:flex-grow
+          flex-grow
         "
       >
         {{ account }}
       </h1>
 
+      <div class="flex items-center space-x-1">
+        <a
+          href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+          class="twitter-share-button"
+          data-size="large"
+          data-text="Check out my NEAR stats!"
+          data-related="NEARProtocol,sudo_build"
+          data-show-count="true"
+          >Tweet</a
+        >
+      </div>
+
+      <div class="w-full mt-2"></div>
+
+      <div class="sr-only">Badges</div>
+      <div class="flex-grow flex items-center space-x-1 mr-5">
+        <BadgeTooltip
+          v-for="badge in badgeGroups"
+          :key="badge.name"
+          :name="badge.name"
+          :description="badge.description"
+          :fraction="badge.rarityFraction"
+          :group="badge.group"
+        />
+      </div>
+
       <div class="sr-only">Metrics</div>
-      <div class="order-3 self-center flex space-x-3">
+      <div class="self-center flex space-x-3">
         <Star class="text-blue-500">{{
           $filters.number.standard(accountLevel.level)
         }}</Star>
@@ -52,22 +77,6 @@
             $filters.number.standard(+$filters.toNear(view.amount))
           }}
         </div>
-      </div>
-
-      <div class="hidden lg:block order-4 w-full mt-2"></div>
-
-      <div class="sr-only">Badges</div>
-      <div
-        class="order-2 lg:order-5 flex-grow flex items-center space-x-1 mr-5"
-      >
-        <BadgeTooltip
-          v-for="badge in badgeGroups"
-          :key="badge.name"
-          :name="badge.name"
-          :description="badge.description"
-          :fraction="badge.rarityFraction"
-          :group="badge.group"
-        />
       </div>
     </header>
 
