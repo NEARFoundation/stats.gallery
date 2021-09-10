@@ -1,7 +1,19 @@
 <template>
   <CombinedTopBar :showIntake="true" />
   <div class="p-3 mx-auto max-w-7xl flex flex-col">
-    <header class="lg:ml-64 xl:ml-80 flex-grow flex flex-wrap">
+    <header
+      class="
+        lg:ml-64
+        xl:ml-80
+        flex-grow flex flex-wrap
+        mt-8
+        lg:mt-4
+        mb-4
+        lg:mb-2
+        space-y-4
+        lg:space-y-1
+      "
+    >
       <h1
         class="
           order-1
@@ -74,7 +86,7 @@
     <div class="w-full mt-5 flex">
       <nav
         class="
-          w-16
+          w-1/5
           md:w-52
           lg:w-64
           xl:w-80
@@ -96,7 +108,7 @@
           :icon="LeaderboardsIcon"
           name="Leaderboards"
         /> -->
-        <hr class="w-64 dark:border-gray-700" />
+        <hr class="w-64 dark:border-gray-700 hidden md:block" />
         <SectionLink
           to="https://learnnear.club/"
           :icon="AcademicCapIcon"

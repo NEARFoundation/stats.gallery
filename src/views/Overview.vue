@@ -1,13 +1,15 @@
 <template>
   <main
     class="
+      w-4/5
       flex-grow flex flex-col
       space-y-4
       pr-3
       md:space-y-6 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
+      -mt-6
     "
   >
-    <ScoreWidget class="row-span-2 order-1 md:order-none" />
+    <ScoreWidget class="row-span-2 order-1 md:order-none mt-6" />
     <LevelWidget class="row-span-1 order-2 md:order-none" />
     <BalanceWidget class="row-span-2 order-4 md:order-none" />
     <RankWidget class="row-span-1 order-3 md:order-none" />

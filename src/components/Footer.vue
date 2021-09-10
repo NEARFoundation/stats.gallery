@@ -1,5 +1,5 @@
 <template>
-  <footer class="p-4 bg-gray-800">
+  <footer class="p-4 bg-gray-800 mt-16">
     <div
       class="
         max-w-7xl
