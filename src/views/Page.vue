@@ -48,7 +48,7 @@
             font-bold
           "
         >
-          <near-symbol class="w-5" />&nbsp;{{
+          <near-symbol class="w-5 h-full" />&nbsp;{{
             $filters.number.standard(+$filters.toNear(view.amount))
           }}
         </div>
