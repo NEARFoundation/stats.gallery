@@ -52,7 +52,14 @@
         <h2 class="font-bold text-center pb-12">Also,</h2>
       </div>
       <div
-        class="flex flex-wrap lg:space-x-24 w-full items-start justify-center"
+        class="
+          flex flex-wrap
+          lg:space-x-24
+          w-full
+          items-center
+          lg:items-start
+          justify-center
+        "
       >
         <picture>
           <source

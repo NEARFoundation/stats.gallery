@@ -1,11 +1,11 @@
 <template>
-  <main class="flex-grow flex flex-col space-y-3">
+  <main class="flex-grow flex flex-col space-y-3 w-4/5">
     <DashboardCard title="Transactions">
       <div class="flex flex-col space-y-3 p-3">
         <!-- aggregate stats wrapper -->
         <div class="flex flex-col md:flex-row space-x-3">
           <!-- header + legend wrapper -->
-          <div class="flex-grow flex flex-col items-center space-y-3 my-24">
+          <div class="flex-grow flex flex-col items-center space-y-3 my-12">
             <!-- # transactions header -->
             <h3 class="text-2xl font-bold">
               {{ $filters.number.standard(actions.length) }} transaction{{
@@ -33,7 +33,9 @@
           </div>
         </div>
         <!-- show filter -->
-        <div class="flex justify-end items-center space-x-2">
+        <div
+          class="flex justify-end items-center space-x-2 flex-wrap space-y-3"
+        >
           <span class="font-medium">Show:</span>
           <ToggleButton
             :modelValue="showFilter === 'all'"
@@ -98,7 +100,7 @@
               leave-to-class="transform scale-95 opacity-0"
             >
               <DisclosurePanel
-                class="flex flex-col divide-y divide-gray-100 mt-2"
+                class="flex flex-col divide-y divide-gray-100 mt-2 truncate"
               >
                 <template v-for="(action, i) in group.actions" :key="i">
                   <ActionLine v-if="filterAction(action)" :action="action" />
