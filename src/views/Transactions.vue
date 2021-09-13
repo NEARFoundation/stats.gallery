@@ -98,10 +98,15 @@
               leave-to-class="transform scale-95 opacity-0"
             >
               <DisclosurePanel
-                class="flex flex-col divide-y divide-gray-100 mt-2"
+                class="
+                  flex flex-col
+                  divide-y divide-gray-100
+                  dark:divide-gray-700
+                  mt-2
+                "
               >
                 <template v-for="(action, i) in group.actions" :key="i">
-                  <ActionLine v-if="filterAction(action)" :action="action" />
+                  <ActionLine :action="action" />
                 </template>
               </DisclosurePanel>
             </transition>
@@ -148,6 +153,19 @@ export default defineComponent({
     const outgoing = ref(0);
     const slices = ref([] as DonutSlice[]);
 
+    const showFilter = ref(
+      'all' as 'all' | 'incoming' | 'outgoing' | 'function_call',
+    );
+
+    const filterAction = (action: UnifiedTransactionAction) =>
+      showFilter.value === 'all' ||
+      (showFilter.value === 'function_call' &&
+        action.action_kind === ActionKind.FUNCTION_CALL) ||
+      (showFilter.value === 'incoming' &&
+        action.receiver_account_id === account.value) ||
+      (showFilter.value === 'outgoing' &&
+        action.receiver_account_id !== account.value);
+
     watch(
       [actions, account],
       ([actions, account]) => {
@@ -192,22 +210,24 @@ export default defineComponent({
     const startOfDate = (blockTimestamp: number): DateTime =>
       DateTime.fromMillis(blockTimestamp / 1_000_000).startOf('day');
 
-    watch(actions, actions => {
+    watch([actions, showFilter], ([actions]) => {
       const grouped = [];
       for (let i = 0; i < actions.length; i++) {
         const start = startOfDate(actions[i].block_timestamp);
         const group = {
           date: start.toISODate(),
           dateText: start.toLocaleString(DateTime.DATE_FULL),
-          actions: [actions[i]],
+          actions: [] as UnifiedTransactionAction[],
         };
 
-        let j = i + 1;
+        let j = i;
         for (; j < actions.length; j++) {
           const action = actions[j];
           const date = startOfDate(action.block_timestamp).toISODate();
           if (date === group.date) {
-            group.actions.push(action);
+            if (filterAction(action)) {
+              group.actions.push(action);
+            }
           } else {
             break;
           }
@@ -215,24 +235,13 @@ export default defineComponent({
 
         i = j - 1;
 
-        grouped.push(group);
+        if (group.actions.length > 0) {
+          grouped.push(group);
+        }
       }
 
       groupedByDate.value = grouped;
     });
-
-    const showFilter = ref(
-      'all' as 'all' | 'incoming' | 'outgoing' | 'function_call',
-    );
-
-    const filterAction = (action: UnifiedTransactionAction) =>
-      showFilter.value === 'all' ||
-      (showFilter.value === 'function_call' &&
-        action.action_kind === ActionKind.FUNCTION_CALL) ||
-      (showFilter.value === 'incoming' &&
-        action.receiver_account_id === account.value) ||
-      (showFilter.value === 'outgoing' &&
-        action.receiver_account_id !== account.value);
 
     return {
       showFilter,
@@ -241,7 +250,6 @@ export default defineComponent({
       incoming,
       outgoing,
       groupedByDate,
-      filterAction,
     };
   },
 });
