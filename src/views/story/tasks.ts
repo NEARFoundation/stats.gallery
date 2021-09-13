@@ -10,14 +10,32 @@ export interface RoadmapTask {
 export const tasks: RoadmapTask[] = [
   {
     name: 'Community governance',
-    date: DateTime.fromObject({ year: 2021, month: 11, day: 20 }).toJSDate(),
+    date: DateTime.fromObject({ year: 2021, month: 12, day: 20 }).toJSDate(),
     done: false,
     link: '',
   },
   {
-    name: 'Make everything sharable!',
-    date: DateTime.fromObject({ year: 2021, month: 9, day: 20 }).toJSDate(),
+    name: 'Sponsored badges',
+    date: DateTime.fromObject({ year: 2021, month: 11, day: 22 }).toJSDate(),
     done: false,
+    link: 'https://github.com/NEAR-Edu/stats.gallery/issues/37',
+  },
+  {
+    name: 'Dapp integrations',
+    date: DateTime.fromObject({ year: 2021, month: 11, day: 21 }).toJSDate(),
+    done: false,
+    link: 'https://github.com/NEAR-Edu/stats.gallery/issues/41',
+  },
+  {
+    name: 'Account status NFT',
+    date: DateTime.fromObject({ year: 2021, month: 10, day: 20 }).toJSDate(),
+    done: false,
+    link: 'https://github.com/NEAR-Edu/stats.gallery/issues/39',
+  },
+  {
+    name: 'Make everything sharable!',
+    date: DateTime.fromObject({ year: 2021, month: 9, day: 13 }).toJSDate(),
+    done: true,
     link: '',
   },
   {
@@ -40,7 +58,7 @@ export const tasks: RoadmapTask[] = [
   },
   {
     name: 'Redesign UI',
-    date: DateTime.fromObject({ year: 2021, month: 7, day: 15 }).toJSDate(),
+    date: DateTime.fromObject({ year: 2021, month: 7, day: 16 }).toJSDate(),
     done: true,
     link: '',
   },

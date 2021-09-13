@@ -100,7 +100,7 @@
         <h3 class="text-center font-bold text-2xl">Done</h3>
         <RoadmapCard
           dateClass="bg-pink-500"
-          v-for="(task, i) in completedTasks"
+          v-for="(task, i) in completedTasks.slice(0, 3)"
           :key="i"
           :date="task.date"
           :href="task.link"
@@ -303,13 +303,13 @@ export default defineComponent({
     tasks
       .sort((a, b) => a.date.getTime() - b.date.getTime())
       .forEach(task => {
-        if (
+        if (task.done) {
+          completedTasks.unshift(task);
+        } else if (
           DateTime.fromJSDate(task.date).startOf('month').toMillis() ===
           currentMonth
         ) {
           currentTasks.push(task);
-        } else if (task.done) {
-          completedTasks.push(task);
         } else {
           futureTasks.push(task);
         }

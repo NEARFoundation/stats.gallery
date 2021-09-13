@@ -8,7 +8,7 @@
     class="rounded-md py-3 px-5 relative"
   >
     <CheckIcon v-if="done" class="absolute top-3 right-3 w-6 text-green-600" />
-    <div class="font-medium text-lg pr-5">{{ name }}</div>
+    <div class="font-medium text-lg pr-5 mb-1">{{ name }}</div>
     <div
       :class="dateClass"
       class="inline-block text-sm text-white uppercase px-3 rounded font-bold"
@@ -16,7 +16,15 @@
       {{ monthName }} {{ year }}
     </div>
     <external-link v-if="href !== ''" :href="href" class="float-right">
-      <span class="inline-flex items-center text-sm text-blue-600 underline">
+      <span
+        class="
+          inline-flex
+          items-center
+          text-sm text-blue-600
+          dark:text-blue-400
+          underline
+        "
+      >
         <span>View</span>
         <external-link-icon class="ml-1" />
       </span>
