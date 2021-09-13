@@ -83,6 +83,15 @@ export default defineComponent({
       });
     });
 
+    watch(route, () => {
+      // Reload Twitter button every page change
+      const t = (window as any).twttr;
+
+      if (t && t.widgets && t.widgets.load) {
+        t.widgets.load();
+      }
+    });
+
     return {
       account,
       accountExists,
