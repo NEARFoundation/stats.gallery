@@ -105,7 +105,7 @@
           :icon="LeaderboardsIcon"
           name="Leaderboards"
         /> -->
-        <hr class="w-64 dark:border-gray-700" />
+        <hr class="w-64" />
         <SectionLink
           to="https://learnnear.club/"
           :icon="AcademicCapIcon"

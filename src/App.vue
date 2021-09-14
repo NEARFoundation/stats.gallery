@@ -13,6 +13,14 @@ body {
     background-color: rgb(11, 18, 31);
   }
 }
+
+hr {
+  @apply dark:border-gray-800;
+}
+
+.prose blockquote {
+  @apply dark:border-gray-600 !important;
+}
 </style>
 
 <script lang="ts">
