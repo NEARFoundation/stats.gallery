@@ -3,7 +3,6 @@
     class="
       flex-grow flex flex-col
       space-y-3
-      pr-3
       md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
     "
   >

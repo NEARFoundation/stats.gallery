@@ -1,7 +1,10 @@
 <template>
   <CombinedTopBar :showIntake="true" />
-  <div class="p-3 mx-auto max-w-7xl flex flex-col">
-    <header class="md:ml-52 lg:ml-64 xl:ml-80 flex-grow flex flex-wrap pr-3">
+  <div class="py-3 mx-auto max-w-7xl flex flex-col">
+    <header
+      v-if="account"
+      class="md:ml-52 lg:ml-64 xl:ml-80 flex-grow flex flex-wrap pl-3 pr-5"
+    >
       <h1
         class="
           font-display font-extrabold
@@ -80,7 +83,7 @@
       </div>
     </header>
 
-    <div class="w-full mt-5 flex">
+    <div class="w-full max-w-full mt-5 flex">
       <nav
         class="
           w-16
@@ -89,22 +92,42 @@
           xl:w-80
           flex-shrink-0 flex flex-col
           space-y-2
-          pr-4
+          pl-3
         "
       >
-        <SectionLink to="./overview" :icon="OverviewIcon" name="Overview" />
-        <SectionLink to="./stats" :icon="StatsIcon" name="Stats" />
         <SectionLink
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'overview',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
+          :icon="OverviewIcon"
+          name="Overview"
+        />
+        <SectionLink
+          v-if="account && network && timeframe"
+          to="./stats"
+          :icon="StatsIcon"
+          name="Stats"
+        />
+        <SectionLink
+          v-if="account && network && timeframe"
           to="./transactions"
           :icon="TransactionsIcon"
           name="Transactions"
         />
-        <SectionLink to="./quests" :icon="QuestsIcon" name="Quests" />
-        <!-- <SectionLink
-          to="./leaderboards"
+        <SectionLink
+          v-if="account && network && timeframe"
+          to="./quests"
+          :icon="QuestsIcon"
+          name="Quests"
+        />
+        <SectionLink
+          to="/leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
-        /> -->
+        />
         <hr class="w-64" />
         <SectionLink
           to="https://learnnear.club/"
@@ -196,8 +219,10 @@
         </div>
       </nav>
 
-      <slot />
-      <router-view></router-view>
+      <div class="flex-1 overflow-hidden p-5 pl-3 -mt-5">
+        <slot />
+        <router-view></router-view>
+      </div>
     </div>
   </div>
   <Footer />
@@ -225,7 +250,8 @@ import {
   ClockIcon,
   AnnotationIcon,
 } from 'heroicons-vue3/solid';
-import { defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
 import OverviewIcon from './overview/icons/OverviewIcon.vue';
@@ -286,8 +312,12 @@ export default defineComponent({
       badgeGroups.value = [nft, transfer, stake, contract].flat();
     });
 
+    const route = useRoute();
+
     return {
       account,
+      network,
+      timeframe,
       view,
       score,
       accountLevel,
