@@ -52,7 +52,7 @@
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
 import { usePromise } from '@/composables/usePromise';
-import { useSingle } from '@/composables/useSingle';
+import { useScore } from '@/composables/useScore';
 import { Await } from '@/utils/types';
 import { defineComponent, ref, watch } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
@@ -62,6 +62,7 @@ export default defineComponent({
   components: { DashboardCard, DonutChart },
   setup() {
     const { account, network, timeframe, indexer } = useNear();
+    const { score } = useScore({ account, network, timeframe });
     const { value: distribution, isLoading } = usePromise(
       network,
       () => indexer.getDistribution(),
@@ -69,31 +70,19 @@ export default defineComponent({
         total: 0,
       } as Await<ReturnType<typeof indexer.getDistribution>>,
     );
-    const { value: transactionCount } = useSingle(
-      'sent-transaction-count',
-      {
-        account,
-        network,
-        timeframe,
-      },
-      0,
-    );
     const percentile = ref(0.7);
     const ranking = ref(0);
 
-    watch(
-      [distribution, transactionCount],
-      ([distribution, transactionCount]) => {
-        const unsorted = Object.keys(distribution).filter(k => k !== 'total');
-        const sorted = unsorted.sort((a, b) => parseFloat(b) - parseFloat(a));
-        const p = sorted.find(x => transactionCount >= distribution[x]);
-        if (p) {
-          const float = parseFloat(p);
-          percentile.value = float;
-          ranking.value = ((1 - float) * distribution.total) | 0;
-        }
-      },
-    );
+    watch([distribution, score], ([distribution, score]) => {
+      const unsorted = Object.keys(distribution).filter(k => k !== 'total');
+      const sorted = unsorted.sort((a, b) => parseFloat(b) - parseFloat(a));
+      const p = sorted.find(x => score >= distribution[x]);
+      if (p) {
+        const float = parseFloat(p);
+        percentile.value = float;
+        ranking.value = ((1 - float) * distribution.total) | 0;
+      }
+    });
 
     return {
       percentile,
