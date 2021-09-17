@@ -195,8 +195,6 @@ export default defineComponent({
       },
     });
 
-    console.log(r.href, r.path, r.fullPath);
-
     return {
       transfers,
       view,

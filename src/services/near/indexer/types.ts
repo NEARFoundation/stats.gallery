@@ -156,3 +156,9 @@ export type Action = {
   predecessor_account_id: string;
   receiver_account_id: string;
 };
+
+export interface CachedAccountRecord {
+  account_id: string;
+  balance: string;
+  score: number;
+}

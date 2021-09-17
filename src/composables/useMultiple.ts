@@ -4,7 +4,7 @@ import { Network } from '@/services/near/indexer/networks';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
 import { debounceRequest, requestId } from '@/utils/debounceRequest';
 import { deref, OptionalRef } from '@/utils/deref';
-import { isRef, Ref, WatchSource } from 'vue';
+import { isRef, ref, Ref, WatchSource } from 'vue';
 
 export function useMultiple<T>(
   stat: string,
@@ -41,7 +41,9 @@ export function useMultiple<T>(
   };
 
   const { value, isLoading } = usePromise(
-    [account, network, timeframe].filter(w => isRef(w)) as WatchSource[],
+    [account, network, timeframe, ref('')].filter(w =>
+      isRef(w),
+    ) as WatchSource[],
     f,
     defaultValue,
   );

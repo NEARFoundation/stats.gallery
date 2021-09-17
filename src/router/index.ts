@@ -12,6 +12,7 @@ import Page from '@/views/Page.vue';
 import Quests from '@/views/Quests.vue';
 import Stats from '@/views/Stats.vue';
 import Story from '@/views/Story.vue';
+import Leaderboards from '@/views/Leaderboards.vue';
 import Transactions from '@/views/Transactions.vue';
 import {
   createMemoryHistory,
@@ -57,6 +58,21 @@ const routes: Array<RouteRecordRaw> = [
     component: Story,
     meta: {
       title: 'the story behind stats.gallery',
+      noTitleSuffix: true,
+    },
+  },
+  {
+    path: '/leaderboards',
+    name: 'leaderboards',
+    component: Page,
+    children: [
+      {
+        path: '',
+        component: Leaderboards,
+      },
+    ],
+    meta: {
+      title: 'leaderboards',
       noTitleSuffix: true,
     },
   },
