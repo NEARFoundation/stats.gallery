@@ -15,6 +15,7 @@
           mr-3
           flex-grow
         "
+        style="line-height: 1.25"
       >
         {{ account }}
       </h1>
@@ -219,7 +220,7 @@
         </div>
       </nav>
 
-      <div class="flex-1 overflow-hidden p-5 pl-3 -mt-5">
+      <div class="flex-1 w-0 p-5 pl-3 -mt-5">
         <slot />
         <router-view></router-view>
       </div>
