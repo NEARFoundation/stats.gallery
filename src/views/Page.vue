@@ -108,19 +108,31 @@
         />
         <SectionLink
           v-if="account && network && timeframe"
-          to="./stats"
+          :to="{
+            name: 'stats',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
           :icon="StatsIcon"
           name="Stats"
         />
         <SectionLink
           v-if="account && network && timeframe"
-          to="./transactions"
+          :to="{
+            name: 'transactions',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
           :icon="TransactionsIcon"
           name="Transactions"
         />
         <SectionLink
           v-if="account && network && timeframe"
-          to="./quests"
+          :to="{
+            name: 'quests',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
           :icon="QuestsIcon"
           name="Quests"
         />
