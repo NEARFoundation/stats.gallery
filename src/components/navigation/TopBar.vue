@@ -65,6 +65,10 @@
           >story</span
         >
       </router-link>
+  <div id="root">
+    <SignedOut v-show="!isSignedIn" />
+    <SignedIn v-show="isSignedIn" />
+  </div>
       <!-- <ToggleSwitch v-model="theme" /> -->
     </div>
   </nav>
@@ -78,7 +82,14 @@ import SmallAccountInput from '../form/SmallAccountInput.vue';
 import SmallNetworkInput from '../form/SmallNetworkInput.vue';
 import SmallPrimaryButton from '../form/SmallPrimaryButton.vue';
 import SmallTimeframeInput from '../form/SmallTimeframeInput.vue';
+import { getConfig } from "../../config"
+import SignedOut from "../SignedOut.vue"
+import SignedIn from "../SignedIn.vue"
 // import ToggleSwitch from '../form/ToggleSwitch.vue';
+
+const nearConfig = getConfig(process.env.NODE_ENV || "development");
+
+(window as any).networkId = nearConfig.networkId;
 
 export default defineComponent({
   components: {
@@ -88,6 +99,13 @@ export default defineComponent({
     SmallTimeframeInput,
     SmallPrimaryButton,
     StatsGalleryLogo,
+    SignedOut,
+    SignedIn,
+  },
+  computed: {
+    isSignedIn: function () {
+      return (window as any).walletConnection.isSignedIn();
+    }
   },
   props: {
     showIntake: {

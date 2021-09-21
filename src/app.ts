@@ -22,11 +22,14 @@ import {
 import 'tailwindcss/tailwind.css';
 import { App as VueApp, createSSRApp } from 'vue';
 import { Router } from 'vue-router';
+import { initContract } from "./utils/util"
 
 export default function createApp(): {
   app: VueApp<Element>;
   router: Router;
 } {
+  
+  (<any>window).nearInitPromise = initContract();
   const app = createSSRApp(App);
   app.component('client-only', ClientOnly);
   app.component('near-symbol', NearSymbol);
