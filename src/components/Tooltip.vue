@@ -19,7 +19,7 @@
             sm:top-full
             left-0
             sm:left-1/2 sm:transform sm:-translate-x-1/2
-            z-10
+            z-50
             w-full
             sm:w-screen
             mt-1
