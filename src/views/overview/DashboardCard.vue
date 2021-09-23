@@ -51,6 +51,7 @@
           hover:text-opacity-60 hover:bg-gray-600 hover:bg-opacity-10
           opacity-0
           group-hover:opacity-100
+          z-40
         "
         @click="isEmbedModalOpen = true"
       >

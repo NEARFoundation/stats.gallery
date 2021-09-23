@@ -7,7 +7,7 @@
       <div class="flex-grow flex p-3">
         <div class="flex flex-col items-end pt-2">
           <div
-            class="font-bold h-12 truncate text-purple-300"
+            class="font-bold h-12 truncate text-green-400"
             style="max-width: 12rem"
           >
             {{ currentAccount }}
@@ -90,17 +90,15 @@
                 }"
               ></div>
             </template>
-            <div
+            <Tooltip
               class="
                 absolute
-                w-7
-                h-7
+                w-8
+                h-8
                 left-1/2
                 transform
                 -translate-x-1/2 -translate-y-1/2
-                rounded-full
-                z-40
-                border-2 border-gray-800
+                z-30
               "
               :style="{
                 top:
@@ -110,8 +108,55 @@
                   'rem',
               }"
             >
-              <ActionIcon class="w-7 h-7" :action="action" />
-            </div>
+              <template v-slot:trigger="{ open }">
+                <ActionIcon
+                  class="
+                    w-8
+                    h-8
+                    border-2 border-gray-800
+                    transform
+                    transition-all
+                    duration-75
+                  "
+                  :class="{
+                    'scale-125 filter drop-shadow-sm': open,
+                  }"
+                  :action="action"
+                />
+              </template>
+              <template #content>
+                <h6 class="text-center font-medium">
+                  {{ $filters.humanize.actionKind(action.action_kind) }}
+                </h6>
+                <table class="text-sm">
+                  <tbody>
+                    <tr>
+                      <th>From:</th>
+                      <td>{{ action.signer_account_id }}</td>
+                    </tr>
+                    <tr>
+                      <th>To:</th>
+                      <td>{{ action.receiver_account_id }}</td>
+                    </tr>
+                    <tr>
+                      <th>Hash:</th>
+                      <td>{{ action.transaction_hash }}</td>
+                    </tr>
+                    <tr>
+                      <th>Date:</th>
+                      <td>
+                        {{
+                          $filters.nearTimestampToLocaleString(
+                            action.block_timestamp,
+                            DateTime.DATETIME_FULL,
+                          )
+                        }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </template>
+            </Tooltip>
             <div class="relative h-12 z-10 border-t-2 border-green-600">
               <div
                 class="absolute h-full right-0 border-r border-gray-700"
@@ -154,13 +199,24 @@
 .scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(128, 128, 128, 0.6);
 }
+
+th {
+  @apply text-gray-400 font-normal text-right pr-2;
+}
+
+td {
+  @apply truncate;
+  max-width: 20em;
+}
 </style>
 
 <script lang="ts">
 import ActionIcon from '@/components/ActionIcon.vue';
+import Tooltip from '@/components/Tooltip.vue';
 import { useNear } from '@/composables/useNear';
 import { useRecentActions } from '@/composables/useRecentActions';
 import { UnifiedTransactionAction } from '@/services/near/indexer/types';
+import { DateTime } from 'luxon';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
 
@@ -168,6 +224,7 @@ export default defineComponent({
   components: {
     ActionIcon,
     DashboardCard,
+    Tooltip,
   },
   setup() {
     const { account, network, timeframe } = useNear();
@@ -224,6 +281,7 @@ export default defineComponent({
       actions,
       mostInteractedAccounts,
       mostInteractedActions,
+      DateTime,
     };
   },
 });

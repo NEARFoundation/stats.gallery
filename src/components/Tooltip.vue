@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <Popover v-slot="{ open }" class="sm:relative">
+    <Popover v-slot="{ open }" v-bind="$attrs">
       <PopoverButton ref="buttonRef">
         <slot name="trigger" :open="open" />
       </PopoverButton>
@@ -20,7 +20,7 @@
               z-50
               w-full
               sm:w-screen sm:max-w-sm
-              mt-1
+              mt-2
               transform
               -translate-x-1/2
             "
@@ -86,17 +86,25 @@ export default defineComponent({
           const el = buttonRef.value.el as HTMLButtonElement;
           const rect = el.getBoundingClientRect();
           top.value = rect.top + rect.height;
-          left.value = rect.left;
+          // We have to do this calculation in JS because we're teleporting the
+          // element, so we can't do it in CSS. :(
+          left.value = rect.left + rect.width / 2;
         }
       };
 
       fit();
+      reposition();
 
-      window.addEventListener('resize', fit);
-      window.addEventListener('resize', reposition);
+      window.addEventListener('resize', () => {
+        reposition();
+        fit();
+      });
       window.addEventListener('scroll', reposition);
 
-      watch(elRef, fit);
+      watch(elRef, () => {
+        reposition();
+        fit();
+      });
     });
 
     return {
