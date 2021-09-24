@@ -132,11 +132,15 @@
                   <tbody>
                     <tr>
                       <th>From:</th>
-                      <td>{{ action.signer_account_id }}</td>
+                      <td>
+                        <account-link :account="action.signer_account_id" />
+                      </td>
                     </tr>
                     <tr>
                       <th>To:</th>
-                      <td>{{ action.receiver_account_id }}</td>
+                      <td>
+                        <account-link :account="action.receiver_account_id" />
+                      </td>
                     </tr>
                     <tr>
                       <th>Hash:</th>
