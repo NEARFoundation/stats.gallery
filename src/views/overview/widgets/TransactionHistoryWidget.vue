@@ -26,6 +26,12 @@
           ref="scrollableContainerRef"
         >
           <div
+            v-if="mostInteractedActions.length === 0"
+            class="-mt-3 flex-1 text-center text-gray-500 italic"
+          >
+            Nothing to show.
+          </div>
+          <div
             v-for="action of mostInteractedActions"
             :key="action"
             class="relative w-12 flex-shrink-0"
