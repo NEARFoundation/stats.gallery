@@ -15,15 +15,7 @@
         >
           <PopoverPanel
             ref="panelRef"
-            class="
-              fixed
-              z-50
-              w-full
-              sm:w-screen sm:max-w-sm
-              mt-2
-              transform
-              -translate-x-1/2
-            "
+            class="fixed z-50 sm:w-full max-w-sm mt-2"
             :style="{
               left: left + 'px',
               top: top + 'px',
@@ -39,8 +31,6 @@
                 backdrop-filter backdrop-blur-sm
                 text-white
                 p-3
-                mx-4
-                sm:mx-0
               "
             >
               <slot name="content" :open="open" />
@@ -71,40 +61,36 @@ export default defineComponent({
     const top = ref(0);
 
     onMounted(() => {
-      const fit = () => {
-        if (panelRef.value && panelRef.value.el) {
-          panelRef.value.el.style.marginLeft = '';
-          const rect = panelRef.value.el.getBoundingClientRect();
-          if (rect.x < 0) {
-            panelRef.value.el.style.marginLeft = -rect.x + 5 + 'px';
-          }
-        }
-      };
-
       const reposition = () => {
-        if (buttonRef.value && buttonRef.value.el) {
-          const el = buttonRef.value.el as HTMLButtonElement;
-          const rect = el.getBoundingClientRect();
-          top.value = rect.top + rect.height;
-          // We have to do this calculation in JS because we're teleporting the
-          // element, so we can't do it in CSS. :(
-          left.value = rect.left + rect.width / 2;
+        if (
+          buttonRef.value &&
+          buttonRef.value.el &&
+          panelRef.value &&
+          panelRef.value.el
+        ) {
+          const button = buttonRef.value.el as HTMLButtonElement;
+          const panel = panelRef.value.el as HTMLDivElement;
+          const buttonRect = button.getBoundingClientRect();
+          const panelRect = panel.getBoundingClientRect();
+          top.value = buttonRect.top + buttonRect.height;
+
+          const xGap = 5;
+          left.value = Math.max(
+            0 + xGap,
+            Math.min(
+              buttonRect.left + buttonRect.width / 2 - panelRect.width / 2,
+              document.documentElement.clientWidth - panelRect.width - xGap,
+            ),
+          );
         }
       };
 
-      fit();
       reposition();
 
-      window.addEventListener('resize', () => {
-        reposition();
-        fit();
-      });
+      window.addEventListener('resize', reposition);
       window.addEventListener('scroll', reposition);
 
-      watch(elRef, () => {
-        reposition();
-        fit();
-      });
+      watch(elRef, reposition);
     });
 
     return {
