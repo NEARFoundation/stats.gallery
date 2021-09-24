@@ -155,6 +155,17 @@
                     </tr>
                   </tbody>
                 </table>
+                <p class="text-center mt-2 text-gray-400">
+                  <external-link
+                    :href="
+                      networks[network].explorer +
+                      '/transactions/' +
+                      action.transaction_hash
+                    "
+                    class="underline"
+                    >Transaction Details</external-link
+                  >
+                </p>
               </template>
             </Tooltip>
             <div class="relative h-12 z-10 border-t-2 border-green-600">
@@ -215,6 +226,7 @@ import ActionIcon from '@/components/ActionIcon.vue';
 import Tooltip from '@/components/Tooltip.vue';
 import { useNear } from '@/composables/useNear';
 import { useRecentActions } from '@/composables/useRecentActions';
+import { networks } from '@/services/near/indexer/networks';
 import { UnifiedTransactionAction } from '@/services/near/indexer/types';
 import { DateTime } from 'luxon';
 import { defineComponent, onMounted, ref, watch } from 'vue';
@@ -282,6 +294,8 @@ export default defineComponent({
       mostInteractedAccounts,
       mostInteractedActions,
       DateTime,
+      network,
+      networks,
     };
   },
 });
