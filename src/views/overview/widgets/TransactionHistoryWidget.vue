@@ -32,13 +32,14 @@
             Nothing to show.
           </div>
           <div
-            v-for="action of mostInteractedActions"
+            v-for="(action, i) of mostInteractedActions"
             :key="action"
             class="relative w-12 flex-shrink-0"
           >
             <template
               v-if="action.receiver_account_id !== action.signer_account_id"
             >
+              <!-- Line -->
               <div
                 class="
                   absolute
@@ -46,7 +47,8 @@
                   transform
                   -translate-x-1/2
                   w-0.5
-                  bg-gray-300
+                  bg-gray-500
+                  dark:bg-gray-300
                   z-10
                 "
                 :style="{
@@ -72,6 +74,7 @@
                     'rem',
                 }"
               ></div>
+              <!-- Point -->
               <div
                 class="
                   absolute
@@ -82,7 +85,8 @@
                   -translate-y-1/2 -translate-x-1/2
                   left-1/2
                   bg-green-400
-                  border-2 border-gray-800
+                  border-2 border-white
+                  dark:border-gray-800
                   z-20
                 "
                 :style="{
@@ -96,6 +100,7 @@
                 }"
               ></div>
             </template>
+            <!-- Icon -->
             <Tooltip
               class="
                 absolute
@@ -119,7 +124,8 @@
                   class="
                     w-8
                     h-8
-                    border-2 border-gray-800
+                    border-2 border-white
+                    dark:border-gray-800
                     transform
                     transition-all
                     duration-75
@@ -139,13 +145,19 @@
                     <tr>
                       <th>From:</th>
                       <td>
-                        <account-link :account="action.signer_account_id" />
+                        <account-link
+                          theme="dark"
+                          :account="action.signer_account_id"
+                        />
                       </td>
                     </tr>
                     <tr>
                       <th>To:</th>
                       <td>
-                        <account-link :account="action.receiver_account_id" />
+                        <account-link
+                          theme="dark"
+                          :account="action.receiver_account_id"
+                        />
                       </td>
                     </tr>
                     <tr>
@@ -178,24 +190,54 @@
                 </p>
               </template>
             </Tooltip>
-            <div class="relative h-12 z-10 border-t-2 border-green-600">
+            <!-- Current account track -->
+            <div
+              class="
+                relative
+                h-12
+                z-10
+                border-t-2 border-green-400
+                dark:border-green-600
+              "
+            >
+              <!-- Vertical grid line -->
               <div
-                class="absolute h-full right-0 border-r border-gray-700"
+                v-if="i !== mostInteractedActions.length - 1"
+                class="
+                  absolute
+                  h-full
+                  right-0
+                  border-r border-gray-200
+                  dark:border-gray-700
+                "
               ></div>
             </div>
+            <!-- Other account tracks -->
             <div
-              v-for="account of mostInteractedAccounts"
+              v-for="(account, j) of mostInteractedAccounts"
               :key="account"
               class="
                 relative
                 flex
                 justify-center
                 h-12
-                border-t-2 border-gray-700
+                border-t-2 border-gray-200
+                dark:border-gray-700
               "
             >
+              <!-- Vertical grid line -->
               <div
-                class="absolute h-full right-0 border-r border-gray-700"
+                v-if="
+                  i !== mostInteractedActions.length - 1 &&
+                  j !== mostInteractedAccounts.length - 1
+                "
+                class="
+                  absolute
+                  h-full
+                  right-0
+                  border-r border-gray-200
+                  dark:border-gray-700
+                "
               ></div>
             </div>
           </div>
