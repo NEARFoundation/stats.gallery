@@ -200,6 +200,11 @@
 </template>
 
 <style scoped>
+.scrollbar {
+  scrollbar-color: dark;
+  scrollbar-width: thin;
+}
+
 .scrollbar::-webkit-scrollbar {
   height: 8px;
   width: 8px;
