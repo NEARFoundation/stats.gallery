@@ -63,6 +63,9 @@
       class="col-span-2 xl:col-span-1 order-7 md:order-none"
       style="min-height: 200px"
     />
+    <TransactionHistoryWidget
+      class="col-span-3 xl:col-span-3 order-8 md:order-none"
+    />
     <!-- <DashboardCard
       class="col-span-3 order-8 md:order-none"
       title="Transaction History"
@@ -89,6 +92,7 @@ import LevelWidget from './overview/widgets/LevelWidget.vue';
 import RankWidget from './overview/widgets/RankWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import StatsWidget from './overview/widgets/StatsWidget.vue';
+import TransactionHistoryWidget from './overview/widgets/TransactionHistoryWidget.vue';
 import TransactionRateWidget from './overview/widgets/TransactionRateWidget.vue';
 
 export default defineComponent({
@@ -100,6 +104,7 @@ export default defineComponent({
     RankWidget,
     BalanceWidget,
     StatsWidget,
+    TransactionHistoryWidget,
     TransactionRateWidget,
   },
 });

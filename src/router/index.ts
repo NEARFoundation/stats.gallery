@@ -1,18 +1,19 @@
 import { networks } from '@/services/near/indexer/networks';
 import Embed from '@/views/Embed.vue';
 import Landing from '@/views/Landing.vue';
+import Leaderboards from '@/views/Leaderboards.vue';
 import Overview from '@/views/Overview.vue';
 import BalanceWidget from '@/views/overview/widgets/BalanceWidget.vue';
 import LevelWidget from '@/views/overview/widgets/LevelWidget.vue';
 import RankWidget from '@/views/overview/widgets/RankWidget.vue';
 import ScoreWidget from '@/views/overview/widgets/ScoreWidget.vue';
 import StatsWidget from '@/views/overview/widgets/StatsWidget.vue';
+import TransactionHistoryWidget from '@/views/overview/widgets/TransactionHistoryWidget.vue';
 import TransactionRateWidget from '@/views/overview/widgets/TransactionRateWidget.vue';
 import Page from '@/views/Page.vue';
 import Quests from '@/views/Quests.vue';
 import Stats from '@/views/Stats.vue';
 import Story from '@/views/Story.vue';
-import Leaderboards from '@/views/Leaderboards.vue';
 import Transactions from '@/views/Transactions.vue';
 import {
   createMemoryHistory,
@@ -104,6 +105,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'stats',
         name: 'embed:stats',
         component: StatsWidget,
+      },
+      {
+        path: 'transaction-history',
+        name: 'embed:transaction-history',
+        component: TransactionHistoryWidget,
       },
       {
         path: 'transaction-rate',
