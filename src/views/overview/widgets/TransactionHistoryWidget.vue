@@ -21,10 +21,7 @@
             {{ account }}
           </div>
         </div>
-        <div
-          class="ml-3 pt-5 flex-1 overflow-x-auto flex scrollbar"
-          ref="scrollableContainerRef"
-        >
+        <div class="ml-3 pt-5 flex-1 overflow-x-auto flex scrollbar">
           <div
             v-if="mostInteractedActions.length === 0"
             class="-mt-3 flex-1 text-center text-gray-500 italic"
@@ -335,18 +332,8 @@ export default defineComponent({
       mostInteractedActions.value = filteredActions;
     });
 
-    const scrollableContainerRef = ref<HTMLElement | null>(null);
-
-    onMounted(() => {
-      const el = scrollableContainerRef.value;
-      if (el !== null) {
-        el.scrollLeft = el.scrollWidth;
-      }
-    });
-
     return {
       currentAccount: account,
-      scrollableContainerRef,
       actions,
       mostInteractedAccounts,
       mostInteractedActions,
