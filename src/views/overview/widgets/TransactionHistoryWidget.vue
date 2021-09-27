@@ -88,9 +88,7 @@
                 "
                 :style="{
                   top:
-                    (mostInteractedAccounts.indexOf(
-                      action.receiver_account_id,
-                    ) +
+                    (mostInteractedAccounts.indexOf(action.signer_account_id) +
                       1) *
                       3 +
                     'rem',
@@ -110,7 +108,7 @@
               "
               :style="{
                 top:
-                  (mostInteractedAccounts.indexOf(action.signer_account_id) +
+                  (mostInteractedAccounts.indexOf(action.receiver_account_id) +
                     1) *
                     3 +
                   'rem',
@@ -131,6 +129,7 @@
                     'scale-125 filter drop-shadow-sm': open,
                   }"
                   :action="action"
+                  transactionStyle="generic"
                 />
               </template>
               <template #content>

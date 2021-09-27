@@ -31,6 +31,7 @@ import {
   KeyIcon,
   LightningBoltIcon,
   LockClosedIcon,
+  SwitchHorizontalIcon,
   UserAddIcon,
   UserRemoveIcon,
 } from 'heroicons-vue3/outline';
@@ -41,6 +42,10 @@ export default defineComponent({
     action: {
       type: Object as PropType<UnifiedTransactionAction>,
       required: true,
+    },
+    transactionStyle: {
+      type: String as PropType<'relative' | 'generic'>,
+      default: 'relative',
     },
   },
   setup(props) {
@@ -78,12 +83,17 @@ export default defineComponent({
             iconBgColor.value = 'bg-yellow-400';
             break;
           case ActionKind.TRANSFER:
-            if (action.receiver_account_id === account) {
-              icon.value = ArrowDownIcon;
-              iconBgColor.value = 'bg-green-500';
+            if (props.transactionStyle === 'relative') {
+              if (action.receiver_account_id === account) {
+                icon.value = ArrowDownIcon;
+                iconBgColor.value = 'bg-green-500';
+              } else {
+                icon.value = ArrowUpIcon;
+                iconBgColor.value = 'bg-red-500';
+              }
             } else {
-              icon.value = ArrowUpIcon;
-              iconBgColor.value = 'bg-red-500';
+              icon.value = SwitchHorizontalIcon;
+              iconBgColor.value = 'bg-pink-500';
             }
             break;
           case ActionKind.STAKE:
