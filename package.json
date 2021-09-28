@@ -35,7 +35,8 @@
     "luxon": "^1.27.0",
     "vue": "^3.2.8",
     "vue-class-component": "^8.0.0-0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",

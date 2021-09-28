@@ -30,6 +30,7 @@ import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
+import { useStore } from './store';
 
 export default defineComponent({
   components: {
@@ -94,11 +95,21 @@ export default defineComponent({
 
     watch(route, () => {
       // Reload Twitter button every page change
+
+      // eslint-disable-next-line
       const t = (window as any).twttr;
 
       if (t && t.widgets && t.widgets.load) {
         t.widgets.load();
       }
+    });
+
+    const store = useStore();
+
+    console.log(store.getters.accountId);
+
+    store.dispatch('updateAccountId', 'myAccountId').then(() => {
+      console.log(store.getters.accountId);
     });
 
     return {

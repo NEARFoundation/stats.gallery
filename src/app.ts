@@ -7,6 +7,7 @@ import NearSymbol from '@/components/NearSymbol.vue';
 import QuestionMarkIcon from '@/components/QuestionMarkIcon.vue';
 import { initRouter } from '@/router';
 import { timeframeToPastTimestamp } from '@/services/timeframe';
+import { createStore, key } from '@/store';
 import { humanizeActionKind, humanizeLevel } from '@/utils/humanize';
 import {
   nearSymbol,
@@ -38,6 +39,7 @@ export default function createApp(): {
   const router = initRouter();
 
   app.use(router);
+  app.use(createStore(), key);
 
   app.config.globalProperties = {
     nearSymbol,
