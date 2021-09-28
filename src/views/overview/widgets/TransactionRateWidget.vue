@@ -2,6 +2,7 @@
   <DashboardCard
     class="col-span-2 xl:col-span-1 order-7 md:order-none"
     title="Weekly Transaction Rate"
+    embed="embed:transaction-rate"
   >
     <template #help>
       This is the number of transactions you've sent over the past 7 days. Are

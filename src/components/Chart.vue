@@ -19,7 +19,6 @@
 
 .dyn-container {
   height: 100%;
-  /* max-height: 300px; */
 }
 </style>
 

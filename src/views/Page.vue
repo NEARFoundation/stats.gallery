@@ -1,36 +1,53 @@
 <template>
   <CombinedTopBar :showIntake="true" />
-  <div class="p-3 mx-auto max-w-7xl flex flex-col">
+  <div class="py-3 mx-auto max-w-7xl flex flex-col">
     <header
-      class="
-        lg:ml-64
-        xl:ml-80
-        flex-grow flex flex-wrap
-        mt-8
-        lg:mt-4
-        mb-4
-        lg:mb-2
-        space-y-4
-        lg:space-y-1
-      "
+      v-if="account"
+      class="md:ml-52 lg:ml-64 xl:ml-80 flex-grow flex flex-wrap pl-3 pr-5"
     >
       <h1
         class="
-          order-1
           font-display font-extrabold
           text-4xl
           truncate
           md:text-5xl
           my-1
           mr-3
-          lg:flex-grow
+          flex-grow
         "
+        style="line-height: 1.25"
       >
         {{ account }}
       </h1>
 
+      <div class="flex items-center space-x-1">
+        <a
+          href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+          class="twitter-share-button"
+          data-size="large"
+          data-text="Check out my NEAR stats!"
+          data-related="NEARProtocol,sudo_build"
+          data-show-count="true"
+          >Tweet</a
+        >
+      </div>
+
+      <div class="w-full mt-2"></div>
+
+      <div class="sr-only">Badges</div>
+      <div class="flex-grow flex items-center space-x-1 mr-5">
+        <BadgeTooltip
+          v-for="badge in badgeGroups"
+          :key="badge.name"
+          :name="badge.name"
+          :description="badge.description"
+          :fraction="badge.rarityFraction"
+          :group="badge.group"
+        />
+      </div>
+
       <div class="sr-only">Metrics</div>
-      <div class="order-3 self-center flex space-x-3">
+      <div class="self-center flex space-x-3">
         <Star class="text-blue-500">{{
           $filters.number.standard(accountLevel.level)
         }}</Star>
@@ -65,49 +82,65 @@
           }}
         </div>
       </div>
-
-      <div class="hidden lg:block order-4 w-full mt-2"></div>
-
-      <div class="sr-only">Badges</div>
-      <div
-        class="order-2 lg:order-5 flex-grow flex items-center space-x-1 mr-5"
-      >
-        <BadgeTooltip
-          v-for="badge in badgeGroups"
-          :key="badge.name"
-          :name="badge.name"
-          :description="badge.description"
-          :fraction="badge.rarityFraction"
-          :group="badge.group"
-        />
-      </div>
     </header>
 
-    <div class="w-full mt-5 flex">
+    <div class="w-full max-w-full mt-5 flex">
       <nav
         class="
-          w-1/5
+          w-16
           md:w-52
           lg:w-64
           xl:w-80
           flex-shrink-0 flex flex-col
           space-y-2
-          pr-4
+          pl-3
         "
       >
-        <SectionLink to="./overview" :icon="OverviewIcon" name="Overview" />
-        <SectionLink to="./stats" :icon="StatsIcon" name="Stats" />
         <SectionLink
-          to="./transactions"
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'overview',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
+          :icon="OverviewIcon"
+          name="Overview"
+        />
+        <SectionLink
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'stats',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
+          :icon="StatsIcon"
+          name="Stats"
+        />
+        <SectionLink
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'transactions',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
           :icon="TransactionsIcon"
           name="Transactions"
         />
-        <SectionLink to="./quests" :icon="QuestsIcon" name="Quests" />
-        <!-- <SectionLink
-          to="./leaderboards"
+        <SectionLink
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'quests',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
+          :icon="QuestsIcon"
+          name="Quests"
+        />
+        <SectionLink
+          to="/leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
-        /> -->
+        />
         <hr class="w-64 dark:border-gray-700 hidden md:block" />
         <SectionLink
           to="https://learnnear.club/"
@@ -199,8 +232,10 @@
         </div>
       </nav>
 
-      <slot />
-      <router-view></router-view>
+      <div class="flex-1 w-0 p-5 pl-3 -mt-5">
+        <slot />
+        <router-view></router-view>
+      </div>
     </div>
   </div>
   <Footer />
@@ -228,7 +263,8 @@ import {
   ClockIcon,
   AnnotationIcon,
 } from 'heroicons-vue3/solid';
-import { defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
 import OverviewIcon from './overview/icons/OverviewIcon.vue';
@@ -289,8 +325,12 @@ export default defineComponent({
       badgeGroups.value = [nft, transfer, stake, contract].flat();
     });
 
+    const route = useRoute();
+
     return {
       account,
+      network,
+      timeframe,
       view,
       score,
       accountLevel,

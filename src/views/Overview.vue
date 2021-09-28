@@ -1,15 +1,12 @@
 <template>
   <main
     class="
-      w-4/5
       flex-grow flex flex-col
-      space-y-4
-      pr-3
-      md:space-y-6 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
-      -mt-6
+      space-y-3
+      md:space-y-0 md:grid md:grid-cols-3 md:grid-flow-row-dense md:gap-3
     "
   >
-    <ScoreWidget class="row-span-2 order-1 md:order-none mt-6" />
+    <ScoreWidget class="row-span-2 order-1 md:order-none" />
     <LevelWidget class="row-span-1 order-2 md:order-none" />
     <BalanceWidget class="row-span-2 order-4 md:order-none" />
     <RankWidget class="row-span-1 order-3 md:order-none" />
@@ -66,6 +63,9 @@
       class="col-span-2 xl:col-span-1 order-7 md:order-none"
       style="min-height: 200px"
     />
+    <TransactionHistoryWidget
+      class="col-span-3 xl:col-span-3 order-8 md:order-none"
+    />
     <!-- <DashboardCard
       class="col-span-3 order-8 md:order-none"
       title="Transaction History"
@@ -92,6 +92,7 @@ import LevelWidget from './overview/widgets/LevelWidget.vue';
 import RankWidget from './overview/widgets/RankWidget.vue';
 import ScoreWidget from './overview/widgets/ScoreWidget.vue';
 import StatsWidget from './overview/widgets/StatsWidget.vue';
+import TransactionHistoryWidget from './overview/widgets/TransactionHistoryWidget.vue';
 import TransactionRateWidget from './overview/widgets/TransactionRateWidget.vue';
 
 export default defineComponent({
@@ -103,6 +104,7 @@ export default defineComponent({
     RankWidget,
     BalanceWidget,
     StatsWidget,
+    TransactionHistoryWidget,
     TransactionRateWidget,
   },
 });

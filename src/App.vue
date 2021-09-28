@@ -1,5 +1,6 @@
 <template>
   <router-view></router-view>
+  <div id="tooltips"></div>
 </template>
 
 <style>
@@ -12,6 +13,14 @@ body {
   body {
     background-color: rgb(11, 18, 31);
   }
+}
+
+hr {
+  @apply dark:border-gray-800;
+}
+
+.prose blockquote {
+  @apply dark:border-gray-600 !important;
 }
 </style>
 
@@ -81,6 +90,15 @@ export default defineComponent({
           t: timeframe.value,
         },
       });
+    });
+
+    watch(route, () => {
+      // Reload Twitter button every page change
+      const t = (window as any).twttr;
+
+      if (t && t.widgets && t.widgets.load) {
+        t.widgets.load();
+      }
     });
 
     return {

@@ -4,13 +4,7 @@
       Collect achievements and get rewarded!
     </h2>
     <div
-      class="
-        grid grid-flow-row grid-cols-1
-        md:grid-cols-2
-        xl:grid-cols-3
-        gap-3
-        space-y-3
-      "
+      class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"
       style="grid-auto-rows: 1fr"
     >
       <BadgeWidget

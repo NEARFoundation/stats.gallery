@@ -56,6 +56,16 @@
       </div>
       <PrimaryButton @click="go">Show stats</PrimaryButton>
     </div>
+    <div class="flex space-x-3 mt-6" v-if="accountsJumble.length">
+      <span class="text-white font-medium">Or try these:</span>
+      <account-link
+        v-for="account of accountsJumble.slice(0, 4)"
+        :key="account"
+        :account="account"
+        class="truncate"
+        style="max-width: 150px"
+      />
+    </div>
   </div>
 </template>
 
@@ -82,9 +92,10 @@ import { useMultiple } from '@/composables/useMultiple';
 import { useSingle } from '@/composables/useSingle';
 import { Network } from '@/services/near/indexer/networks';
 import { Timeframe } from '@/services/timeframe';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import Chart from '@/components/Chart.vue';
 import { useRouter } from 'vue-router';
+import { CachedAccountRecord } from '@/services/near/indexer/types';
 
 export default defineComponent({
   components: {
@@ -110,15 +121,71 @@ export default defineComponent({
       314071,
     );
 
-    type NewAccountsEntry = {
+    type NewAccountsByDateEntry = {
       new_accounts: number;
       block_date: string;
     };
-    const { value: newAccounts } = useMultiple<NewAccountsEntry>(
+    const { value: newAccountsByDate } = useMultiple<NewAccountsByDateEntry>(
       'new-accounts-count',
       { network: networkInputValue },
     );
-    const chartOption = useNetworkActivityChart(newAccounts);
+    const chartOption = useNetworkActivityChart(newAccountsByDate);
+
+    type NewAccountEntry = {
+      account_id: string;
+      block_timestamp: number;
+    };
+
+    const { value: newAccounts } = useMultiple<NewAccountEntry>(
+      'new-accounts-list',
+      {
+        network: networkInputValue,
+      },
+    );
+
+    const { value: balanceLeaderboard } = useMultiple<CachedAccountRecord>(
+      'leaderboard-balance',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.ALL,
+      },
+      [],
+    );
+
+    const { value: scoreLeaderboard } = useMultiple<CachedAccountRecord>(
+      'leaderboard-score',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.ALL,
+      },
+      [],
+    );
+
+    const accountsJumble = ref<string[]>([]);
+
+    watch(
+      [newAccounts, scoreLeaderboard, balanceLeaderboard],
+      ([newAccounts, scoreLeaderboard, balanceLeaderboard]) => {
+        const a = [];
+        for (let i = 0; i < 10; i++) {
+          const randomArray = [
+            newAccounts,
+            scoreLeaderboard,
+            balanceLeaderboard,
+          ][Math.floor(Math.random() * 3)];
+          if (randomArray.length) {
+            const randomSelection =
+              randomArray[Math.floor(Math.random() * randomArray.length)]
+                .account_id;
+            a.push(randomSelection);
+          }
+        }
+
+        accountsJumble.value = Array.from(new Set(a));
+      },
+    );
 
     const router = useRouter();
 
@@ -142,6 +209,7 @@ export default defineComponent({
       chartOption,
       go,
       allAccounts,
+      accountsJumble,
     };
   },
 });

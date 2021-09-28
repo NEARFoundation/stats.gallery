@@ -20,7 +20,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Component } from 'vue';
+import { defineComponent, Component, PropType } from 'vue';
+import { RouteLocation } from 'vue-router';
 import SectionLinkInternal from './SectionLinkInternal.vue';
 
 export default defineComponent({
@@ -29,7 +30,7 @@ export default defineComponent({
   },
   props: {
     to: {
-      type: String,
+      type: [String, Object],
       required: true,
     },
     icon: {
