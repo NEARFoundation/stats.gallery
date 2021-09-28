@@ -48,7 +48,7 @@
             :value="$filters.number.compact(gasSpent) + 'gas'"
           >
             <div class="flex">
-              <near-symbol class="w-5 h-full" />&nbsp;{{
+              <near-symbol class="w-5 h-5" />&nbsp;{{
                 $filters.number.standard(
                   +$filters.toNear(gasTokensSpent).toString(),
                 )
