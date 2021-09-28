@@ -108,7 +108,7 @@ export default defineComponent({
 
     console.log(store.getters.accountId);
 
-    store.dispatch('updateAccountId', 'myAccountId').then(() => {
+    store.dispatch('SET_ACCOUNT_ID', { accountId: 'test' }).then(() => {
       console.log(store.getters.accountId);
     });
 

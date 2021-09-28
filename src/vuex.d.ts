@@ -1,5 +1,5 @@
 import { Store } from 'vuex';
-import { State } from '@/store/State';
+import { State } from '@/store/types';
 
 declare module '@vue/runtime-core' {
   // provide typings for `this.$store`
