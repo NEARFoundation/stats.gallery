@@ -77,7 +77,7 @@
             font-bold
           "
         >
-          <near-symbol class="w-5" />&nbsp;{{
+          <near-symbol class="w-5 h-5" />&nbsp;{{
             $filters.number.standard(+$filters.toNear(view.amount))
           }}
         </div>
@@ -141,7 +141,7 @@
           :icon="LeaderboardsIcon"
           name="Leaderboards"
         />
-        <hr class="w-64" />
+        <hr class="w-64 dark:border-gray-700 hidden md:block" />
         <SectionLink
           to="https://learnnear.club/"
           :icon="AcademicCapIcon"

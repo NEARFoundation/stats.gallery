@@ -5,7 +5,7 @@
         <!-- aggregate stats wrapper -->
         <div class="flex flex-col md:flex-row space-x-3">
           <!-- header + legend wrapper -->
-          <div class="flex-grow flex flex-col items-center space-y-3 my-24">
+          <div class="flex-grow flex flex-col items-center space-y-3 my-12">
             <!-- # transactions header -->
             <h3 class="text-2xl font-bold">
               {{ $filters.number.standard(actions.length) }} transaction{{
@@ -33,7 +33,9 @@
           </div>
         </div>
         <!-- show filter -->
-        <div class="flex justify-end items-center space-x-2">
+        <div
+          class="flex justify-end items-center space-x-2 flex-wrap space-y-3"
+        >
           <span class="font-medium">Show:</span>
           <ToggleButton
             :modelValue="showFilter === 'all'"
@@ -103,6 +105,7 @@
                   divide-y divide-gray-100
                   dark:divide-gray-700
                   mt-2
+                  truncate
                 "
               >
                 <template v-for="(action, i) in group.actions" :key="i">

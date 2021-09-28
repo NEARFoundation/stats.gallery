@@ -1,6 +1,14 @@
 <template>
   <div
-    class="py-16 lg:py-64 flex flex-col items-center relative overflow-hidden"
+    class="
+      py-16
+      lg:py-64
+      flex flex-col
+      items-center
+      relative
+      overflow-hidden
+      -mb-16
+    "
   >
     <Chart :option="chartOption" class="bg-chart" autoresize />
     <h1 class="font-bold text-white text-4xl lg:text-6xl mb-5 mx-4 text-center">
