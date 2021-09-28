@@ -11,7 +11,7 @@
     :href="href"
   >
     <div class="rounded-l-full py-3 pl-4 pr-3 flex">
-      <component :is="icon" class="w-6 h-full"></component>
+      <component :is="icon" class="w-6 h-6"></component>
     </div>
     <div class="hidden md:flex flex-grow rounded-r-full py-3 items-center">
       {{ name }}
