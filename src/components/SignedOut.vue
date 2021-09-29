@@ -1,22 +1,27 @@
 <template>
   <main>
-    <p style="text-align:center;">
+    <p class="sign-text">
       <button v-on:click="login">Sign in</button>
     </p>
   </main>
 </template>
 
+<style scoped>
+.sign-text {
+  text-align: center;
+}
+</style>
 <script>
-import { login } from "../utils/util"
+import { login } from '../utils/util';
 
 export default {
-  name: "SignedOut",
+  name: 'SignedOut',
 
   methods: {
     login() {
-      console.log("calling utils.login")
-      login()
+      console.log('calling utils.login');
+      login();
     },
   },
-}
+};
 </script>
