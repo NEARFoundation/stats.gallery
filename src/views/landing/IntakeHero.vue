@@ -56,6 +56,7 @@
         :account="account"
         class="truncate"
         style="max-width: 150px"
+        theme="dark"
       />
     </div>
   </div>
