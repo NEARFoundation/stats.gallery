@@ -30,12 +30,12 @@
         <div v-if="incoming" class="font-bold text-green-500 flex items-center">
           {{
             $filters.number.standard(+$filters.toNear(nearValue))
-          }}&nbsp;<near-symbol class="w-5" />
+          }}&nbsp;<near-symbol class="w-5 h-full" />
         </div>
         <div v-else class="font-bold text-red-500 flex items-center">
           &minus;{{
             $filters.number.standard(+$filters.toNear(nearValue))
-          }}&nbsp;<near-symbol class="w-5" />
+          }}&nbsp;<near-symbol class="w-5 h-full" />
         </div>
       </template>
       <div

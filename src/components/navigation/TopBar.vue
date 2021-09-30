@@ -12,7 +12,8 @@
       class="
         w-full
         h-full
-        xl:w-5/6 xl:mx-auto
+        max-w-7xl
+        xl:mx-auto
         flex flex-wrap
         lg:flex-nowrap
         items-center
