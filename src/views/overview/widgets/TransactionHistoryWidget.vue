@@ -34,7 +34,9 @@
             class="relative w-12 flex-shrink-0"
           >
             <template
-              v-if="action.receiver_account_id !== action.signer_account_id"
+              v-if="
+                action.receiver_account_id !== action.predecessor_account_id
+              "
             >
               <!-- Line -->
               <div
@@ -51,7 +53,9 @@
                 :style="{
                   top:
                     (Math.min(
-                      mostInteractedAccounts.indexOf(action.signer_account_id),
+                      mostInteractedAccounts.indexOf(
+                        action.predecessor_account_id,
+                      ),
                       mostInteractedAccounts.indexOf(
                         action.receiver_account_id,
                       ),
@@ -61,7 +65,9 @@
                     'rem',
                   height:
                     (Math.max(
-                      mostInteractedAccounts.indexOf(action.signer_account_id),
+                      mostInteractedAccounts.indexOf(
+                        action.predecessor_account_id,
+                      ),
                       mostInteractedAccounts.indexOf(
                         action.receiver_account_id,
                       ),
@@ -88,7 +94,9 @@
                 "
                 :style="{
                   top:
-                    (mostInteractedAccounts.indexOf(action.signer_account_id) +
+                    (mostInteractedAccounts.indexOf(
+                      action.predecessor_account_id,
+                    ) +
                       1) *
                       3 +
                     'rem',
@@ -143,7 +151,7 @@
                       <td>
                         <account-link
                           theme="dark"
-                          :account="action.signer_account_id"
+                          :account="action.predecessor_account_id"
                         />
                       </td>
                     </tr>
@@ -278,11 +286,11 @@ td {
 import ActionIcon from '@/components/ActionIcon.vue';
 import Tooltip from '@/components/Tooltip.vue';
 import { useNear } from '@/composables/useNear';
-import { useRecentActions } from '@/composables/useRecentActions';
+import { useTransactionActions } from '@/composables/useTransactionActions';
 import { networks } from '@/services/near/indexer/networks';
 import { UnifiedTransactionAction } from '@/services/near/indexer/types';
 import { DateTime } from 'luxon';
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
 
 export default defineComponent({
@@ -293,7 +301,7 @@ export default defineComponent({
   },
   setup() {
     const { account, network, timeframe } = useNear();
-    const { actions } = useRecentActions({ account, network, timeframe });
+    const { actions } = useTransactionActions({ account, network, timeframe });
     const mostInteractedAccounts = ref<string[]>([]);
     const mostInteractedActions = ref<UnifiedTransactionAction[]>([]);
 

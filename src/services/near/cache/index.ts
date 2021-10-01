@@ -1,7 +1,7 @@
 import { Network } from '@/services/near/indexer/networks';
 import { IDBPDatabase, openDB } from 'idb';
 import { RequestParams } from '../indexer/IndexerClient';
-import { Action } from '../indexer/types';
+import { ReceiptAction } from '../indexer/types';
 import { AccountView } from '../rpc/types';
 import {
   IndexSchema,
@@ -81,7 +81,7 @@ export class Cache {
     actions,
     params,
   }: {
-    actions: Action[];
+    actions: ReceiptAction[];
     params: RequestParams;
   }): Promise<void> {
     const db = await this.db;
@@ -117,7 +117,7 @@ export class Cache {
     return await db.get('action_range', account);
   }
 
-  public async getActions(params: RequestParams): Promise<Action[]> {
+  public async getActions(params: RequestParams): Promise<ReceiptAction[]> {
     const db = await this.db;
     const predecessor = db.getAllFromIndex(
       'action',
@@ -126,7 +126,7 @@ export class Cache {
     );
     const receiver = db.getAllFromIndex('action', 'receiver', params.account);
     const nonunique = (await Promise.all([predecessor, receiver])).flat();
-    const uniqueMap = new Map<string, Action>();
+    const uniqueMap = new Map<string, ReceiptAction>();
     nonunique.forEach(action => {
       if (
         action.block_timestamp >= params.after &&

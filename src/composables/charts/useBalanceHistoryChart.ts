@@ -1,4 +1,4 @@
-import { Action } from '@/services/near/indexer/types';
+import { ReceiptAction } from '@/services/near/indexer/types';
 import { AccountView } from '@/services/near/rpc/types';
 import { toNear } from '@/utils/near';
 import Highcharts from 'highcharts';
@@ -11,7 +11,7 @@ export function useBalanceHistoryChart({
   initial,
   final,
 }: {
-  actions: Ref<Action[]>;
+  actions: Ref<ReceiptAction[]>;
   views: Ref<(AccountView | undefined)[]>;
   initial?: {
     amount: string;

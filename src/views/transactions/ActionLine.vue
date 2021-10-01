@@ -105,12 +105,12 @@ import {
   UserRemoveIcon,
 } from 'heroicons-vue3/outline';
 import { DateTime } from 'luxon';
-import { Component, defineComponent, ref, watch } from 'vue';
+import { Component, defineComponent, PropType, ref, watch } from 'vue';
 
 export default defineComponent({
   props: {
     action: {
-      type: Object as () => UnifiedTransactionAction,
+      type: Object as PropType<UnifiedTransactionAction>,
       required: true,
     },
   },

@@ -1,26 +1,27 @@
 import { usePromise } from '@/composables/usePromise';
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
-import { Action } from '@/services/near/indexer/types';
+import { ReceiptAction } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
+import { deref, OptionalRef } from '@/utils/deref';
 import { Ref, WatchSource } from 'vue';
 
-export function useActions({
+export function useReceiptActions({
   account,
   network,
   timeframe,
 }: {
-  account: Ref<string>;
-  network: Ref<Network>;
-  timeframe: Ref<Timeframe>;
+  account: OptionalRef<string>;
+  network: OptionalRef<Network>;
+  timeframe: OptionalRef<Timeframe>;
 }): {
-  actions: Ref<Action[]>;
+  actions: Ref<ReceiptAction[]>;
   isLoading: Ref<boolean>;
 } {
   const f = () =>
-    IndexerClient.from(network.value).getActions({
-      account: account.value,
-      after: timeframeToPastTimestamp(timeframe.value) * 1_000_000,
+    IndexerClient.from(deref(network)).getActions({
+      account: deref(account),
+      after: timeframeToPastTimestamp(deref(timeframe)) * 1_000_000,
       before: Date.now() * 1_000_000,
     });
 

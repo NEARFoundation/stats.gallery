@@ -116,7 +116,7 @@ export interface IStakeArgs {
   public_key: string;
 }
 
-export type TransactionActionArgs =
+export type ActionArgs =
   | IFunctionCallArgs
   | IAddKeyArgs
   | IDeployContractArgs
@@ -126,36 +126,59 @@ export type TransactionActionArgs =
   | ITransferArgs
   | IStakeArgs;
 
-export interface ITransactionAction<T extends TransactionActionArgs> {
+export interface ITransactionAction<T extends ActionArgs> {
   transaction_hash: string;
   index_in_transaction: number;
   action_kind: ActionKind;
   args: T;
 }
 
-export type UnifiedTransactionAction =
-  ITransactionAction<TransactionActionArgs> &
-    Pick<
-      ITransaction,
-      | 'block_timestamp'
-      | 'signer_account_id'
-      | 'receiver_account_id'
-      | 'included_in_block_hash'
-    > & {
-      receipt_included_in_block_hash: string;
-      receipt_included_in_block_height: number;
-    };
+export type UnifiedTransactionAction = ITransactionAction<ActionArgs> &
+  Pick<
+    ITransaction,
+    | 'block_timestamp'
+    | 'signer_account_id'
+    | 'receiver_account_id'
+    | 'included_in_block_hash'
+  > & {
+    receipt_included_in_block_hash: string;
+    receipt_included_in_block_height: number;
+  };
 
-export type Action = {
+export type ReceiptAction<K extends ActionKind = ActionKind> = {
   receipt_id: string;
   index_in_action_receipt: number;
   transaction_hash: string;
-  action_kind: ActionKind;
+  action_kind: K;
+  args: K extends ActionKind.ADD_KEY
+    ? IAddKeyArgs
+    : K extends ActionKind.CREATE_ACCOUNT
+    ? ICreateAccountArgs
+    : K extends ActionKind.DELETE_ACCOUNT
+    ? IDeleteAccountArgs
+    : K extends ActionKind.DELETE_KEY
+    ? IDeleteKeyArgs
+    : K extends ActionKind.DEPLOY_CONTRACT
+    ? IDeployContractArgs
+    : K extends ActionKind.FUNCTION_CALL
+    ? IFunctionCallArgs
+    : K extends ActionKind.STAKE
+    ? IStakeArgs
+    : K extends ActionKind.TRANSFER
+    ? ITransferArgs
+    : never;
   block_hash: string;
   block_timestamp: number;
   predecessor_account_id: string;
   receiver_account_id: string;
 };
+
+export function isActionOfKind<T extends ActionKind>(
+  x: ReceiptAction<any>,
+  k: T,
+): x is ReceiptAction<T> {
+  return x.action_kind === k;
+}
 
 export interface CachedAccountRecord {
   account_id: string;

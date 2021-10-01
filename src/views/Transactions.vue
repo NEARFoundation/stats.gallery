@@ -123,20 +123,20 @@
 <style scoped></style>
 
 <script lang="ts">
+import Chart from '@/components/Chart.vue';
 import ToggleButton from '@/components/form/ToggleButton.vue';
 import { DonutSlice, useDonutChart } from '@/composables/charts/useDonutChart';
 import { useNear } from '@/composables/useNear';
-import { useRecentActions } from '@/composables/useRecentActions';
+import { useTransactionActions } from '@/composables/useTransactionActions';
 import {
   ActionKind,
   UnifiedTransactionAction,
 } from '@/services/near/indexer/types';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { DateTime } from 'luxon';
 import { defineComponent, ref, watch } from 'vue';
-import Chart from '@/components/Chart.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import ActionLine from './transactions/ActionLine.vue';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 
 export default defineComponent({
   components: {
@@ -150,7 +150,7 @@ export default defineComponent({
   },
   setup() {
     const { account, network, timeframe } = useNear();
-    const { actions } = useRecentActions({ account, network, timeframe });
+    const { actions } = useTransactionActions({ account, network, timeframe });
 
     const incoming = ref(0);
     const outgoing = ref(0);

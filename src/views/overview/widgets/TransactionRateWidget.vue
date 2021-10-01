@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
+import Chart from '@/components/Chart.vue';
 import { useGaugeChart } from '@/composables/charts/useGaugeChart';
 import { useNear } from '@/composables/useNear';
-import { useRecentActions } from '@/composables/useRecentActions';
+import { useTransactionActions } from '@/composables/useTransactionActions';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref, watch } from 'vue';
-import Chart from '@/components/Chart.vue';
 import DashboardCard from '../DashboardCard.vue';
 
 export default defineComponent({
@@ -36,7 +36,7 @@ export default defineComponent({
   },
   setup() {
     const { account, network } = useNear();
-    const { actions, isLoading } = useRecentActions({
+    const { actions, isLoading } = useTransactionActions({
       account,
       network,
       timeframe: Timeframe.WEEK,

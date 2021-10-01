@@ -146,8 +146,8 @@
 <script lang="ts">
 import Modal from '@/components/Modal.vue';
 import { useNear } from '@/composables/useNear';
-import { useRecentActions } from '@/composables/useRecentActions';
 import { useScore } from '@/composables/useScore';
+import { useTransactionActions } from '@/composables/useTransactionActions';
 import { networks } from '@/services/near/indexer/networks';
 import {
   ActionKind,
@@ -172,7 +172,7 @@ export default defineComponent({
       network,
       timeframe,
     });
-    const { actions, isLoading: isActionsLoading } = useRecentActions({
+    const { actions, isLoading: isActionsLoading } = useTransactionActions({
       account,
       network,
       timeframe,

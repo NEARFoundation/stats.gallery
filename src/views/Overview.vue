@@ -66,10 +66,6 @@
     <TransactionHistoryWidget
       class="col-span-3 xl:col-span-3 order-8 md:order-none"
     />
-    <!-- <DashboardCard
-      class="col-span-3 order-8 md:order-none"
-      title="Transaction History"
-    ></DashboardCard> -->
   </main>
 </template>
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Cache } from '../cache';
 import { Network, networks } from './networks';
-import { Action, IAccessKey, UnifiedTransactionAction } from './types';
+import { IAccessKey, ReceiptAction, UnifiedTransactionAction } from './types';
 
 export interface RequestParams {
   account: string;
@@ -113,14 +113,14 @@ export class IndexerClient {
     return this.getMultiple('recent-transaction-actions', params);
   }
 
-  public async getActions(params: RequestParams): Promise<Action[]> {
+  public async getActions(params: RequestParams): Promise<ReceiptAction[]> {
     const cache = Cache.from(this.network);
     const cachedRange = await cache.getActionRange(params.account);
     if (cachedRange !== undefined) {
       const lowerBound = upperIntersection(cachedRange, params);
       if (lowerBound !== false) {
         const freshParams = { ...params, after: lowerBound };
-        const freshActionsPromise = this.getMultiple<Action>(
+        const freshActionsPromise = this.getMultiple<ReceiptAction>(
           'actions',
           freshParams,
         );
@@ -135,7 +135,7 @@ export class IndexerClient {
       }
     }
 
-    const actions = await this.getMultiple<Action>('actions', params);
+    const actions = await this.getMultiple<ReceiptAction>('actions', params);
     cache.putActions({ params, actions });
     return actions;
   }

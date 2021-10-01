@@ -1,9 +1,9 @@
-import { Action, ActionKind } from '@/services/near/indexer/types';
+import { ActionKind, ReceiptAction } from '@/services/near/indexer/types';
 import Highcharts from 'highcharts';
 import { ref, Ref, watch } from 'vue';
 
 export function useActionTypeChart(
-  actions: Ref<Action[]>,
+  actions: Ref<ReceiptAction[]>,
 ): Ref<Highcharts.Options> {
   const pieSlice = (
     name: string,

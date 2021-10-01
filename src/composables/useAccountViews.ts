@@ -1,5 +1,5 @@
 import { Network } from '@/services/near/indexer/networks';
-import { Action } from '@/services/near/indexer/types';
+import { ReceiptAction } from '@/services/near/indexer/types';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { AccountView, RpcResponse } from '@/services/near/rpc/types';
 import { Ref } from 'vue';
@@ -11,7 +11,7 @@ export function useAccountViews({
   network,
 }: {
   account: Ref<string>;
-  actions: Ref<Action[]>;
+  actions: Ref<ReceiptAction[]>;
   network: Ref<Network>;
 }): {
   views: Ref<(AccountView | undefined)[]>;

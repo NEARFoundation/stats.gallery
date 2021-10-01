@@ -1,8 +1,8 @@
-import { Action } from '@/services/near/indexer/types';
+import { ReceiptAction } from '@/services/near/indexer/types';
 import { ref, Ref, watch } from 'vue';
 
 export function useTopIncomingChart(
-  actions: Ref<Action[]>,
+  actions: Ref<ReceiptAction[]>,
 ): Ref<Highcharts.Options> {
   const makeData = () => {
     const groups = actions.value.reduce((acc, current) => {

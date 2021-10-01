@@ -29,6 +29,7 @@
 </style>
 
 <script lang="ts">
+import Chart from '@/components/Chart.vue';
 import BalanceHistoryLoader from '@/components/charts/loaders/BalanceHistoryLoader.vue';
 import HorizontalBarChartLoader from '@/components/charts/loaders/HorizontalBarChartLoader.vue';
 import PieChartLoader from '@/components/charts/loaders/PieChartLoader.vue';
@@ -37,12 +38,11 @@ import { useBalanceHistoryChart } from '@/composables/charts/useBalanceHistoryCh
 import { useTopIncomingChart } from '@/composables/charts/useTopIncomingChart';
 import { useTopOutgoingChart } from '@/composables/charts/useTopOutgoingChart';
 import { useAccountViews } from '@/composables/useAccountViews';
-import { useActions } from '@/composables/useActions';
 import { useNear } from '@/composables/useNear';
+import { useReceiptActions } from '@/composables/useReceiptActions';
 import { ActionKind } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
 import { defineComponent, onMounted, reactive, watch } from '@vue/runtime-core';
-import Chart from '@/components/Chart.vue';
 import DashboardCard from './overview/DashboardCard.vue';
 
 export default defineComponent({
@@ -55,7 +55,7 @@ export default defineComponent({
   },
   setup() {
     const { account, network, timeframe, rpc } = useNear();
-    const { actions, isLoading: actionsIsLoading } = useActions({
+    const { actions, isLoading: actionsIsLoading } = useReceiptActions({
       account,
       network,
       timeframe,

@@ -135,7 +135,7 @@
 import Modal from '@/components/Modal.vue';
 import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
-import { useRecentActions } from '@/composables/useRecentActions';
+import { useTransactionActions } from '@/composables/useTransactionActions';
 import { networks } from '@/services/near/indexer/networks';
 import {
   ActionKind,
@@ -152,7 +152,7 @@ export default defineComponent({
   components: { DashboardCard, HeaderListButtonTemplate, Modal },
   setup() {
     const { account, network, timeframe } = useNear();
-    const { actions } = useRecentActions({ account, network, timeframe });
+    const { actions } = useTransactionActions({ account, network, timeframe });
     const { view } = useAccountView({ account, network, finality: 'final' });
     const transfers = ref(
       [] as {

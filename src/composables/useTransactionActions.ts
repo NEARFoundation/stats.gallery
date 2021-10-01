@@ -6,7 +6,7 @@ import { Timeframe, timeframeToPastTimestamp } from '@/services/timeframe';
 import { deref, OptionalRef } from '@/utils/deref';
 import { isRef, Ref, WatchSource } from 'vue';
 
-export function useRecentActions({
+export function useTransactionActions({
   account,
   network,
   timeframe,

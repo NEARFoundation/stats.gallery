@@ -1,5 +1,5 @@
 import { DBSchema } from 'idb';
-import { Action } from '../indexer/types';
+import { ReceiptAction } from '../indexer/types';
 import { AccountView } from '../rpc/types';
 
 export const INDEX_SCHEMA_VERSION = 1;
@@ -36,7 +36,7 @@ export interface Schema extends DBSchema {
   };
   action: {
     key: [string, string];
-    value: Action;
+    value: ReceiptAction;
     indexes: {
       predecessor: string;
       receiver: string;
