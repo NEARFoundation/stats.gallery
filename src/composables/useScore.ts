@@ -19,7 +19,7 @@ export function useScore({
   isLoading: Ref<boolean>;
 } {
   const { value: score, isLoading } = useSingle(
-    'score',
+    'score-calculate',
     {
       account,
       network,
