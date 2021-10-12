@@ -15,7 +15,7 @@ export const badges: IBadgeDescriptor[] = [
   {
     name: 'One-of-a-kind',
     description: 'Receive an NFT',
-    rarityFraction: 0.017766,
+    rarityFraction: 0.009637601848473794,
     group: 'nft',
     composable: createBadgeComposable('badge-nft'),
   },
