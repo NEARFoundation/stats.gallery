@@ -34,9 +34,7 @@
             class="relative w-12 flex-shrink-0"
           >
             <template
-              v-if="
-                action.receiver_account_id !== action.predecessor_account_id
-              "
+              v-if="action.receiver_account_id !== action.signer_account_id"
             >
               <!-- Line -->
               <div
@@ -53,9 +51,7 @@
                 :style="{
                   top:
                     (Math.min(
-                      mostInteractedAccounts.indexOf(
-                        action.predecessor_account_id,
-                      ),
+                      mostInteractedAccounts.indexOf(action.signer_account_id),
                       mostInteractedAccounts.indexOf(
                         action.receiver_account_id,
                       ),
@@ -65,9 +61,7 @@
                     'rem',
                   height:
                     (Math.max(
-                      mostInteractedAccounts.indexOf(
-                        action.predecessor_account_id,
-                      ),
+                      mostInteractedAccounts.indexOf(action.signer_account_id),
                       mostInteractedAccounts.indexOf(
                         action.receiver_account_id,
                       ),
@@ -94,9 +88,7 @@
                 "
                 :style="{
                   top:
-                    (mostInteractedAccounts.indexOf(
-                      action.predecessor_account_id,
-                    ) +
+                    (mostInteractedAccounts.indexOf(action.signer_account_id) +
                       1) *
                       3 +
                     'rem',
@@ -151,7 +143,7 @@
                       <td>
                         <account-link
                           theme="dark"
-                          :account="action.predecessor_account_id"
+                          :account="action.signer_account_id"
                         />
                       </td>
                     </tr>
