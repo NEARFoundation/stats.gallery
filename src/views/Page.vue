@@ -22,10 +22,10 @@
 
       <div class="flex items-center space-x-1">
         <a
-          href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+          href="https://twitter.com/intent/tweet"
           class="twitter-share-button"
           data-size="large"
-          data-text="Check out my NEAR stats!"
+          :data-text="tweetText"
           data-related="NEARProtocol,sudo_build"
           data-show-count="true"
           >Tweet</a
@@ -327,6 +327,27 @@ export default defineComponent({
 
     const route = useRoute();
 
+    // Twitter Link Dynamic content
+    const tweetText = computed(() => {
+      // used route path since route name does not exist for leaderboards
+
+      const routeArr = route.path.split('/');
+      const routeSlug = routeArr[routeArr.length - 1];
+
+      if (routeSlug == 'stats') return 'Checkout my NEAR stats!';
+
+      if (routeSlug == 'leaderboards')
+        return 'Checkout the leaderboards on NEAR!';
+
+      if (routeSlug == 'transactions')
+        return 'Checkout my transactions on NEAR!';
+
+      if (routeSlug == 'quests') return 'Checkout the quests on NEAR!';
+
+      //for overview
+      return 'Check me out on NEAR!';
+    });
+
     return {
       account,
       network,
@@ -346,6 +367,7 @@ export default defineComponent({
       TransactionBadge,
       FunctionBadge,
       NftBadge,
+      tweetText,
     };
   },
 });
