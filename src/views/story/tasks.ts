@@ -34,13 +34,13 @@ export const tasks: RoadmapTask[] = [
   },
   {
     name: 'NEAR Login',
-    date: DateTime.fromObject({ year: 2021, month: 9, day: 30 }).toJSDate(),
+    date: DateTime.fromObject({ year: 2021, month: 10, day: 30 }).toJSDate(),
     done: false,
     link: 'https://github.com/NEAR-Edu/stats.gallery/issues/47',
   },
   {
     name: 'New charts',
-    date: DateTime.fromObject({ year: 2021, month: 9, day: 29 }).toJSDate(),
+    date: DateTime.fromObject({ year: 2021, month: 10, day: 29 }).toJSDate(),
     done: false,
     link: '',
   },
