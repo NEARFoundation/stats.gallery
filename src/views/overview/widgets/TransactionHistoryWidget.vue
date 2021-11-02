@@ -21,7 +21,7 @@
             {{ account }}
           </div>
         </div>
-        <div class="ml-3 pt-5 flex-1 overflow-x-auto flex scrollbar">
+        <div class="ml-3 pt-5 flex-1 overflow-x-auto flex custom-scrollbar">
           <div
             v-if="mostInteractedActions.length === 0"
             class="-mt-3 flex-1 text-center text-gray-500 italic"
@@ -244,26 +244,6 @@
 </template>
 
 <style scoped>
-.scrollbar {
-  scrollbar-color: dark;
-  scrollbar-width: thin;
-}
-
-.scrollbar::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-  background-color: transparent;
-}
-
-.scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(128, 128, 128, 0.4);
-  border-radius: 9999px;
-}
-
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(128, 128, 128, 0.6);
-}
-
 th {
   @apply text-gray-400 font-normal text-right pr-2;
 }

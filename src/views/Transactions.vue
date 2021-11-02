@@ -33,30 +33,22 @@
           </div>
         </div>
         <!-- show filter -->
-        <div
-          class="flex justify-end items-center space-x-2 flex-wrap space-y-3"
-        >
-          <span class="font-medium">Show:</span>
-          <ToggleButton
-            :modelValue="showFilter === 'all'"
-            @update:modelValue="showFilter = 'all'"
-            >All</ToggleButton
-          >
-          <ToggleButton
-            :modelValue="showFilter === 'incoming'"
-            @update:modelValue="showFilter = 'incoming'"
-            >Incoming</ToggleButton
-          >
-          <ToggleButton
-            :modelValue="showFilter === 'outgoing'"
-            @update:modelValue="showFilter = 'outgoing'"
-            >Outgoing</ToggleButton
-          >
-          <ToggleButton
-            :modelValue="showFilter === 'function_call'"
-            @update:modelValue="showFilter = 'function_call'"
-            >Function Call</ToggleButton
-          >
+        <div class="flex justify-end items-center space-x-2">
+          <MultiFilterButton
+            v-model="directionFilter"
+            class="w-32"
+            label="Direction"
+            :items="['All', ...directions]"
+            :highlight="e => e !== 'All'"
+          />
+          <MultiFilterButton
+            v-model="actionKindFilter"
+            class="w-48"
+            label="Type"
+            :items="['All', ...actionKinds]"
+            :display="x => (x === 'All' ? x : humanizeActionKind(x))"
+            :highlight="e => e !== 'All'"
+          />
         </div>
         <!-- tx groups list wrapper -->
         <div class="flex flex-col space-y-3">
@@ -124,7 +116,7 @@
 
 <script lang="ts">
 import Chart from '@/components/Chart.vue';
-import ToggleButton from '@/components/form/ToggleButton.vue';
+import MultiFilterButton from '@/components/form/MultiFilterButton.vue';
 import { DonutSlice, useDonutChart } from '@/composables/charts/useDonutChart';
 import { useNear } from '@/composables/useNear';
 import { useTransactionActions } from '@/composables/useTransactionActions';
@@ -132,21 +124,28 @@ import {
   ActionKind,
   UnifiedTransactionAction,
 } from '@/services/near/indexer/types';
+import { humanizeActionKind } from '@/utils/humanize';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { DateTime } from 'luxon';
 import { defineComponent, ref, watch } from 'vue';
 import DashboardCard from './overview/DashboardCard.vue';
 import ActionLine from './transactions/ActionLine.vue';
 
+const enum TransactionDirection {
+  Incoming = 'Incoming',
+  Outgoing = 'Outgoing',
+  Reflexive = 'Reflexive',
+}
+
 export default defineComponent({
   components: {
     DashboardCard,
     Chart,
-    ToggleButton,
     ActionLine,
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
+    MultiFilterButton,
   },
   setup() {
     const { account, network, timeframe } = useNear();
@@ -154,20 +153,44 @@ export default defineComponent({
 
     const incoming = ref(0);
     const outgoing = ref(0);
+    const reflexive = ref(0);
+
     const slices = ref([] as DonutSlice[]);
 
-    const showFilter = ref(
-      'all' as 'all' | 'incoming' | 'outgoing' | 'function_call',
-    );
+    const actionKinds: ActionKind[] = [
+      ActionKind.FUNCTION_CALL,
+      ActionKind.TRANSFER,
+      ActionKind.STAKE,
+      ActionKind.ADD_KEY,
+      ActionKind.DELETE_KEY,
+      ActionKind.DEPLOY_CONTRACT,
+      ActionKind.CREATE_ACCOUNT,
+      ActionKind.DELETE_ACCOUNT,
+    ];
+
+    const actionKindFilter = ref('All' as 'All' | ActionKind);
+
+    const directions: TransactionDirection[] = [
+      TransactionDirection.Incoming,
+      TransactionDirection.Outgoing,
+      TransactionDirection.Reflexive,
+    ];
+
+    const directionFilter = ref('All' as 'All' | TransactionDirection);
 
     const filterAction = (action: UnifiedTransactionAction) =>
-      showFilter.value === 'all' ||
-      (showFilter.value === 'function_call' &&
-        action.action_kind === ActionKind.FUNCTION_CALL) ||
-      (showFilter.value === 'incoming' &&
-        action.receiver_account_id === account.value) ||
-      (showFilter.value === 'outgoing' &&
-        action.receiver_account_id !== account.value);
+      (actionKindFilter.value === 'All' ||
+        actionKindFilter.value === action.action_kind) &&
+      (directionFilter.value === 'All' ||
+        (directionFilter.value === TransactionDirection.Incoming &&
+          action.signer_account_id !== account.value &&
+          action.receiver_account_id === account.value) ||
+        (directionFilter.value === TransactionDirection.Outgoing &&
+          action.signer_account_id === account.value &&
+          action.receiver_account_id !== account.value) ||
+        (directionFilter.value === TransactionDirection.Reflexive &&
+          action.signer_account_id === account.value &&
+          action.receiver_account_id === account.value));
 
     watch(
       [actions, account],
@@ -175,24 +198,39 @@ export default defineComponent({
         const totals = {
           incoming: 0,
           outgoing: 0,
+          reflexive: 0,
         };
 
         actions.forEach(action => {
-          if (action.receiver_account_id === account) {
+          if (
+            action.signer_account_id !== account &&
+            action.receiver_account_id === account
+          ) {
             totals.incoming++;
-          } else {
+          } else if (
+            action.signer_account_id === account &&
+            action.receiver_account_id !== account
+          ) {
             totals.outgoing++;
+          } else {
+            totals.reflexive++;
           }
         });
 
         incoming.value = totals.incoming;
         outgoing.value = totals.outgoing;
+        reflexive.value = totals.reflexive;
 
         slices.value = [
           {
             name: 'Incoming',
             value: totals.incoming,
             color: 'rgb(251, 191, 36)',
+          },
+          {
+            name: 'Reflexive',
+            value: totals.reflexive,
+            color: 'rgb(45, 178, 95)',
           },
           {
             name: 'Outgoing',
@@ -213,7 +251,7 @@ export default defineComponent({
     const startOfDate = (blockTimestamp: number): DateTime =>
       DateTime.fromMillis(blockTimestamp / 1_000_000).startOf('day');
 
-    watch([actions, showFilter], ([actions]) => {
+    watch([actions, actionKindFilter, directionFilter], ([actions]) => {
       const grouped = [];
       for (let i = 0; i < actions.length; i++) {
         const start = startOfDate(actions[i].block_timestamp);
@@ -247,12 +285,16 @@ export default defineComponent({
     });
 
     return {
-      showFilter,
       transactionTypeOption,
       actions,
       incoming,
       outgoing,
       groupedByDate,
+      actionKinds,
+      directions,
+      humanizeActionKind,
+      actionKindFilter,
+      directionFilter,
     };
   },
 });

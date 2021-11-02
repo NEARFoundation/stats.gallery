@@ -22,6 +22,26 @@ hr {
 .prose blockquote {
   @apply dark:border-gray-600 !important;
 }
+
+.custom-scrollbar {
+  scrollbar-color: dark;
+  scrollbar-width: thin;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+  background-color: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.4);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.6);
+}
 </style>
 
 <script lang="ts">

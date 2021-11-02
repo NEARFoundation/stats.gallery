@@ -4,12 +4,12 @@ export function humanizeActionKind(actionKind: ActionKind): string {
   return (
     {
       ADD_KEY: 'Add key',
-      CREATE_ACCOUNT: 'Account creation',
-      DELETE_ACCOUNT: 'Account deletion',
+      CREATE_ACCOUNT: 'Create account',
+      DELETE_ACCOUNT: 'Delete account',
       DELETE_KEY: 'Delete key',
-      DEPLOY_CONTRACT: 'Contract deployment',
+      DEPLOY_CONTRACT: 'Deploy contract',
       FUNCTION_CALL: 'Function call',
-      STAKE: 'Staking',
+      STAKE: 'Stake',
       TRANSFER: 'Transfer',
     } as Record<ActionKind, string>
   )[actionKind];
