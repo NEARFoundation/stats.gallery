@@ -143,7 +143,7 @@
         />
         <hr class="w-64 dark:border-gray-700 hidden md:block" />
         <SectionLink
-          to="https://learnnear.club/"
+          to="https://near.university/"
           :icon="AcademicCapIcon"
           name="Learn NEAR"
           external

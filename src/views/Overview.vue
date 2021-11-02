@@ -43,7 +43,7 @@
       <div class="flex flex-col items-center space-y-4 w-64 text-white">
         <EarnNear />
         <a
-          href="https://learnnear.club/"
+          href="https://near.university/"
           target="_blank"
           rel="noreferrer"
           class="
