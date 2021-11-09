@@ -22,10 +22,10 @@
 
       <div class="flex items-center space-x-1">
         <a
-          href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+          :href="shareRoute"
           class="twitter-share-button"
           data-size="large"
-          data-text="Check out my NEAR stats!"
+          :data-text="tweetShareText"
           data-related="NEARProtocol,sudo_build"
           data-show-count="true"
           >Tweet</a
@@ -327,6 +327,29 @@ export default defineComponent({
 
     const route = useRoute();
 
+    const tweetShareText = computed(() => {
+      let tweetText = 'Check out my NEAR stats!';
+
+      const routeArr = route.path.split('/');
+      const routeSlug = routeArr[routeArr.length - 1];
+      if (routeSlug == 'stats') tweetText = 'Check out my NEAR stats!';
+      if (routeSlug == 'leaderboards')
+        tweetText = 'Check out the leaderboards on NEAR!';
+      if (routeSlug == 'transactions')
+        tweetText = 'Check out my transactions on NEAR!';
+      if (routeSlug == 'quests') tweetText = 'Check out my quests on NEAR!';
+
+      return tweetText;
+    });
+
+    const shareRoute = computed(() => {
+      let shareLink = 'https://twitter.com/share?ref_src=twsrc%5Etfw';
+
+      shareLink = `https://twitter.com/share?ref_src=${route}`;
+
+      return shareLink;
+    });
+
     return {
       account,
       network,
@@ -346,6 +369,8 @@ export default defineComponent({
       TransactionBadge,
       FunctionBadge,
       NftBadge,
+      tweetShareText,
+      shareRoute,
     };
   },
 });
