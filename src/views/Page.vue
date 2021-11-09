@@ -21,15 +21,7 @@
       </h1>
 
       <div class="flex items-center space-x-1">
-        <a
-          :href="shareRoute"
-          class="twitter-share-button"
-          data-size="large"
-          :data-text="tweetShareText"
-          data-related="NEARProtocol,sudo_build"
-          data-show-count="true"
-          >Tweet</a
-        >
+        <span v-html="tweetButton" />
       </div>
 
       <div class="w-full mt-2"></div>
@@ -343,9 +335,12 @@ export default defineComponent({
     });
 
     const shareRoute = computed(() => {
+      console.log('route', window.location);
       let shareLink = 'https://twitter.com/share?ref_src=twsrc%5Etfw';
 
-      shareLink = `https://twitter.com/share?ref_src=${route}`;
+      shareLink = `https://twitter.com/share?ref_src=${
+        window.location.origin + route.fullPath
+      }`;
 
       return shareLink;
     });
@@ -371,7 +366,28 @@ export default defineComponent({
       NftBadge,
       tweetShareText,
       shareRoute,
+      tweetButton: '',
     };
+  },
+  mounted() {
+    this.renderTweetButton();
+  },
+  methods: {
+    renderTweetButton() {
+      this.tweetButton = `<a
+        class="twitter-share-button"
+        data-size="large"
+        data-show-count="true"
+        data-related="NEARProtocol,sudo_build"
+        data-text="${this.tweetShareText}"
+        href="${this.shareRoute}">
+      Tweet</a>`;
+    },
+  },
+  watch: {
+    shareRoute() {
+      this.renderTweetButton();
+    },
   },
 });
 </script>
