@@ -20,17 +20,7 @@
         {{ account }}
       </h1>
 
-      <div class="flex items-center space-x-1">
-        <a
-          href="https://twitter.com/share?ref_src=twsrc%5Etfw"
-          class="twitter-share-button"
-          data-size="large"
-          data-text="Check out my NEAR stats!"
-          data-related="NEARProtocol,sudo_build"
-          data-show-count="true"
-          >Tweet</a
-        >
-      </div>
+      <div class="flex items-center space-x-1" v-html="tweetButton"></div>
 
       <div class="w-full mt-2"></div>
 
@@ -260,8 +250,8 @@ import { useNear } from '@/composables/useNear';
 import { useScore } from '@/composables/useScore';
 import {
   AcademicCapIcon,
-  ClockIcon,
   AnnotationIcon,
+  ClockIcon,
 } from 'heroicons-vue3/solid';
 import { computed, defineComponent, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -325,7 +315,49 @@ export default defineComponent({
       badgeGroups.value = [nft, transfer, stake, contract].flat();
     });
 
+    const getTweetText = (routeName: string) => {
+      // Switch based on route name
+      switch (routeName) {
+        case 'overview':
+          return 'Check out my NEAR stats!';
+        case 'transactions':
+          return 'Check out my NEAR transactions!';
+        case 'quests':
+          return 'Check out my NEAR quests!';
+        case 'leaderboards':
+          return 'Check out my NEAR leaderboards!';
+        default:
+          return 'Check out NEAR statistics on stats.gallery!';
+      }
+    };
+
+    const tweetButton = computed(
+      // Hardcoded HTML so that external Twitter script can read&replace
+      () =>
+        `<a
+          class="twitter-share-button"
+          data-size="large"
+          data-show-count="true"
+          data-related="NEARProtocol,sudo_build"
+          data-text="${getTweetText(route.name?.toString() ?? '')}"
+          href="https://twitter.com/share?ref_src=${window.location.href}"
+        >Tweet</a>`,
+    );
+
     const route = useRoute();
+
+    watch(
+      route,
+      () => {
+        // Reload Twitter button every page change
+        const t = (window as any).twttr;
+
+        if (t && t.widgets && t.widgets.load) {
+          t.widgets.load();
+        }
+      },
+      { immediate: true },
+    );
 
     return {
       account,
@@ -346,6 +378,7 @@ export default defineComponent({
       TransactionBadge,
       FunctionBadge,
       NftBadge,
+      tweetButton,
     };
   },
 });
