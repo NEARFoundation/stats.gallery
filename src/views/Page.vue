@@ -250,10 +250,10 @@ import { useNear } from '@/composables/useNear';
 import { useScore } from '@/composables/useScore';
 import {
   AcademicCapIcon,
-  ClockIcon,
   AnnotationIcon,
+  ClockIcon,
 } from 'heroicons-vue3/solid';
-import { computed, defineComponent, ref, watch, onMounted } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
