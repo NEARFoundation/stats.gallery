@@ -20,9 +20,7 @@
         {{ account }}
       </h1>
 
-      <div class="flex items-center space-x-1">
-        <span v-html="tweetButton" />
-      </div>
+      <div class="flex items-center space-x-1" v-html="tweetButton"></div>
 
       <div class="w-full mt-2"></div>
 
@@ -317,67 +315,49 @@ export default defineComponent({
       badgeGroups.value = [nft, transfer, stake, contract].flat();
     });
 
-    const route = useRoute();
-
-    const tweetShareText = computed(() => {
-      let tweetText = 'Check our Stats.Gallery!';
-
-      // switch case for route slug
-      switch (route.name) {
+    const getTweetText = (routeName: string) => {
+      // Switch based on route name
+      switch (routeName) {
         case 'overview':
-          tweetText = `Check out my NEAR stats!`;
-          break;
+          return 'Check out my NEAR stats!';
         case 'transactions':
-          tweetText = `Check out my NEAR transactions!`;
-          break;
+          return 'Check out my NEAR transactions!';
         case 'quests':
-          tweetText = `Check out my NEAR quests!`;
-          break;
+          return 'Check out my NEAR quests!';
         case 'leaderboards':
-          tweetText = `Check out my NEAR leaderboards!`;
-          break;
-        case 'nft':
-          tweetText = `Check out my NEAR NFT!`;
-          break;
-        case 'contracts':
-          tweetText = `Check out my NEAR contracts!`;
-          break;
-        case 'stake':
-          tweetText = `Check out my NEAR stake!`;
-          break;
+          return 'Check out my NEAR leaderboards!';
         default:
-          break;
+          return 'Check out NEAR statistics on stats.gallery!';
       }
-
-      return tweetText;
-    });
-
-    const shareRoute = computed(() => {
-      return `https://twitter.com/share?ref_src=${
-        window.location.origin + route.fullPath
-      }`;
-    });
-
-    const tweetButton = ref('');
-
-    const renderTweetButton = () => {
-      tweetButton.value = `<a
-        class="twitter-share-button"
-        data-size="large"
-        data-show-count="true"
-        data-related="NEARProtocol,sudo_build"
-        data-text="${tweetShareText.value}"
-        href="${shareRoute.value}">
-      Tweet</a>`;
     };
 
-    watch(shareRoute, (shareRoute, afterShareRoute) => {
-      renderTweetButton();
-    });
+    const tweetButton = computed(
+      // Hardcoded HTML so that external Twitter script can read&replace
+      () =>
+        `<a
+          class="twitter-share-button"
+          data-size="large"
+          data-show-count="true"
+          data-related="NEARProtocol,sudo_build"
+          data-text="${getTweetText(route.name?.toString() ?? '')}"
+          href="https://twitter.com/share?ref_src=${window.location.href}"
+        >Tweet</a>`,
+    );
 
-    onMounted(() => {
-      renderTweetButton();
-    });
+    const route = useRoute();
+
+    watch(
+      route,
+      () => {
+        // Reload Twitter button every page change
+        const t = (window as any).twttr;
+
+        if (t && t.widgets && t.widgets.load) {
+          t.widgets.load();
+        }
+      },
+      { immediate: true },
+    );
 
     return {
       account,
@@ -398,8 +378,6 @@ export default defineComponent({
       TransactionBadge,
       FunctionBadge,
       NftBadge,
-      tweetShareText,
-      shareRoute,
       tweetButton,
     };
   },

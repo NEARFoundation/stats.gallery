@@ -64,11 +64,11 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/leaderboards',
-    name: 'leaderboards',
     component: Page,
     children: [
       {
         path: '',
+        name: 'leaderboards',
         component: Leaderboards,
       },
     ],
