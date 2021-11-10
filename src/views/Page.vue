@@ -371,7 +371,7 @@ export default defineComponent({
       Tweet</a>`;
     };
 
-    watch(shareRoute, (shareRoute, afterShareRoute) => {
+    watch(shareRoute, () => {
       renderTweetButton();
     });
 
