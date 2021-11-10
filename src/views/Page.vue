@@ -255,7 +255,7 @@ import {
   ClockIcon,
   AnnotationIcon,
 } from 'heroicons-vue3/solid';
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
@@ -358,6 +358,27 @@ export default defineComponent({
       }`;
     });
 
+    const tweetButton = ref('');
+
+    const renderTweetButton = () => {
+      tweetButton.value = `<a
+        class="twitter-share-button"
+        data-size="large"
+        data-show-count="true"
+        data-related="NEARProtocol,sudo_build"
+        data-text="${tweetShareText.value}"
+        href="${shareRoute.value}">
+      Tweet</a>`;
+    };
+
+    watch(shareRoute, (shareRoute, afterShareRoute) => {
+      renderTweetButton();
+    });
+
+    onMounted(() => {
+      renderTweetButton();
+    });
+
     return {
       account,
       network,
@@ -379,28 +400,8 @@ export default defineComponent({
       NftBadge,
       tweetShareText,
       shareRoute,
-      tweetButton: '',
+      tweetButton,
     };
-  },
-  mounted() {
-    this.renderTweetButton();
-  },
-  methods: {
-    renderTweetButton() {
-      this.tweetButton = `<a
-        class="twitter-share-button"
-        data-size="large"
-        data-show-count="true"
-        data-related="NEARProtocol,sudo_build"
-        data-text="${this.tweetShareText}"
-        href="${this.shareRoute}">
-      Tweet</a>`;
-    },
-  },
-  watch: {
-    shareRoute() {
-      this.renderTweetButton();
-    },
   },
 });
 </script>
