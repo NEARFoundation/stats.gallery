@@ -320,29 +320,42 @@ export default defineComponent({
     const route = useRoute();
 
     const tweetShareText = computed(() => {
-      let tweetText = 'Check out my NEAR stats!';
+      let tweetText = 'Check our Stats.Gallery!';
 
-      const routeArr = route.path.split('/');
-      const routeSlug = routeArr[routeArr.length - 1];
-      if (routeSlug == 'stats') tweetText = 'Check out my NEAR stats!';
-      if (routeSlug == 'leaderboards')
-        tweetText = 'Check out the leaderboards on NEAR!';
-      if (routeSlug == 'transactions')
-        tweetText = 'Check out my transactions on NEAR!';
-      if (routeSlug == 'quests') tweetText = 'Check out my quests on NEAR!';
+      // switch case for route slug
+      switch (route.name) {
+        case 'overview':
+          tweetText = `Check out my NEAR stats!`;
+          break;
+        case 'transactions':
+          tweetText = `Check out my NEAR transactions!`;
+          break;
+        case 'quests':
+          tweetText = `Check out my NEAR quests!`;
+          break;
+        case 'leaderboards':
+          tweetText = `Check out my NEAR leaderboards!`;
+          break;
+        case 'nft':
+          tweetText = `Check out my NEAR NFT!`;
+          break;
+        case 'contracts':
+          tweetText = `Check out my NEAR contracts!`;
+          break;
+        case 'stake':
+          tweetText = `Check out my NEAR stake!`;
+          break;
+        default:
+          break;
+      }
 
       return tweetText;
     });
 
     const shareRoute = computed(() => {
-      console.log('route', window.location);
-      let shareLink = 'https://twitter.com/share?ref_src=twsrc%5Etfw';
-
-      shareLink = `https://twitter.com/share?ref_src=${
+      return `https://twitter.com/share?ref_src=${
         window.location.origin + route.fullPath
       }`;
-
-      return shareLink;
     });
 
     return {
