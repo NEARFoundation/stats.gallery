@@ -253,7 +253,7 @@ import {
   AnnotationIcon,
   ClockIcon,
 } from 'heroicons-vue3/solid';
-import { computed, defineComponent, ref, watch } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
@@ -331,33 +331,35 @@ export default defineComponent({
       }
     };
 
-    const tweetButton = computed(
-      // Hardcoded HTML so that external Twitter script can read&replace
-      () =>
-        `<a
-          class="twitter-share-button"
-          data-size="large"
-          data-show-count="true"
-          data-related="NEARProtocol,sudo_build"
-          data-text="${getTweetText(route.name?.toString() ?? '')}"
-          href="https://twitter.com/share?ref_src=${window.location.href}"
-        >Tweet</a>`,
-    );
-
+    const tweetButton = ref('');
     const route = useRoute();
 
-    watch(
-      route,
-      () => {
-        // Reload Twitter button every page change
-        const t = (window as any).twttr;
+    onMounted(() => {
+      watch(
+        route,
+        () => {
+          // Hardcoded HTML so that external Twitter script can read&replace
+          tweetButton.value = `<a
+              class="twitter-share-button"
+              data-size="large"
+              data-show-count="true"
+              data-related="NEARProtocol,sudo_build"
+              data-text="${getTweetText(route.name?.toString() ?? '')}"
+              href="https://twitter.com/share?ref_src=${
+                window?.location.href ?? ''
+              }"
+            >Tweet</a>`;
 
-        if (t && t.widgets && t.widgets.load) {
-          t.widgets.load();
-        }
-      },
-      { immediate: true },
-    );
+          // Reload Twitter button every page change
+          const t = (window as any).twttr;
+
+          if (t && t.widgets && t.widgets.load) {
+            t.widgets.load();
+          }
+        },
+        { immediate: true },
+      );
+    });
 
     return {
       account,
