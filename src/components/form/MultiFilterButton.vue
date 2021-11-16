@@ -2,6 +2,7 @@
   <client-only>
     <Listbox
       as="div"
+      :class="$attrs.class"
       class="relative"
       :modelValue="modelValue"
       @update:modelValue="$emit('update:modelValue', $event)"
