@@ -2,7 +2,7 @@ import { Network, networks } from '@/services/near/indexer/networks';
 import { isString } from '@/utils/is';
 import axios from 'axios';
 import { Cache } from '@/services/near/cache';
-import { AccountView, RpcResponse } from './types';
+import { AccountView, CodeView, RpcResponse } from './types';
 
 export type AccountViewQuery = {
   account: string;
@@ -21,6 +21,24 @@ export class RpcClient {
   }
 
   constructor(public network: Network) {}
+
+  public viewCode(query: AccountViewQuery): Promise<RpcResponse<CodeView>> {
+    return axios({
+      url: this.endpoint,
+      method: 'POST',
+      data: {
+        jsonrpc: '2.0',
+        id: 'dontcare',
+        method: 'query',
+        params: {
+          request_type: 'view_code',
+          account_id: query.account,
+          block_id: 'blockId' in query ? query.blockId : undefined,
+          finality: 'finality' in query ? query.finality : undefined,
+        },
+      },
+    }).then(v => v.data);
+  }
 
   private getAccountViewFromRpc(
     query: AccountViewQuery,

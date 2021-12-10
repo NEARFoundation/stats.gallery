@@ -12,6 +12,7 @@ import TransactionHistoryWidget from '@/views/overview/widgets/TransactionHistor
 import TransactionRateWidget from '@/views/overview/widgets/TransactionRateWidget.vue';
 import Page from '@/views/Page.vue';
 import Quests from '@/views/Quests.vue';
+import Contract from '@/views/Contract.vue';
 import Stats from '@/views/Stats.vue';
 import Story from '@/views/Story.vue';
 import Transactions from '@/views/Transactions.vue';
@@ -161,6 +162,18 @@ const routes: Array<RouteRecordRaw> = [
           title: <RouteTitleGenerator>(
             (route =>
               `${route.params.account}'s ${route.params.network} transactions`)
+          ),
+        },
+      },
+      {
+        path: 'contract',
+        name: 'contract',
+        component: Contract,
+        beforeEnter: [preserveQueryString],
+        meta: {
+          title: <RouteTitleGenerator>(
+            (route =>
+              `interact with ${route.params.account} on ${route.params.network}`)
           ),
         },
       },

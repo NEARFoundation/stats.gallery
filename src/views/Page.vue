@@ -127,6 +127,16 @@
           name="Quests"
         />
         <SectionLink
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'contract',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
+          :icon="ContractIcon"
+          name="Contract"
+        />
+        <SectionLink
           to="/leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
@@ -259,6 +269,7 @@ import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
 import OverviewIcon from './overview/icons/OverviewIcon.vue';
 import QuestsIcon from './overview/icons/QuestsIcon.vue';
+import ContractIcon from './overview/icons/ContractIcon.vue';
 import StatsIcon from './overview/icons/StatsIcon.vue';
 import TransactionsIcon from './overview/icons/TransactionsIcon.vue';
 import SectionLink from './overview/SectionLink.vue';
@@ -373,6 +384,7 @@ export default defineComponent({
       StatsIcon,
       TransactionsIcon,
       QuestsIcon,
+      ContractIcon,
       LeaderboardsIcon,
       NftIcon,
       ClockIcon,

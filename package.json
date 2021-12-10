@@ -21,6 +21,7 @@
     "@koa/router": "^10.1.1",
     "@tailwindcss/typography": "^0.4.1",
     "@vue/server-renderer": "^3.2.8",
+    "@webassemblyjs/wasm-parser": "^1.9.0",
     "axios": "^0.21.1",
     "big.js": "^5.2.2",
     "clipboard-copy": "^4.0.1",
