@@ -41,7 +41,8 @@
           lg:w-auto
         "
       >
-        <SmallAccountInput
+        <SmallTextInput
+          placeholder="my-account.near"
           class="w-full sm:w-48"
           v-model="displayedAccount"
           @submit="update"
@@ -75,7 +76,7 @@
 import StatsGalleryLogo from '@/components/icons/StatsGalleryLogo.vue';
 import { useNear } from '@/composables/useNear';
 import { defineComponent, ref, watch } from 'vue';
-import SmallAccountInput from '../form/SmallAccountInput.vue';
+import SmallTextInput from '../form/SmallTextInput.vue';
 import SmallNetworkInput from '../form/SmallNetworkInput.vue';
 import SmallPrimaryButton from '../form/SmallPrimaryButton.vue';
 import SmallTimeframeInput from '../form/SmallTimeframeInput.vue';
@@ -84,7 +85,7 @@ import SmallTimeframeInput from '../form/SmallTimeframeInput.vue';
 export default defineComponent({
   components: {
     // ToggleSwitch,
-    SmallAccountInput,
+    SmallTextInput,
     SmallNetworkInput,
     SmallTimeframeInput,
     SmallPrimaryButton,

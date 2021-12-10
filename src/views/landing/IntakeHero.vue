@@ -29,8 +29,9 @@
       "
     >
       <div class="flex flex-col flex-shrink-0">
-        <AccountInput
+        <TextInput
           autofocus
+          placeholder="my-account.near"
           class="shadow-md"
           v-model="accountInputValue"
           @submit="go"
@@ -84,23 +85,23 @@
 </style>
 
 <script lang="ts">
-import AccountInput from '@/components/form/AccountInput.vue';
+import Chart from '@/components/Chart.vue';
 import NetworkInput from '@/components/form/NetworkInput.vue';
 import PrimaryButton from '@/components/form/PrimaryButton.vue';
+import TextInput from '@/components/form/TextInput.vue';
 import TimeframeInput from '@/components/form/TimeframeInput.vue';
 import { useNetworkActivityChart } from '@/composables/charts/useNetworkActivityChart';
 import { useMultiple } from '@/composables/useMultiple';
 import { useSingle } from '@/composables/useSingle';
 import { Network } from '@/services/near/indexer/networks';
+import { CachedAccountRecord } from '@/services/near/indexer/types';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref, watch } from 'vue';
-import Chart from '@/components/Chart.vue';
 import { useRouter } from 'vue-router';
-import { CachedAccountRecord } from '@/services/near/indexer/types';
 
 export default defineComponent({
   components: {
-    AccountInput,
+    TextInput,
     TimeframeInput,
     NetworkInput,
     PrimaryButton,
