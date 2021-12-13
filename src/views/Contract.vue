@@ -10,63 +10,13 @@
             class="m-1 px-4 py-2 font-medium rounded-full"
           >
             <div>{{ interfaces[interfaceId].name }}</div>
-            <Method
-              v-for="method in interfaces[interfaceId].methods"
-              :key="method.name"
-              :methodName="method.name"
-              :suggestedArguments="method.args"
-            />
-            <div
-              v-for="method in interfaces[interfaceId].methods"
-              :key="method.name"
-              class="grid grid-cols-4 ml-4 py-3"
-            >
-              <div class="col-span-4">
-                Standard Method:
-                <code
-                  class="
-                    bg-gray-200
-                    dark:bg-gray-900
-                    truncate
-                    max-w-xs
-                    px-1
-                    font-mono
-                    rounded
-                    text-gray-500
-                    dark:text-gray-300
-                    text-sm
-                  "
-                  >{{ method.name }}</code
-                >
-              </div>
-              <div class="col-span-full mt-2 ml-2 space-y-1 flex flex-col">
-                <div
-                  v-for="arg in method.args"
-                  :key="arg"
-                  class="flex flex-row"
-                >
-                  <div class="w-1/2">
-                    <input
-                      class="bg-gray-900"
-                      type="text"
-                      disabled
-                      :value="arg"
-                    />
-                  </div>
-                  <div class="w-1/2">
-                    <input
-                      class="bg-gray-900"
-                      type="text"
-                      disabled
-                      value="Value 1"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="col-span-3"></div>
-              <div class="col-span-1">
-                <button class="px-3 py-2 bg-blue-700 rounded-md">Run</button>
-              </div>
+            <div class="space-y-2 mt-2">
+              <Method
+                v-for="method in interfaces[interfaceId].methods"
+                :key="method.name"
+                :methodName="method.name"
+                :suggestedArguments="method.args"
+              />
             </div>
           </li>
         </ul>

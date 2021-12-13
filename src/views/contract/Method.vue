@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-sm px-4">
-    <Popover v-slot="{ open }" class="relative">
+    <Popover v-slot="{ open }">
       <PopoverButton
         :class="open ? '' : 'text-opacity-90'"
         class="
@@ -11,7 +11,7 @@
           text-base
           font-medium
           text-white
-          bg-orange-700
+          bg-gray-600 bg-opacity-30
           rounded-md
           group
           hover:text-opacity-100
@@ -47,56 +47,27 @@
         leave-to-class="translate-y-1 opacity-0"
       >
         <PopoverPanel
-          class="
-            absolute
-            z-10
-            w-screen
-            max-w-sm
-            px-4
-            mt-3
-            transform
-            -translate-x-1/2
-            left-1/2
-            sm:px-0
-            lg:max-w-3xl
-          "
+          class="z-10 px-4 mt-2 absolute left-0 lg:-ml-4 lg:left-auto lg:w-auto"
         >
-          <div
-            class="
-              overflow-hidden
-              rounded-lg
-              shadow-lg
-              ring-1 ring-black ring-opacity-5
-            "
-          >
-            <div class="relative grid gap-8 bg-white p-7 lg:grid-cols-2"></div>
-            <div class="p-4 bg-gray-50">
-              <a
-                href="##"
-                class="
-                  flow-root
-                  px-2
-                  py-2
-                  transition
-                  duration-150
-                  ease-in-out
-                  rounded-md
-                  hover:bg-gray-100
-                  focus:outline-none
-                  focus-visible:ring
-                  focus-visible:ring-orange-500
-                  focus-visible:ring-opacity-50
-                "
-              >
-                <span class="flex items-center">
-                  <span class="text-sm font-medium text-gray-900">
-                    Documentation
-                  </span>
-                </span>
-                <span class="block text-sm text-gray-500">
-                  Start integrating products and tools
-                </span>
-              </a>
+          <div class="shadow-lg bg-gray-900 rounded-md p-3">
+            <div class="mb-3 flex space-x-3 items-center">
+              <h4 class="text-lg flex-grow">
+                Method: <code>{{ methodName }}</code>
+              </h4>
+              <SmallPrimaryButton class="w-24">View</SmallPrimaryButton>
+              <SmallPrimaryButton class="w-24">Call</SmallPrimaryButton>
+            </div>
+            <div class="gap-5 flex flex-col p-2">
+              <p>Default</p>
+              <ArgumentRow
+                v-for="arg in suggestedArguments"
+                :key="arg"
+                locked
+                v-model:active="argModels.get(arg).active"
+                :field="arg"
+                v-model:type="argModels.get(arg).type"
+                v-model:value="argModels.get(arg).value"
+              />
             </div>
           </div>
         </PopoverPanel>
@@ -106,9 +77,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
+import { GuessableTypeString } from '@/utils/guessType';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { ChevronRightIcon } from 'heroicons-vue3/solid';
+import { defineComponent, PropType, reactive, toRefs, watch } from 'vue';
+import ArgumentRow from './ArgumentRow.vue';
 
 export default defineComponent({
   components: {
@@ -116,6 +90,8 @@ export default defineComponent({
     PopoverButton,
     PopoverPanel,
     ChevronRightIcon,
+    ArgumentRow,
+    SmallPrimaryButton,
   },
   props: {
     methodName: {
@@ -131,8 +107,35 @@ export default defineComponent({
       default: () => [],
     },
   },
-  setup() {
-    return {};
+  setup(props) {
+    interface IArgModel {
+      type: GuessableTypeString | 'auto';
+      value: string;
+      active: boolean;
+    }
+
+    const argModels = reactive(new Map<string, IArgModel>());
+
+    watch(
+      toRefs(props).suggestedArguments,
+      suggestedArguments => {
+        suggestedArguments.forEach(arg => {
+          if (!argModels.has(arg)) {
+            argModels.set(arg, {
+              type: 'auto',
+              value: '',
+              active: true,
+            });
+          }
+        });
+      },
+      { immediate: true },
+    );
+
+    return {
+      argModels,
+      log: console.log.bind(console),
+    };
   },
 });
 </script>

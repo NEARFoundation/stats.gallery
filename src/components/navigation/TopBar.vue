@@ -67,7 +67,6 @@
           >story</span
         >
       </router-link>
-      <!-- <ToggleSwitch v-model="theme" /> -->
     </div>
   </nav>
 </template>
@@ -113,7 +112,7 @@ export default defineComponent({
         return;
       }
 
-      account.value = displayedAccount.value;
+      account.value = displayedAccount.value.toLowerCase();
       network.value = selectedNetwork.value;
       timeframe.value = selectedTimeframe.value;
     };

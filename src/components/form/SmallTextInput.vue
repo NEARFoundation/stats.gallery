@@ -1,15 +1,14 @@
 <template>
   <input
-    :value="modelValue.toLowerCase()"
-    @input="$emit('update:modelValue', $event.target.value.toLowerCase())"
-    @keydown.enter="$emit('submit', $event.target.value.toLowerCase())"
+    :value="modelValue"
+    @input="$emit('update:modelValue', $event.target.value)"
+    @keydown.enter="$emit('submit', $event.target.value)"
     type="text"
     class="
       text-base text-black
       focus:ring-green-500 focus:ring-2
       font-normal
       block
-      w-full
       outline-none
       rounded-sm
       border border-gray-300
