@@ -1,7 +1,7 @@
 <template>
   <label class="flex flex-col items-center">
     <slot />
-    <small class="text-gray-400 mt-1">{{ label }}</small>
+    <small class="text-gray-500 mt-1">{{ label }}</small>
   </label>
 </template>
 

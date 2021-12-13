@@ -3,9 +3,10 @@
     <Dialog
       as="div"
       auto-reopen="true"
-      class="fixed z-50 inset-0 overflow-y-auto"
+      class="fixed z-40 inset-0 overflow-y-auto"
       @close="$emit('close')"
     >
+      <div class="modal-teleports"></div>
       <div
         class="
           flex
@@ -63,7 +64,7 @@
               lg:max-w-screen-lg
               inline-block
               align-bottom
-              bg-gray-50
+              bg-white
               text-black
               rounded-lg
               px-4
@@ -98,7 +99,7 @@
               <DialogTitle class="sm:pr-8 font-bold text-xl">{{
                 title
               }}</DialogTitle>
-              <div class="mt-2 prose">
+              <div :class="{ 'mt-2': true, prose: prose }">
                 <slot />
               </div>
             </div>
@@ -121,7 +122,7 @@ import {
   TransitionRoot,
 } from '@headlessui/vue';
 import { XIcon } from 'heroicons-vue3/outline';
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   components: {
@@ -141,7 +142,14 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    prose: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    },
   },
   emits: ['close'],
+  provide: {
+    localTeleport: '.modal-teleports',
+  },
 });
 </script>

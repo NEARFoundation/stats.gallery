@@ -8,29 +8,37 @@
       @update:modelValue="$emit('update:modelValue', $event.value)"
     >
       <ListboxButton
+        ref="anchorRef"
         class="
           w-full
           h-full
-          bg-white
-          hover:bg-gray-100
           cursor-pointer
           relative
           rounded-sm
           p-2
           pl-3
           pr-8
-          border border-gray-300
+          border
           text-left
           focus:ring-green-500 focus:ring-2 focus:outline-none
-          dark:bg-gray-700
-          dark:hover:bg-gray-800
-          dark:border-gray-600
-          dark:text-white
         "
+        :class="{
+          'bg-white hover:bg-gray-100 border-gray-300': theme !== 'dark',
+          'dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-600 dark:text-white':
+            theme !== 'dark' && theme !== 'light',
+          'bg-gray-700 hover:bg-gray-800 border-gray-600 text-white':
+            theme === 'dark',
+        }"
       >
-        <span class="block truncate text-base text-black dark:text-white">{{
-          selectedOption.label
-        }}</span>
+        <span
+          class="block truncate text-base"
+          :class="{
+            'text-black': theme !== 'dark',
+            'dark:text-white': theme !== 'dark' && theme !== 'light',
+            'text-white': theme === 'dark',
+          }"
+          >{{ selectedOption.label }}</span
+        >
         <span
           class="
             absolute
@@ -46,49 +54,87 @@
         </span>
       </ListboxButton>
 
-      <transition
-        leave-active-class="transition ease-in duration-100"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+      <teleport
+        :to="teleport || localTeleport"
+        :disabled="!teleport && !localTeleport"
       >
-        <ListboxOptions
-          class="
-            absolute
-            z-10
-            mt-1
-            w-full
-            bg-white
-            shadow-lg
-            max-h-60
-            rounded-sm
-            py-1
-            ring-1 ring-black ring-opacity-5
-            overflow-auto
-            focus:outline-none
-            text-base
-            dark:bg-gray-700
-          "
+        <Float
+          snap="left"
+          v-slot="{ left, top, width }"
+          :anchorRef="anchorRef"
+          :targetRef="targetRef"
+          :watchRef="watchRef"
         >
-          <ListboxOption
-            as="template"
-            v-for="option in options"
-            :key="option.value"
-            :value="option"
-            v-slot="{ active }"
+          <div
+            ref="targetRef"
+            class="fixed z-50"
+            :style="{
+              top: top + 'px',
+              left: left + 'px',
+              width: width + 'px',
+            }"
           >
-            <li
-              :class="[
-                active ? 'bg-gray-100 dark:bg-gray-800' : '',
-                'cursor-pointer select-none relative py-2 px-3',
-              ]"
+            <transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
             >
-              <span class="block truncate">
-                {{ option.label }}
-              </span>
-            </li>
-          </ListboxOption>
-        </ListboxOptions>
-      </transition>
+              <ListboxOptions
+                class="
+                  mt-1
+                  w-full
+                  shadow-lg
+                  max-h-60
+                  rounded-sm
+                  py-1
+                  ring-1 ring-black ring-opacity-5
+                  overflow-auto
+                  custom-scrollbar
+                  focus:outline-none
+                  text-base
+                "
+                :class="{
+                  'bg-white': theme !== 'dark',
+                  'dark:bg-gray-700': theme !== 'dark' && theme !== 'light',
+                  'bg-gray-700': theme === 'dark',
+                }"
+              >
+                <ListboxOption
+                  ref="watchRef"
+                  as="template"
+                  v-for="option in options"
+                  :key="option.value"
+                  :value="option"
+                  v-slot="{ active }"
+                >
+                  <li
+                    :class="[
+                      active
+                        ? {
+                            'bg-gray-100 text-black': theme !== 'dark',
+                            'dark:bg-gray-800 dark:text-white':
+                              theme !== 'dark' && theme !== 'light',
+                            'bg-gray-800 text-white': theme === 'dark',
+                          }
+                        : {
+                            'text-black': theme !== 'dark',
+                            'dark:text-white':
+                              theme !== 'dark' && theme !== 'light',
+                            'text-white': theme === 'dark',
+                          },
+                      'cursor-pointer select-none relative py-2 px-3',
+                    ]"
+                  >
+                    <span class="block truncate">
+                      {{ option.label }}
+                    </span>
+                  </li>
+                </ListboxOption>
+              </ListboxOptions>
+            </transition>
+          </div>
+        </Float>
+      </teleport>
     </Listbox>
   </client-only>
 </template>
@@ -101,7 +147,8 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { SelectorIcon } from 'heroicons-vue3/outline';
-import { computed, defineComponent, PropType } from 'vue';
+import { computed, defineComponent, inject, PropType, ref, watch } from 'vue';
+import Float from '../Float.vue';
 
 export default defineComponent({
   components: {
@@ -110,6 +157,7 @@ export default defineComponent({
     ListboxOption,
     ListboxOptions,
     SelectorIcon,
+    Float,
   },
   props: {
     modelValue: {
@@ -120,14 +168,37 @@ export default defineComponent({
       type: Array as PropType<{ label: string; value: string }[]>,
       required: true,
     },
+    theme: {
+      type: String as PropType<'light' | 'dark' | 'auto'>,
+      default: 'auto',
+    },
+    teleport: {
+      type: String as PropType<string>,
+      default: '',
+    },
   },
   emits: ['update:modelValue'],
   setup(props) {
+    const anchorRef = ref(null);
+    const targetRef = ref(null);
+    const watchRef = ref(null);
+
+    watch(watchRef, wr => {
+      console.log('change in watchRef', wr);
+    });
+
+    const localTeleport = inject<string>('localTeleport');
+
     const selectedOption = computed(() =>
       props.options.find(o => o.value === props.modelValue),
     );
+
     return {
+      anchorRef,
+      targetRef,
+      watchRef,
       selectedOption,
+      localTeleport,
     };
   },
 });

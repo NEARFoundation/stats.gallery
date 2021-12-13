@@ -10,6 +10,7 @@
     </Labeled>
     <Labeled label="Field Name">
       <SmallTextInput
+        theme="light"
         class="w-48"
         :modelValue="field"
         @update:modelValue="$emit('update:field', $event)"
@@ -18,6 +19,7 @@
     </Labeled>
     <Labeled label="Data Type">
       <SmallSelectInput
+        theme="light"
         class="w-32"
         :modelValue="type"
         @update:modelValue="$emit('update:type', $event)"
@@ -27,6 +29,7 @@
     <Labeled label="Value">
       <div class="relative">
         <SmallTextInput
+          theme="light"
           class="w-48"
           :modelValue="value"
           @update:modelValue="$emit('update:value', $event)"
@@ -43,9 +46,11 @@
             px-1
             py-0.5
             transform
-            -translate-y-1/2
-            bg-green-700
+            -translate-y-3/4
+            bg-blue-600
+            text-white
             font-mono font-bold
+            ring-2 ring-white
           "
         >
           {{ guess.type }}

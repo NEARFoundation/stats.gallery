@@ -53,6 +53,7 @@ export default defineComponent({
     PopoverPanel,
   },
   setup() {
+    // TODO: Use Float.vue
     const panelRef = ref<VNode | null>(null);
     const elRef = ref<HTMLElement | null>(null);
     const buttonRef = ref<VNode | null>(null);

@@ -63,6 +63,7 @@
         :open="helpModalOpen"
         @close="helpModalOpen = false"
         title="How to earn points"
+        prose
       >
         <p>
           Account score is calculated by a number of factors, primarily
@@ -87,6 +88,7 @@
         :open="viewModalOpen"
         @close="viewModalOpen = false"
         title="Scores"
+        prose
       >
         <p>
           Total score: <strong>{{ $filters.number.standard(score) }}</strong>

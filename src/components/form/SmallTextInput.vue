@@ -5,28 +5,37 @@
     @keydown.enter="$emit('submit', $event.target.value)"
     type="text"
     class="
-      text-base text-black
+      text-base
       focus:ring-green-500 focus:ring-2
       font-normal
       block
       outline-none
       rounded-sm
-      border border-gray-300
+      border
       p-2
       z-10
-      dark:bg-gray-700 dark:border-gray-600 dark:text-white
     "
+    :class="{
+      'text-black border-gray-300': theme !== 'dark',
+      'dark:bg-gray-700 dark:border-gray-600 dark:text-white':
+        theme !== 'dark' && theme !== 'light',
+      'bg-gray-700 border-gray-600 text-white': theme === 'dark',
+    }"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   props: {
     modelValue: {
       type: String,
       required: true,
+    },
+    theme: {
+      type: String as PropType<'dark' | 'light' | 'auto'>,
+      default: 'auto',
     },
   },
   emits: ['update:modelValue', 'submit'],

@@ -63,6 +63,7 @@
       :open="isEmbedModalOpen"
       @close="isEmbedModalOpen = false"
       title="Embed Code"
+      prose
     >
       <template #default>
         <p>Copy this code to your website:</p>
