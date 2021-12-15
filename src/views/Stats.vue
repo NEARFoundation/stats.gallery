@@ -42,7 +42,7 @@ import { useNear } from '@/composables/useNear';
 import { useReceiptActions } from '@/composables/useReceiptActions';
 import { ActionKind } from '@/services/near/indexer/types';
 import { Timeframe, timeframeToPastTimestamp } from '@/utils/timeframe';
-import { defineComponent, onMounted, reactive, watch } from '@vue/runtime-core';
+import { defineComponent, onMounted, reactive, watch } from 'vue';
 import DashboardCard from './overview/DashboardCard.vue';
 
 export default defineComponent({

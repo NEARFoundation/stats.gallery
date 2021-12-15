@@ -28,7 +28,6 @@
           w-5
           h-5
           ml-2
-          text-orange-300
           transition
           duration-150
           ease-in-out

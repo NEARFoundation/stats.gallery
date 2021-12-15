@@ -97,7 +97,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue';
-import { defineComponent, PropType } from '@vue/runtime-core';
+import { defineComponent, PropType } from 'vue';
 import { ChevronDownIcon } from 'heroicons-vue3/solid';
 
 export default defineComponent({

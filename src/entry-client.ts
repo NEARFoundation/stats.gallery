@@ -1,5 +1,7 @@
 import LogRocket from 'logrocket';
 import createApp from './app';
+import { Buffer } from 'buffer';
+(window as any).Buffer = Buffer;
 
 if (process.env['NODE_ENV'] === 'production') {
   LogRocket.init('near/statsgallery');

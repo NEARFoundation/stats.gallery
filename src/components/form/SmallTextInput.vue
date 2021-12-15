@@ -14,6 +14,7 @@
       border
       p-2
       z-10
+      disabled:bg-green-500
     "
     :class="{
       'text-black border-gray-300': theme !== 'dark',

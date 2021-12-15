@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
-import { defineComponent } from '@vue/runtime-core';
+import { defineComponent } from 'vue';
 import { MoonIcon, SunIcon } from 'heroicons-vue3/outline';
 
 export default defineComponent({
