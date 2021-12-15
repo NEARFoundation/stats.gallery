@@ -12,7 +12,7 @@
         font-medium
         text-white
         bg-gray-600 bg-opacity-30
-        rounded-md
+        rounded-sm
         group
         hover:text-opacity-100
         focus:outline-none
@@ -38,10 +38,6 @@
       />
     </button>
 
-    <!-- <PopoverPanel
-          class="z-10 px-4 mt-2 absolute left-0 lg:-ml-4 lg:left-auto lg:w-auto"
-        > -->
-    <!-- <div class="shadow-lg bg-gray-900 rounded-md p-3"> -->
     <Modal
       :open="isModalOpen"
       title="Call Contract"
@@ -67,15 +63,13 @@
         />
       </div>
     </Modal>
-    <!-- </div> -->
   </div>
 </template>
 
 <script lang="ts">
-import Modal from '@/components/Modal.vue';
 import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
+import Modal from '@/components/Modal.vue';
 import { GuessableTypeString } from '@/utils/guessType';
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { ChevronRightIcon } from 'heroicons-vue3/solid';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';

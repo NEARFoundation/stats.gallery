@@ -15,7 +15,7 @@
 import { useMultiple } from '@/composables/useMultiple';
 import { Network } from '@/services/near/indexer/networks';
 import { CachedAccountRecord } from '@/services/near/indexer/types';
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import { defineComponent } from '@vue/runtime-core';
 import LeaderboardTableCard from './leaderboards/LeaderboardTableCard.vue';
 

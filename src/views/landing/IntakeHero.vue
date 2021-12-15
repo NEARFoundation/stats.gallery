@@ -95,7 +95,7 @@ import { useMultiple } from '@/composables/useMultiple';
 import { useSingle } from '@/composables/useSingle';
 import { Network } from '@/services/near/indexer/networks';
 import { CachedAccountRecord } from '@/services/near/indexer/types';
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 

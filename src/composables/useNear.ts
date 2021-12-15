@@ -8,7 +8,7 @@ import {
   NEAR_RPC,
   NEAR_TIMEFRAME,
 } from '@/services/provideNear';
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import { inject, Ref } from 'vue';
 
 export function useNear(): {

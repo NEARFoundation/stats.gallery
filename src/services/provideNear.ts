@@ -4,8 +4,8 @@ import { useTimeframeFromUrl } from '@/composables/useTimeframeFromUrl';
 import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
+import { Timeframe } from '@/utils/timeframe';
 import { provide, reactive, Ref, watch } from 'vue';
-import { Timeframe } from './timeframe';
 
 export const NEAR_ACCOUNT = Symbol('near_account');
 export const NEAR_NETWORK = Symbol('near_network');

@@ -1,4 +1,4 @@
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import { ref, watch } from 'vue';
 import { useSingle } from '../useSingle';
 import { BadgeComposable } from './BadgeComposable';

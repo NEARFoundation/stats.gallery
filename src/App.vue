@@ -46,6 +46,7 @@ hr {
 
 <script lang="ts">
 import { useTitle } from '@/composables/useTitle';
+import { TITLE_SUFFIX } from '@/constants';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { defineComponent, onMounted, ref, watch } from 'vue';
@@ -84,8 +85,7 @@ export default defineComponent({
       );
     });
 
-    const titleSuffix =
-      process.env['VUE_APP_TITLE_SUFFIX'] ?? ' - stats.gallery';
+    const titleSuffix = TITLE_SUFFIX ?? ' - stats.gallery';
 
     useTitle(route => {
       const suffix = route.meta.noTitleSuffix ? '' : titleSuffix;

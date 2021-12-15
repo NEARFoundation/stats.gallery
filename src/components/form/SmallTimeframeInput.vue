@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import {
   Listbox,
   ListboxButton,

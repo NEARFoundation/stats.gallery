@@ -109,19 +109,18 @@
                 >
                   <li
                     :class="[
-                      active
-                        ? {
-                            'bg-gray-100 text-black': theme !== 'dark',
-                            'dark:bg-gray-800 dark:text-white':
-                              theme !== 'dark' && theme !== 'light',
-                            'bg-gray-800 text-white': theme === 'dark',
-                          }
-                        : {
-                            'text-black': theme !== 'dark',
-                            'dark:text-white':
-                              theme !== 'dark' && theme !== 'light',
-                            'text-white': theme === 'dark',
-                          },
+                      active && {
+                        'bg-gray-100': theme !== 'dark',
+                        'dark:bg-gray-800':
+                          theme !== 'dark' && theme !== 'light',
+                        'bg-gray-800': theme === 'dark',
+                      },
+                      {
+                        'text-black': theme !== 'dark',
+                        'dark:text-white':
+                          theme !== 'dark' && theme !== 'light',
+                        'text-white': theme === 'dark',
+                      },
                       'cursor-pointer select-none relative py-2 px-3',
                     ]"
                   >

@@ -6,7 +6,7 @@ import ExternalLinkIcon from '@/components/ExternalLinkIcon.vue';
 import NearSymbol from '@/components/NearSymbol.vue';
 import QuestionMarkIcon from '@/components/QuestionMarkIcon.vue';
 import { initRouter } from '@/router';
-import { timeframeToPastTimestamp } from '@/services/timeframe';
+import { timeframeToPastTimestamp } from '@/utils/timeframe';
 import { humanizeActionKind, humanizeLevel } from '@/utils/humanize';
 import {
   nearSymbol,
