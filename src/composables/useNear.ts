@@ -3,12 +3,17 @@ import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import {
   NEAR_ACCOUNT,
+  NEAR_CONNECTION,
   NEAR_INDEXER,
   NEAR_NETWORK,
   NEAR_RPC,
   NEAR_TIMEFRAME,
+  NEAR_WALLET,
+  NEAR_WALLET_AUTH,
+  WalletAuth,
 } from '@/services/provideNear';
 import { Timeframe } from '@/utils/timeframe';
+import { Near, WalletConnection } from 'near-api-js';
 import { inject, Ref } from 'vue';
 
 export function useNear(): {
@@ -17,6 +22,9 @@ export function useNear(): {
   timeframe: Ref<Timeframe>;
   indexer: IndexerClient;
   rpc: RpcClient;
+  wallet: Ref<WalletConnection | null>;
+  walletAuth: WalletAuth;
+  connection: Ref<Near | null>;
 } {
   // TODO: Fallback?
   // eslint-disable-next-line
@@ -29,6 +37,12 @@ export function useNear(): {
   const indexer = inject<IndexerClient>(NEAR_INDEXER)!;
   // eslint-disable-next-line
   const rpc = inject<RpcClient>(NEAR_RPC)!;
+  // eslint-disable-next-line
+  const wallet = inject<Ref<WalletConnection | null>>(NEAR_WALLET)!;
+  // eslint-disable-next-line
+  const walletAuth = inject<WalletAuth>(NEAR_WALLET_AUTH)!;
+  // eslint-disable-next-line
+  const connection = inject<Ref<Near | null>>(NEAR_CONNECTION)!;
 
   return {
     account,
@@ -36,5 +50,8 @@ export function useNear(): {
     timeframe,
     indexer,
     rpc,
+    wallet,
+    walletAuth,
+    connection,
   };
 }
