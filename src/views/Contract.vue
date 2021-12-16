@@ -100,27 +100,114 @@
       </div>
     </DashboardCard>
   </main>
+  <Modal
+    :open="isTransactionResultsModalOpen"
+    @close="closeTransactionResultsModal"
+    title="Transaction Results"
+  >
+    <Alert v-if="errorCode" class="bg-red-50">
+      <template #icon>
+        <XCircleIcon class="w-5 h-5 text-red-600" aria-hidden="true" />
+      </template>
+      <template #default>
+        <h3 class="text-red-800 font-medium">Transaction Execution Error</h3>
+        <p class="text-red-700">{{ errorCode }}</p>
+        <p
+          class="
+            mt-2
+            text-red-700
+            bg-gray-400 bg-opacity-10
+            p-2
+            border border-gray-300
+            rounded-sm
+            font-mono
+            whitespace-nowrap
+            max-w-sm
+            overflow-x-auto
+            custom-scrollbar
+          "
+        >
+          {{ errorMessage }}
+        </p>
+      </template>
+    </Alert>
+    <TransactionResult
+      v-for="hash in transactionHashes"
+      :key="hash"
+      :hash="hash"
+    />
+  </Modal>
 </template>
 
 <script lang="ts">
-import { useNear } from '@/composables/useNear';
-import { useContract } from '@/composables/contract/useContract';
-import { defineComponent, reactive, ref, watch } from 'vue';
+import Alert from '@/components/Alert.vue';
+import Modal from '@/components/Modal.vue';
 import { interfaces } from '@/composables/contract/interfaces';
-import DashboardCard from './overview/DashboardCard.vue';
+import { useContract } from '@/composables/contract/useContract';
+import { useNear } from '@/composables/useNear';
+import { useTransactionResultFromUrl } from '@/composables/useTransactionResultFromUrl';
+import { XCircleIcon } from 'heroicons-vue3/solid';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import Method from './contract/Method.vue';
+import TransactionResult from './contract/TransactionResult.vue';
+import DashboardCard from './overview/DashboardCard.vue';
 
 export default defineComponent({
   components: {
+    Alert,
     DashboardCard,
     Method,
+    Modal,
+    TransactionResult,
+    XCircleIcon,
   },
   setup() {
     const { account, network } = useNear();
     const { contract, isLoading } = useContract({ account, network });
     const args = reactive(new Map<string, { name: string; value: string }>());
 
+    const { transactionHashes, errorMessage, errorCode } =
+      useTransactionResultFromUrl();
+
+    // Saved so that the values don't disappear immediately upon modal close
+    const savedTransactionHashes = ref<string[]>([]);
+    const savedErrorMessage = ref<string>();
+    const savedErrorCode = ref<string>();
+    watch(
+      [transactionHashes, errorMessage, errorCode],
+      ([hashes, errorMessage, errorCode]) => {
+        if (hashes.length > 0) {
+          savedTransactionHashes.value = hashes;
+        }
+
+        if (errorMessage) {
+          savedErrorMessage.value = decodeURIComponent(errorMessage);
+        }
+
+        if (errorCode) {
+          savedErrorCode.value = errorCode;
+        }
+      },
+      { immediate: true },
+    );
+
+    const isTransactionResultsModalOpen = computed(
+      () => transactionHashes.value.length > 0 || !!errorCode.value,
+    );
+    const router = useRouter();
+    const closeTransactionResultsModal = async () => {
+      await router.push({
+        name: 'contract',
+      });
+    };
+
     return {
+      isTransactionResultsModalOpen,
+      closeTransactionResultsModal,
+      transactionHashes: savedTransactionHashes,
+      errorMessage: savedErrorMessage,
+      errorCode: savedErrorCode,
       contract,
       isLoading,
       interfaces,

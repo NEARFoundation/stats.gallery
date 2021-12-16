@@ -57,15 +57,25 @@
         "
       >
         <MenuItem v-slot="{ active }">
-          <a
-            href="#"
+          <router-link
+            v-if="walletAuth.isSignedIn"
+            :to="{
+              name: 'overview',
+              params: {
+                account: walletAuth.accountId,
+                network: network,
+              },
+              query: {
+                t: timeframe,
+              },
+            }"
             :class="[
               active ? 'bg-gray-800' : '',
               'block py-2 px-4 text-sm text-white',
             ]"
-            @click="test"
-            >Test</a
           >
+            Profile
+          </router-link>
         </MenuItem>
         <MenuItem v-if="walletAuth.isSignedIn" v-slot="{ active }">
           <a
@@ -99,7 +109,7 @@
 import { useNear } from '@/composables/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { ChevronDownIcon, UserCircleIcon } from 'heroicons-vue3/outline';
-import { defineComponent, watch } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {
@@ -111,17 +121,7 @@ export default defineComponent({
     ChevronDownIcon,
   },
   setup() {
-    const { wallet, walletAuth, account, network } = useNear();
-
-    watch(
-      [wallet, walletAuth],
-      async ([w, a]) => {
-        console.log('walletConnection', w);
-        console.log('walletAuth', a);
-        console.log('accessKeys', await a.account?.getAccessKeys());
-      },
-      { immediate: true },
-    );
+    const { wallet, walletAuth, account, timeframe, network } = useNear();
 
     const signIn = () => {
       wallet.value?.requestSignIn({}, 'stats.gallery');
@@ -131,18 +131,14 @@ export default defineComponent({
       walletAuth.signOut();
     };
 
-    const test = async () => {
-      console.log(
-        await walletAuth.account?.functionCall({
-          contractId: 'wrap.testnet',
-          methodName: 'ft_total_supply',
-          args: {},
-          attachedDeposit: 1,
-        }),
-      );
+    return {
+      account,
+      network,
+      timeframe,
+      walletAuth,
+      signIn,
+      signOut,
     };
-
-    return { test, account, walletAuth, signIn, signOut };
   },
 });
 </script>

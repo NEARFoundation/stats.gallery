@@ -183,10 +183,6 @@ export default defineComponent({
     const targetRef = ref(null);
     const watchRef = ref(null);
 
-    watch(watchRef, wr => {
-      console.log('change in watchRef', wr);
-    });
-
     const localTeleport = inject<string>('localTeleport');
 
     const selectedOption = computed(() =>
