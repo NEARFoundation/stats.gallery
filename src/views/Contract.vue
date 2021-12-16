@@ -131,6 +131,13 @@
         </p>
       </template>
     </Alert>
+    <h3
+      v-if="transactionHashes.length > 0"
+      class="inline-flex items-center gap-2 font-medium mb-1"
+    >
+      <span>Successful</span>
+      <CheckCircleIcon class="w-5 h-5 text-green-600" aria-hidden="true" />
+    </h3>
     <TransactionResult
       v-for="hash in transactionHashes"
       :key="hash"
@@ -146,7 +153,7 @@ import { interfaces } from '@/composables/contract/interfaces';
 import { useContract } from '@/composables/contract/useContract';
 import { useNear } from '@/composables/useNear';
 import { useTransactionResultFromUrl } from '@/composables/useTransactionResultFromUrl';
-import { XCircleIcon } from 'heroicons-vue3/solid';
+import { XCircleIcon, CheckCircleIcon } from 'heroicons-vue3/solid';
 import { computed, defineComponent, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Method from './contract/Method.vue';
@@ -161,6 +168,7 @@ export default defineComponent({
     Modal,
     TransactionResult,
     XCircleIcon,
+    CheckCircleIcon,
   },
   setup() {
     const { account, network } = useNear();

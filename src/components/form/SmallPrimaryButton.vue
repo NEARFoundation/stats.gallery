@@ -11,6 +11,7 @@
       text-white
       bg-green-600
       hover:bg-green-700
+      disabled:bg-gray-400
       rounded-sm
       shadow
     "
