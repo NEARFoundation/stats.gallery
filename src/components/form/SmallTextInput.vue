@@ -14,10 +14,10 @@
       border
       p-2
       z-10
-      disabled:bg-green-500
     "
     :class="{
-      'text-black border-gray-300': theme !== 'dark',
+      'text-black border-gray-300 disabled:bg-slate-200 disabled:text-gray-600':
+        theme !== 'dark',
       'dark:bg-gray-700 dark:border-gray-600 dark:text-white':
         theme !== 'dark' && theme !== 'light',
       'bg-gray-700 border-gray-600 text-white': theme === 'dark',

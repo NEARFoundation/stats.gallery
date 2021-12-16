@@ -1,6 +1,8 @@
+import { Buffer } from 'buffer';
 import LogRocket from 'logrocket';
 import createApp from './app';
-import { Buffer } from 'buffer';
+
+// Necessary for @webassemblyjs/wasm-parser to work in browser
 (window as any).Buffer = Buffer;
 
 if (process.env['NODE_ENV'] === 'production') {

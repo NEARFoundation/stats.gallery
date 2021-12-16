@@ -10,8 +10,10 @@
         py-2
         text-base
         font-medium
-        text-white
-        bg-gray-600 bg-opacity-30
+        dark:text-white
+        bg-gray-100
+        dark:bg-gray-700
+        hover:dark:bg-gray-600
         rounded-sm
         group
         hover:text-opacity-100
@@ -23,7 +25,6 @@
     >
       <span>{{ methodName }}</span>
       <ChevronRightIcon
-        :class="open ? '' : 'text-opacity-70'"
         class="
           w-5
           h-5

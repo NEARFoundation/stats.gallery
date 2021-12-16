@@ -61,9 +61,10 @@
         <Float
           snap="left"
           v-slot="{ left, top, width }"
+          v-if="anchorRef"
           :anchorRef="anchorRef"
           :targetRef="targetRef"
-          :watchRef="watchRef"
+          :watchRef="watchRef || {}"
         >
           <div
             ref="targetRef"
