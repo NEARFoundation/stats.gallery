@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { Cache } from '../cache';
 import { Network, networks } from './networks';
-import { IAccessKey, ReceiptAction, UnifiedTransactionAction } from './types';
+import {
+  ActionKind,
+  IAccessKey,
+  ReceiptAction,
+  UnifiedTransactionAction,
+} from './types';
 
 export interface RequestParams {
   account: string;
@@ -81,6 +86,23 @@ export class IndexerClient {
 
   public async getScore(params: RequestParams): Promise<number> {
     return this.getSingle('score', params);
+  }
+
+  public async getMethodUsage({
+    account,
+    methodName,
+  }: {
+    account: string;
+    methodName: string;
+  }): Promise<Pick<ReceiptAction<ActionKind.FUNCTION_CALL>, 'args'>[]> {
+    return axios({
+      baseURL: this.endpoint,
+      url: 'method-usage',
+      params: {
+        account_id: account,
+        method_name: methodName,
+      },
+    }).then(r => r.data);
   }
 
   public async getDistribution(): Promise<

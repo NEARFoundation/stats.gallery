@@ -135,7 +135,7 @@
             @remove="removeCustomArgument(arg)"
           />
         </template>
-        <div>
+        <div class="flex gap-3">
           <button
             @click="addCustomArgument"
             class="
@@ -150,8 +150,26 @@
               rounded-sm
             "
           >
-            <span>Add Argument</span>
+            <span>Add Argument</span>&nbsp;
             <PlusIcon class="w-6 h-6" />
+          </button>
+          <button
+            @click="guessMethodUsage"
+            class="flex items-center py-2 px-4 border rounded-sm"
+            :class="{
+              'text-gray-800 border-gray-300 bg-gray-100 hover:bg-gray-200':
+                guessMethodUsageState === 'none',
+              'text-gray-800 border-gray-300 bg-gray-300 animate-pulse':
+                guessMethodUsageState === 'loading',
+              'text-white border-red-500 bg-red-600 hover:bg-red-800':
+                guessMethodUsageState === 'failure',
+              'text-white border-green-500 bg-green-600 hover:bg-green-700':
+                guessMethodUsageState === 'success',
+            }"
+            :disabled="guessMethodUsageState === 'loading'"
+          >
+            <span>Auto-detect</span>&nbsp;
+            <SearchCircleIcon class="w-6 h-6" />
           </button>
         </div>
       </div>
@@ -166,9 +184,10 @@ import SmallSelectInput from '@/components/form/SmallSelectInput.vue';
 import SmallTextInput from '@/components/form/SmallTextInput.vue';
 import Modal from '@/components/Modal.vue';
 import { useNear } from '@/composables/useNear';
-import { GuessableTypeString, guessType } from '@/utils/guessType';
+import { getType, GuessableTypeString, guessType } from '@/utils/guessType';
 import { Buffer } from 'buffer';
 import { ChevronRightIcon, PlusIcon, XCircleIcon } from 'heroicons-vue3/solid';
+import { SearchCircleIcon } from 'heroicons-vue3/outline';
 import { CodeResult } from 'near-api-js/lib/providers/provider';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
@@ -215,6 +234,7 @@ export default defineComponent({
     SmallSelectInput,
     Alert,
     XCircleIcon,
+    SearchCircleIcon,
   },
   props: {
     methodName: {
@@ -231,7 +251,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { walletAuth, account, connection } = useNear();
+    const { walletAuth, account, connection, indexer } = useNear();
     let uniqueId = 0;
     const isModalOpen = ref(false);
 
@@ -351,6 +371,50 @@ export default defineComponent({
       });
     };
 
+    const guessMethodUsageState = ref<
+      'none' | 'loading' | 'success' | 'failure'
+    >('none');
+    const guessMethodUsage = async () => {
+      guessMethodUsageState.value = 'loading';
+      let concreteArgs;
+      try {
+        concreteArgs = (
+          await indexer.getMethodUsage({
+            account: account.value,
+            methodName: props.methodName,
+          })
+        )[0].args;
+      } catch (_) {
+        guessMethodUsageState.value = 'failure';
+        return;
+      }
+
+      const decoded = JSON.parse(atob(concreteArgs.args_base64));
+      // Overwrite custom
+      customArguments.value = Object.keys(decoded).map(
+        key =>
+          ({
+            name: key,
+            uniqueId: uniqueId++,
+            model: {
+              type: getType(decoded[key]),
+              value: '',
+              active: true,
+            },
+          } as ICustomArgModel),
+      );
+
+      depositUnits.value = 'yocto';
+      depositValue.value = concreteArgs.deposit;
+
+      guessMethodUsageState.value = 'success';
+
+      // Disable suggested
+      Array.from(argModels.keys()).forEach(p => {
+        argModels.get(p)!.active = false;
+      });
+    };
+
     const viewResult = ref<string>('');
     const viewError = ref<string>('');
     const depositValue = ref<string>('');
@@ -365,6 +429,8 @@ export default defineComponent({
       customArguments,
       addCustomArgument,
       removeCustomArgument,
+      guessMethodUsage,
+      guessMethodUsageState,
       viewResult,
       viewError,
       depositValue,

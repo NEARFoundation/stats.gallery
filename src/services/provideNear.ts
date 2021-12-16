@@ -8,11 +8,11 @@ import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { Timeframe } from '@/utils/timeframe';
 import {
-  Near,
   connect,
   ConnectConfig,
   ConnectedWalletAccount,
   keyStores,
+  Near,
   WalletConnection,
 } from 'near-api-js';
 import { AccountBalance } from 'near-api-js/lib/account';

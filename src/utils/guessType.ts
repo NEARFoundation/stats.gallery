@@ -5,12 +5,27 @@ export type GuessableTypeString =
   | 'boolean'
   | 'json';
 
+// Concrete type hacking :D
+const y: unknown = void 0;
+const x = typeof y;
+export const typeofMap: { [key in typeof x]?: GuessableTypeString } = {
+  object: 'json',
+  boolean: 'boolean',
+  number: 'number',
+  string: 'string',
+  undefined: 'null',
+};
+
 export type Guess =
   | { type: 'null'; value: null }
   | { type: 'boolean'; value: boolean }
   | { type: 'number'; value: number }
   | { type: 'string'; value: string }
   | { type: 'json'; value: unknown };
+
+export function getType(x: unknown): GuessableTypeString {
+  return typeofMap[typeof x] ?? 'string';
+}
 
 export function guessType(s: string): Guess {
   const lower = (s + '').toLowerCase();
