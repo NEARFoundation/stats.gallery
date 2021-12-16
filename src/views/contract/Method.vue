@@ -45,10 +45,10 @@
     >
       <div class="mb-3 flex space-x-3 items-center">
         <h4 class="text-lg flex-grow">
-          Method: <code>{{ methodName }}</code>
+          <code>{{ methodName }}</code>
         </h4>
         <SmallPrimaryButton class="w-24">View</SmallPrimaryButton>
-        <SmallPrimaryButton class="w-24">Call</SmallPrimaryButton>
+        <SmallPrimaryButton class="w-24" @click="call">Call</SmallPrimaryButton>
       </div>
       <div class="gap-5 flex flex-col p-2">
         <p>Default</p>
@@ -69,10 +69,28 @@
 <script lang="ts">
 import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
 import Modal from '@/components/Modal.vue';
-import { GuessableTypeString } from '@/utils/guessType';
+import { useNear } from '@/composables/useNear';
+import { GuessableTypeString, guessType } from '@/utils/guessType';
 import { ChevronRightIcon } from 'heroicons-vue3/solid';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
+
+const strToType = (str: string, type: GuessableTypeString): unknown => {
+  switch (type) {
+    case 'json':
+      return JSON.parse(str);
+    case 'number':
+      return Number(str);
+    case 'boolean':
+      return (
+        str.trim().length > 0 && !['false', '0'].includes(str.toLowerCase())
+      );
+    case 'null':
+      return null;
+    default:
+      return str + '';
+  }
+};
 
 export default defineComponent({
   components: {
@@ -96,6 +114,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { walletAuth, account } = useNear();
     const isModalOpen = ref(false);
 
     interface IArgModel {
@@ -122,7 +141,25 @@ export default defineComponent({
       { immediate: true },
     );
 
+    const call = () => {
+      const args: Record<string, any> = {};
+      for (const [argName, model] of argModels.entries()) {
+        args[argName] =
+          model.type === 'auto'
+            ? guessType(model.value).value
+            : strToType(model.value, model.type);
+      }
+      console.log({ args });
+      // await walletAuth.account?.functionCall({
+      //   contractId: account.value,
+      //   methodName: props.methodName,
+      //   args: {},
+      //   attachedDeposit: 1,
+      // }),
+    };
+
     return {
+      call,
       isModalOpen,
       argModels,
     };

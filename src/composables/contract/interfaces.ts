@@ -10,12 +10,46 @@ export interface IStandardInterface {
 }
 
 export const enum StandardInterfaceId {
+  NEP141 = 'nep141',
+  NEP148 = 'nep148',
   NEP171 = 'nep171',
   NEP177 = 'nep177',
   NEP178 = 'nep178',
 }
 
 export const interfaces: Record<StandardInterfaceId, IStandardInterface> = {
+  [StandardInterfaceId.NEP141]: {
+    id: StandardInterfaceId.NEP141,
+    name: 'FT Core (NEP-141)',
+    methods: [
+      {
+        name: 'ft_transfer',
+        args: ['receiver_id', 'amount', 'memo'],
+      },
+      {
+        name: 'ft_transfer_call',
+        args: ['receiver_id', 'amount', 'memo', 'msg'],
+      },
+      {
+        name: 'ft_total_supply',
+        args: [],
+      },
+      {
+        name: 'ft_balance_of',
+        args: ['account_id'],
+      },
+    ],
+  },
+  [StandardInterfaceId.NEP148]: {
+    id: StandardInterfaceId.NEP148,
+    name: 'FT Metadata (NEP-148)',
+    methods: [
+      {
+        name: 'ft_metadata',
+        args: [],
+      },
+    ],
+  },
   [StandardInterfaceId.NEP171]: {
     id: StandardInterfaceId.NEP171,
     name: 'NFT Core (NEP-171)',
