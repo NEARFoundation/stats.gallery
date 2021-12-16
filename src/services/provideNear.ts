@@ -15,9 +15,11 @@ import {
   keyStores,
   WalletConnection,
 } from 'near-api-js';
+import { AccountBalance } from 'near-api-js/lib/account';
 import { provide, reactive, ref, Ref, watch } from 'vue';
 
 export const NEAR_ACCOUNT = Symbol('near_account');
+export const NEAR_ACCOUNT_BALANCE = Symbol('near_account_balance');
 export const NEAR_NETWORK = Symbol('near_network');
 export const NEAR_INDEXER = Symbol('near_indexer');
 export const NEAR_RPC = Symbol('near_rpc');
@@ -26,10 +28,19 @@ export const NEAR_WALLET = Symbol('near_wallet');
 export const NEAR_WALLET_AUTH = Symbol('near_wallet_auth');
 export const NEAR_CONNECTION = Symbol('near_connection');
 
+const emptyAccountBalance = () =>
+  ({
+    available: '',
+    staked: '',
+    stateStaked: '',
+    total: '',
+  } as AccountBalance);
+
 export interface WalletAuth {
   isSignedIn: boolean;
   accountId: string;
   account: ConnectedWalletAccount | null;
+  accountBalance: AccountBalance;
   signOut: () => void;
 }
 
@@ -42,6 +53,7 @@ const configs: {
 
 export function provideNear(): {
   account: Ref<string>;
+  accountBalance: Ref<AccountBalance>;
   network: Ref<Network>;
   timeframe: Ref<Timeframe>;
   indexer: IndexerClient;
@@ -52,6 +64,8 @@ export function provideNear(): {
 } {
   const account = useAccountFromUrl();
   provide(NEAR_ACCOUNT, account);
+  const accountBalance = ref<AccountBalance>(emptyAccountBalance());
+  provide(NEAR_ACCOUNT_BALANCE, accountBalance);
   const network = useNetworkFromUrl();
   provide(NEAR_NETWORK, network);
   const timeframe = useTimeframeFromUrl();
@@ -68,6 +82,7 @@ export function provideNear(): {
     isSignedIn: false,
     account: null,
     accountId: '',
+    accountBalance: emptyAccountBalance(),
     signOut() {
       walletAuth.account = null;
       walletAuth.accountId = '';
@@ -79,6 +94,21 @@ export function provideNear(): {
   provide(NEAR_WALLET_AUTH, walletAuth);
   const connection = ref<Near | null>(null) as Ref<Near | null>;
   provide(NEAR_CONNECTION, connection);
+
+  watch([account, connection], async ([account, connection]) => {
+    let a;
+    try {
+      a = await connection?.account(account);
+    } catch (_) {
+      void 0;
+    }
+
+    accountBalance.value = a
+      ? await a.getAccountBalance()
+      : emptyAccountBalance();
+
+    console.log(accountBalance.value);
+  });
 
   watch(
     network,
@@ -103,6 +133,8 @@ export function provideNear(): {
       if (isSignedIn) {
         walletAuth.accountId = walletConnection.getAccountId();
         walletAuth.account = walletConnection.account();
+        walletAuth.accountBalance =
+          await walletAuth.account.getAccountBalance();
       } else {
         walletAuth.accountId = '';
         walletAuth.account = null;
@@ -113,6 +145,7 @@ export function provideNear(): {
 
   return {
     account,
+    accountBalance,
     network,
     timeframe,
     indexer,

@@ -68,7 +68,7 @@
           "
         >
           <near-symbol class="w-5 h-5" />&nbsp;{{
-            $filters.number.standard(+$filters.toNear(view.amount))
+            $filters.number.standard(+$filters.toNear(accountBalance.total))
           }}
         </div>
       </div>
@@ -286,12 +286,7 @@ export default defineComponent({
     AnnotationIcon,
   },
   setup() {
-    const { account, network, timeframe } = useNear();
-    const { view } = useAccountView({
-      account,
-      network,
-      finality: 'final',
-    });
+    const { account, accountBalance, network, timeframe } = useNear();
     const {
       score,
       accountLevel,
@@ -374,9 +369,9 @@ export default defineComponent({
 
     return {
       account,
+      accountBalance,
       network,
       timeframe,
-      view,
       score,
       accountLevel,
       badgeGroups,
