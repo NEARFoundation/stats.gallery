@@ -61,6 +61,35 @@
           v-model:type="argModels.get(arg).type"
           v-model:value="argModels.get(arg).value"
         />
+        <p>Custom</p>
+        <template v-for="arg in customArguments" :key="arg.uniqueId">
+          <ArgumentRow
+            v-model:active="arg.model.active"
+            v-model:field="arg.name"
+            v-model:type="arg.model.type"
+            v-model:value="arg.model.value"
+            @remove="removeCustomArgument(arg)"
+          />
+        </template>
+        <div>
+          <button
+            @click="addCustomArgument"
+            class="
+              flex
+              items-center
+              py-2
+              px-4
+              text-gray-800
+              bg-gray-100
+              hover:bg-gray-200
+              border border-gray-300
+              rounded-sm
+            "
+          >
+            <span>Add</span>
+            <PlusIcon class="w-6 h-6" />
+          </button>
+        </div>
       </div>
     </Modal>
   </div>
@@ -69,11 +98,23 @@
 <script lang="ts">
 import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
 import Modal from '@/components/Modal.vue';
-import { useNear } from '@/composables/useNear';
 import { GuessableTypeString, guessType } from '@/utils/guessType';
 import { ChevronRightIcon } from 'heroicons-vue3/solid';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
+import { PlusIcon } from 'heroicons-vue3/solid';
+
+interface IArgModel {
+  type: GuessableTypeString | 'auto';
+  value: string;
+  active: boolean;
+}
+
+interface ICustomArgModel {
+  name: string;
+  uniqueId: number;
+  model: IArgModel;
+}
 
 const strToType = (str: string, type: GuessableTypeString): unknown => {
   switch (type) {
@@ -98,6 +139,7 @@ export default defineComponent({
     ArgumentRow,
     SmallPrimaryButton,
     Modal,
+    PlusIcon,
   },
   props: {
     methodName: {
@@ -114,14 +156,29 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { walletAuth, account } = useNear();
+    let uniqueId = 0;
     const isModalOpen = ref(false);
 
-    interface IArgModel {
-      type: GuessableTypeString | 'auto';
-      value: string;
-      active: boolean;
-    }
+    const customArguments = ref<ICustomArgModel[]>([]);
+
+    const addCustomArgument = () => {
+      customArguments.value = [
+        ...customArguments.value,
+        {
+          name: '',
+          uniqueId: uniqueId++,
+          model: {
+            type: 'auto',
+            value: '',
+            active: true,
+          },
+        },
+      ];
+    };
+
+    const removeCustomArgument = (arg: ICustomArgModel) => {
+      customArguments.value = customArguments.value.filter(x => x !== arg);
+    };
 
     const argModels = reactive(new Map<string, IArgModel>());
 
@@ -142,13 +199,28 @@ export default defineComponent({
     );
 
     const call = () => {
+      // Construct args object
       const args: Record<string, any> = {};
+
       for (const [argName, model] of argModels.entries()) {
-        args[argName] =
-          model.type === 'auto'
-            ? guessType(model.value).value
-            : strToType(model.value, model.type);
+        if (model.active) {
+          args[argName] =
+            model.type === 'auto'
+              ? guessType(model.value).value
+              : strToType(model.value, model.type);
+        }
       }
+
+      // In the case of name conflict, custom args override suggested
+      for (const arg of customArguments.value) {
+        if (arg.model.active) {
+          args[arg.name] =
+            arg.model.type === 'auto'
+              ? guessType(arg.model.value).value
+              : strToType(arg.model.value, arg.model.type);
+        }
+      }
+
       console.log({ args });
       // await walletAuth.account?.functionCall({
       //   contractId: account.value,
@@ -162,6 +234,9 @@ export default defineComponent({
       call,
       isModalOpen,
       argModels,
+      customArguments,
+      addCustomArgument,
+      removeCustomArgument,
     };
   },
 });

@@ -55,6 +55,27 @@
         >
           {{ guess.type }}
         </div>
+        <button
+          v-if="!locked"
+          class="
+            text-xs
+            absolute
+            rounded-full
+            cursor-pointer
+            p-px
+            top-1/2
+            left-full
+            -translate-x-1/2 -translate-y-1/2
+            font-mono font-bold
+            bg-white
+            text-red-700
+            hover:text-red-600
+            focus:text-red-600
+          "
+          @click="$emit('remove')"
+        >
+          <XCircleIcon class="w-6 h-6" />
+        </button>
       </div>
     </Labeled>
   </div>
@@ -66,12 +87,14 @@ import SmallTextInput from '@/components/form/SmallTextInput.vue';
 import SmallSelectInput from '@/components/form/SmallSelectInput.vue';
 import { GuessableTypeString, guessType } from '@/utils/guessType';
 import Labeled from './Labeled.vue';
+import { XCircleIcon } from 'heroicons-vue3/solid';
 
 export default defineComponent({
   components: {
     SmallTextInput,
     SmallSelectInput,
     Labeled,
+    XCircleIcon,
   },
   props: {
     locked: {
@@ -95,7 +118,13 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['update:active', 'update:field', 'update:type', 'update:value'],
+  emits: [
+    'update:active',
+    'update:field',
+    'update:type',
+    'update:value',
+    'remove',
+  ],
   setup(props) {
     const typeStrings = [
       {
