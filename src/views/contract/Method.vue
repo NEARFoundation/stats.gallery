@@ -114,8 +114,8 @@
           >Call</SmallPrimaryButton
         >
       </div>
-      <div class="gap-5 flex flex-col p-2">
-        <p v-if="suggestedArguments.length > 0">Default</p>
+      <div class="gap-5 flex flex-col p-2 md:min-w-[600px]">
+        <p v-if="suggestedArguments.length > 0">Suggested Arguments</p>
         <ArgumentRow
           v-for="arg in suggestedArguments"
           :key="arg"
@@ -125,7 +125,7 @@
           v-model:type="argModels.get(arg).type"
           v-model:value="argModels.get(arg).value"
         />
-        <p>Custom</p>
+        <p>Arguments</p>
         <template v-for="arg in customArguments" :key="arg.uniqueId">
           <ArgumentRow
             v-model:active="arg.model.active"
@@ -136,41 +136,21 @@
           />
         </template>
         <div class="flex gap-3">
-          <button
+          <NormalButton
             @click="addCustomArgument"
-            class="
-              flex
-              items-center
-              py-2
-              px-4
-              text-gray-800
-              bg-gray-100
-              hover:bg-gray-200
-              border border-gray-300
-              rounded-sm
-            "
+            class="inline-flex items-center"
           >
             <span>Add Argument</span>&nbsp;
             <PlusIcon class="w-6 h-6" />
-          </button>
-          <button
+          </NormalButton>
+          <NormalButton
+            class="inline-flex items-center"
             @click="guessMethodUsage"
-            class="flex items-center py-2 px-4 border rounded-sm"
-            :class="{
-              'text-gray-800 border-gray-300 bg-gray-100 hover:bg-gray-200':
-                guessMethodUsageState === 'none',
-              'text-gray-800 border-gray-300 bg-gray-300 animate-pulse':
-                guessMethodUsageState === 'loading',
-              'text-white border-red-500 bg-red-600 hover:bg-red-800':
-                guessMethodUsageState === 'failure',
-              'text-white border-green-500 bg-green-600 hover:bg-green-700':
-                guessMethodUsageState === 'success',
-            }"
-            :disabled="guessMethodUsageState === 'loading'"
+            :mode="guessMethodUsageState"
           >
             <span>Auto-detect</span>&nbsp;
-            <SearchCircleIcon class="w-6 h-6" />
-          </button>
+            <SearchIcon class="w-6 h-6" />
+          </NormalButton>
         </div>
       </div>
     </Modal>
@@ -179,6 +159,7 @@
 
 <script lang="ts">
 import Alert from '@/components/Alert.vue';
+import NormalButton from '@/components/form/NormalButton.vue';
 import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
 import SmallSelectInput from '@/components/form/SmallSelectInput.vue';
 import SmallTextInput from '@/components/form/SmallTextInput.vue';
@@ -186,8 +167,12 @@ import Modal from '@/components/Modal.vue';
 import { useNear } from '@/composables/useNear';
 import { getType, GuessableTypeString, guessType } from '@/utils/guessType';
 import { Buffer } from 'buffer';
-import { ChevronRightIcon, PlusIcon, XCircleIcon } from 'heroicons-vue3/solid';
-import { SearchCircleIcon } from 'heroicons-vue3/outline';
+import {
+  ChevronRightIcon,
+  PlusIcon,
+  SearchIcon,
+  XCircleIcon,
+} from 'heroicons-vue3/solid';
 import { CodeResult } from 'near-api-js/lib/providers/provider';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
@@ -234,7 +219,8 @@ export default defineComponent({
     SmallSelectInput,
     Alert,
     XCircleIcon,
-    SearchCircleIcon,
+    SearchIcon,
+    NormalButton,
   },
   props: {
     methodName: {
@@ -372,47 +358,48 @@ export default defineComponent({
     };
 
     const guessMethodUsageState = ref<
-      'none' | 'loading' | 'success' | 'failure'
-    >('none');
+      'normal' | 'pending' | 'success' | 'error'
+    >('normal');
     const guessMethodUsage = async () => {
-      guessMethodUsageState.value = 'loading';
-      let concreteArgs;
+      guessMethodUsageState.value = 'pending';
+
       try {
-        concreteArgs = (
-          await indexer.getMethodUsage({
-            account: account.value,
-            methodName: props.methodName,
-          })
-        )[0].args;
+        const [{ args: concreteArgs }] = await indexer.getMethodUsage({
+          account: account.value,
+          methodName: props.methodName,
+        });
+
+        // Sometimes args is an empty string (JSON.parse throws)
+        const decoded = concreteArgs.args_base64
+          ? JSON.parse(atob(concreteArgs.args_base64))
+          : {};
+        // Overwrite custom
+        customArguments.value = Object.keys(decoded).map(
+          key =>
+            ({
+              name: key,
+              uniqueId: uniqueId++,
+              model: {
+                type: getType(decoded[key]),
+                value: '',
+                active: true,
+              },
+            } as ICustomArgModel),
+        );
+
+        depositUnits.value = 'yocto';
+        depositValue.value = concreteArgs.deposit;
+
+        // Disable suggested
+        Array.from(argModels.keys()).forEach(p => {
+          argModels.get(p)!.active = false;
+        });
+
+        guessMethodUsageState.value = 'success';
       } catch (_) {
-        guessMethodUsageState.value = 'failure';
+        guessMethodUsageState.value = 'error';
         return;
       }
-
-      const decoded = JSON.parse(atob(concreteArgs.args_base64));
-      // Overwrite custom
-      customArguments.value = Object.keys(decoded).map(
-        key =>
-          ({
-            name: key,
-            uniqueId: uniqueId++,
-            model: {
-              type: getType(decoded[key]),
-              value: '',
-              active: true,
-            },
-          } as ICustomArgModel),
-      );
-
-      depositUnits.value = 'yocto';
-      depositValue.value = concreteArgs.deposit;
-
-      guessMethodUsageState.value = 'success';
-
-      // Disable suggested
-      Array.from(argModels.keys()).forEach(p => {
-        argModels.get(p)!.active = false;
-      });
     };
 
     const viewResult = ref<string>('');

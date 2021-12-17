@@ -52,7 +52,9 @@
             font-mono font-bold
             ring-2 ring-white
           "
+          title="Auto-detected type"
         >
+          <div class="sr-only">Auto-detected type</div>
           {{ guess.type }}
         </div>
         <button
@@ -73,7 +75,9 @@
             focus:text-red-600
           "
           @click="$emit('remove')"
+          title="Delete argument row"
         >
+          <div class="sr-only">Delete argument row</div>
           <XCircleIcon class="w-6 h-6" />
         </button>
       </div>
