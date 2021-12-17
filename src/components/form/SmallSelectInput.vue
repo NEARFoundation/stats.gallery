@@ -54,10 +54,7 @@
         </span>
       </ListboxButton>
 
-      <teleport
-        :to="teleport || localTeleport"
-        :disabled="!teleport && !localTeleport"
-      >
+      <AutoTeleport>
         <Float
           snap="left"
           v-slot="{ left, top, width }"
@@ -134,7 +131,7 @@
             </transition>
           </div>
         </Float>
-      </teleport>
+      </AutoTeleport>
     </Listbox>
   </client-only>
 </template>
@@ -147,7 +144,8 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { SelectorIcon } from 'heroicons-vue3/outline';
-import { computed, defineComponent, inject, PropType, ref, watch } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
+import AutoTeleport from '../AutoTeleport.vue';
 import Float from '../Float.vue';
 
 export default defineComponent({
@@ -158,6 +156,7 @@ export default defineComponent({
     ListboxOptions,
     SelectorIcon,
     Float,
+    AutoTeleport,
   },
   props: {
     modelValue: {
@@ -183,8 +182,6 @@ export default defineComponent({
     const targetRef = ref(null);
     const watchRef = ref(null);
 
-    const localTeleport = inject<string>('localTeleport');
-
     const selectedOption = computed(() =>
       props.options.find(o => o.value === props.modelValue),
     );
@@ -194,7 +191,6 @@ export default defineComponent({
       targetRef,
       watchRef,
       selectedOption,
-      localTeleport,
     };
   },
 });

@@ -22,7 +22,15 @@
       <Tooltip v-if="!!$slots.help && !isEmbedded">
         <template #trigger>
           <question-mark-icon
-            class="text-gray-300 mx-2 mt-1 cursor-pointer hover:text-gray-400"
+            class="
+              w-4
+              h-4
+              text-gray-300
+              mx-2
+              mt-1
+              cursor-pointer
+              hover:text-gray-400
+            "
           />
         </template>
         <template #content>

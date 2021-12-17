@@ -135,7 +135,7 @@
             @remove="removeCustomArgument(arg)"
           />
         </template>
-        <div class="flex gap-3">
+        <div class="flex items-center gap-3">
           <NormalButton
             @click="addCustomArgument"
             class="inline-flex items-center"
@@ -151,6 +151,21 @@
             <span>Auto-detect</span>&nbsp;
             <SearchIcon class="w-6 h-6" />
           </NormalButton>
+          <Tooltip
+            class="
+              text-gray-500
+              cursor-pointer
+              hover:text-gray-600
+              p-2
+              rounded-sm
+              hover:bg-gray-50
+            "
+          >
+            <template #trigger>
+              <question-mark-icon class="w-4 h-4" />
+            </template>
+            <template #content> content </template>
+          </Tooltip>
         </div>
       </div>
     </Modal>
@@ -167,6 +182,7 @@ import Modal from '@/components/Modal.vue';
 import { useNear } from '@/composables/useNear';
 import { getType, GuessableTypeString, guessType } from '@/utils/guessType';
 import { Buffer } from 'buffer';
+import Tooltip from '@/components/Tooltip.vue';
 import {
   ChevronRightIcon,
   PlusIcon,
@@ -221,6 +237,7 @@ export default defineComponent({
     XCircleIcon,
     SearchIcon,
     NormalButton,
+    Tooltip,
   },
   props: {
     methodName: {

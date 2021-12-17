@@ -1,6 +1,6 @@
 <template>
   <router-view></router-view>
-  <div id="tooltips"></div>
+  <div id="global-teleport"></div>
 </template>
 
 <style>
@@ -49,7 +49,7 @@ import { useTitle } from '@/composables/useTitle';
 import { TITLE_SUFFIX } from '@/constants';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, onMounted, provide, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -59,6 +59,8 @@ export default defineComponent({
   setup() {
     const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
+
+    provide('localTeleport', '#global-teleport');
 
     // Account exists RPC call watcher
     onMounted(() => {
