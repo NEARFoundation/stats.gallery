@@ -5,6 +5,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  onBeforeUnmount,
   onMounted,
   PropType,
   ref,
@@ -47,47 +48,50 @@ export default defineComponent({
     const width = ref(0);
     const height = ref(0);
 
+    const reposition = () => {
+      if (!props.anchorRef || !props.targetRef) {
+        return;
+      }
+
+      const anchor = getHTMLElement(props.anchorRef);
+      const target = getHTMLElement(props.targetRef);
+
+      if (!anchor || !target) {
+        return;
+      }
+
+      const anchorRect = anchor.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      top.value = anchorRect.top + anchorRect.height;
+
+      left.value = Math.max(
+        0 + props.xGap,
+        Math.min(
+          props.snap === 'left'
+            ? anchorRect.left // left edges match
+            : props.snap === 'center'
+            ? anchorRect.left + anchorRect.width / 2 - targetRect.width / 2 // centers match
+            : anchorRect.left + anchorRect.width - targetRect.width, // right edges match
+          document.documentElement.clientWidth - targetRect.width - props.xGap,
+        ),
+      );
+
+      width.value = anchorRect.width;
+      height.value = anchorRect.height;
+    };
+
     onMounted(() => {
-      const reposition = () => {
-        if (!props.anchorRef || !props.targetRef) {
-          return;
-        }
-
-        const anchor = getHTMLElement(props.anchorRef);
-        const target = getHTMLElement(props.targetRef);
-
-        if (!anchor || !target) {
-          return;
-        }
-
-        const anchorRect = anchor.getBoundingClientRect();
-        const targetRect = target.getBoundingClientRect();
-        top.value = anchorRect.top + anchorRect.height;
-
-        left.value = Math.max(
-          0 + props.xGap,
-          Math.min(
-            props.snap === 'left'
-              ? anchorRect.left // left edges match
-              : props.snap === 'center'
-              ? anchorRect.left + anchorRect.width / 2 - targetRect.width / 2 // centers match
-              : anchorRect.left + anchorRect.width - targetRect.width, // right edges match
-            document.documentElement.clientWidth -
-              targetRect.width -
-              props.xGap,
-          ),
-        );
-
-        width.value = anchorRect.width;
-        height.value = anchorRect.height;
-      };
-
       reposition();
 
       window.addEventListener('resize', reposition);
-      window.addEventListener('scroll', reposition);
+      window.addEventListener('scroll', reposition, true);
 
       watch(toRefs(props).watchRef, reposition);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', reposition);
+      window.removeEventListener('scroll', reposition, true);
     });
 
     return {
