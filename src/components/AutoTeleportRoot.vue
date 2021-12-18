@@ -12,7 +12,7 @@ export default defineComponent({
   setup() {
     const id = 'teleport-' + uniqueId++;
 
-    provide('localTeleport', '#' + id);
+    provide('autoTeleport', '#' + id);
 
     return {
       id,

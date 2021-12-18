@@ -1,7 +1,7 @@
 <template>
   <teleport
-    :to="localTeleport || fallback"
-    :disabled="!localTeleport && !fallback"
+    :to="autoTeleport || fallback"
+    :disabled="!autoTeleport && !fallback"
   >
     <slot />
   </teleport>
@@ -18,10 +18,10 @@ export default defineComponent({
     },
   },
   setup() {
-    const localTeleport = inject<string>('localTeleport');
+    const autoTeleport = inject<string>('autoTeleport');
 
     return {
-      localTeleport,
+      autoTeleport,
     };
   },
 });
