@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <Popover v-slot="{ open }">
+    <Popover as="template" v-slot="{ open }">
       <PopoverButton ref="buttonRef" v-bind="$attrs">
         <slot name="trigger" :open="open" />
       </PopoverButton>

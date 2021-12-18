@@ -15,7 +15,11 @@
         "
       >
         <span class="sr-only">Open user menu</span>
-        <UserCircleIcon class="w-7 h-7" />
+        <UserCircleIcon v-if="!walletAuth.failed" class="w-7 h-7" />
+        <ExclamationCircleIcon
+          v-if="walletAuth.failed"
+          class="w-7 h-7 text-orange-400"
+        />
         <div
           class="
             mx-2
@@ -49,6 +53,7 @@
             top-full
             mt-2
             w-48
+            flex flex-col
             rounded-sm
             shadow-lg
             bg-gray-700
@@ -58,6 +63,23 @@
             focus:outline-none
           "
         >
+          <button
+            v-if="walletAuth.failed"
+            @click="isAccountErrorModalOpen = true"
+            class="
+              my-1
+              mx-4
+              px-2
+              py-1
+              font-medium
+              bg-orange-600 bg-opacity-20
+              hover:bg-opacity-30
+              rounded-sm
+              border border-orange-400
+            "
+          >
+            Account error
+          </button>
           <MenuItem as="div" v-slot="{ active }">
             <router-link
               as="a"
@@ -106,14 +128,33 @@
         </MenuItems>
       </transition>
     </Menu>
+    <Modal
+      v-if="walletAuth.failed"
+      :open="isAccountErrorModalOpen"
+      @close="isAccountErrorModalOpen = false"
+      title="Account inaccessible"
+      prose
+    >
+      <p>The selected account is inaccessible.</p>
+      <p>Things to try:</p>
+      <ul>
+        <li>Sign out and sign back in</li>
+        <li>Change active network</li>
+      </ul>
+    </Modal>
   </client-only>
 </template>
 
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { ChevronDownIcon, UserCircleIcon } from 'heroicons-vue3/outline';
-import { defineComponent } from 'vue';
+import {
+  ChevronDownIcon,
+  ExclamationCircleIcon,
+  UserCircleIcon,
+} from 'heroicons-vue3/outline';
+import { defineComponent, ref } from 'vue';
+import Modal from '../Modal.vue';
 
 export default defineComponent({
   components: {
@@ -123,12 +164,16 @@ export default defineComponent({
     MenuItem,
     UserCircleIcon,
     ChevronDownIcon,
+    ExclamationCircleIcon,
+    Modal,
   },
   setup() {
-    const { wallet, walletAuth, account, timeframe, network } = useNear();
+    const { walletAuth, account, timeframe, network } = useNear();
+
+    const isAccountErrorModalOpen = ref(false);
 
     const signIn = () => {
-      wallet.value?.requestSignIn({}, 'stats.gallery');
+      walletAuth.signIn();
     };
 
     const signOut = () => {
@@ -142,6 +187,7 @@ export default defineComponent({
       walletAuth,
       signIn,
       signOut,
+      isAccountErrorModalOpen,
     };
   },
 });

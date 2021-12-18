@@ -7,6 +7,7 @@ import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { Timeframe } from '@/utils/timeframe';
+import LogRocket from 'logrocket';
 import {
   connect,
   ConnectConfig,
@@ -30,18 +31,20 @@ export const NEAR_CONNECTION = Symbol('near_connection');
 
 const emptyAccountBalance = () =>
   ({
-    available: '',
-    staked: '',
-    stateStaked: '',
-    total: '',
+    available: '0',
+    staked: '0',
+    stateStaked: '0',
+    total: '0',
   } as AccountBalance);
 
 export interface WalletAuth {
   isSignedIn: boolean;
+  failed: boolean;
   accountId: string;
   account: ConnectedWalletAccount | null;
   accountBalance: AccountBalance;
   signOut: () => void;
+  signIn: () => void;
 }
 
 const configs: {
@@ -80,6 +83,7 @@ export function provideNear(): {
   provide(NEAR_WALLET, wallet);
   const walletAuth = reactive<WalletAuth>({
     isSignedIn: false,
+    failed: false,
     account: null,
     accountId: '',
     accountBalance: emptyAccountBalance(),
@@ -89,6 +93,9 @@ export function provideNear(): {
       walletAuth.isSignedIn = false;
 
       wallet.value?.signOut();
+    },
+    signIn() {
+      wallet.value?.requestSignIn({}, 'stats.gallery');
     },
   }) as WalletAuth;
   provide(NEAR_WALLET_AUTH, walletAuth);
@@ -106,8 +113,6 @@ export function provideNear(): {
     accountBalance.value = a
       ? await a.getAccountBalance()
       : emptyAccountBalance();
-
-    console.log(accountBalance.value);
   });
 
   watch(
@@ -130,15 +135,27 @@ export function provideNear(): {
 
       const isSignedIn = walletConnection.isSignedIn();
       walletAuth.isSignedIn = isSignedIn;
+      walletAuth.failed = false;
       if (isSignedIn) {
-        walletAuth.accountId = walletConnection.getAccountId();
-        walletAuth.account = walletConnection.account();
-        walletAuth.accountBalance =
-          await walletAuth.account.getAccountBalance();
+        try {
+          walletAuth.accountId = walletConnection.getAccountId();
+          LogRocket.identify(walletAuth.accountId);
+          walletAuth.account = walletConnection.account();
+          walletAuth.accountBalance =
+            await walletAuth.account.getAccountBalance();
+        } catch (_) {
+          // Wallet interactions may fail if:
+          // 1. Account does not exist
+          // 2. Wrong network
+          walletAuth.failed = true;
+        }
       } else {
         walletAuth.accountId = '';
         walletAuth.account = null;
+        walletAuth.accountBalance = emptyAccountBalance();
       }
+
+      console.log(walletAuth);
     },
     { immediate: true },
   );

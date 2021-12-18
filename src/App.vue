@@ -1,6 +1,7 @@
 <template>
-  <router-view></router-view>
-  <div id="global-teleport"></div>
+  <AutoTeleportRoot>
+    <router-view></router-view>
+  </AutoTeleportRoot>
 </template>
 
 <style>
@@ -51,16 +52,16 @@ import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { defineComponent, onMounted, provide, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
+import AutoTeleportRoot from './components/AutoTeleportRoot.vue';
 
 export default defineComponent({
   components: {
     RouterView,
+    AutoTeleportRoot,
   },
   setup() {
     const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
-
-    provide('localTeleport', '#global-teleport');
 
     // Account exists RPC call watcher
     onMounted(() => {

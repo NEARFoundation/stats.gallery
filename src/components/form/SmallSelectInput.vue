@@ -171,10 +171,6 @@ export default defineComponent({
       type: String as PropType<'light' | 'dark' | 'auto'>,
       default: 'auto',
     },
-    teleport: {
-      type: String as PropType<string>,
-      default: '',
-    },
   },
   emits: ['update:modelValue'],
   setup(props) {
