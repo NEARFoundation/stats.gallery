@@ -109,7 +109,7 @@
         </Labeled>
         <SmallPrimaryButton
           class="w-24"
-          :disabled="!walletAuth.isSignedIn"
+          :disabled="!walletAuth.isSignedIn || !walletAuth.isAccessible"
           @click="call"
           >Call</SmallPrimaryButton
         >

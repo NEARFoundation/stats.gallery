@@ -39,7 +39,7 @@ const emptyAccountBalance = () =>
 
 export interface WalletAuth {
   isSignedIn: boolean;
-  failed: boolean;
+  isAccessible: boolean;
   accountId: string;
   account: ConnectedWalletAccount | null;
   accountBalance: AccountBalance;
@@ -83,7 +83,7 @@ export function provideNear(): {
   provide(NEAR_WALLET, wallet);
   const walletAuth = reactive<WalletAuth>({
     isSignedIn: false,
-    failed: false,
+    isAccessible: true,
     account: null,
     accountId: '',
     accountBalance: emptyAccountBalance(),
@@ -135,7 +135,7 @@ export function provideNear(): {
 
       const isSignedIn = walletConnection.isSignedIn();
       walletAuth.isSignedIn = isSignedIn;
-      walletAuth.failed = false;
+      walletAuth.isAccessible = true;
       if (isSignedIn) {
         try {
           walletAuth.accountId = walletConnection.getAccountId();
@@ -147,7 +147,7 @@ export function provideNear(): {
           // Wallet interactions may fail if:
           // 1. Account does not exist
           // 2. Wrong network
-          walletAuth.failed = true;
+          walletAuth.isAccessible = false;
         }
       } else {
         walletAuth.accountId = '';

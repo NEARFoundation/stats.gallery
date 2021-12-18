@@ -15,9 +15,9 @@
         "
       >
         <span class="sr-only">Open user menu</span>
-        <UserCircleIcon v-if="!walletAuth.failed" class="w-7 h-7" />
+        <UserCircleIcon v-if="walletAuth.isAccessible" class="w-7 h-7" />
         <ExclamationCircleIcon
-          v-if="walletAuth.failed"
+          v-if="!walletAuth.isAccessible"
           class="w-7 h-7 text-orange-400"
         />
         <div
@@ -64,7 +64,7 @@
           "
         >
           <button
-            v-if="walletAuth.failed"
+            v-if="!walletAuth.isAccessible"
             @click="isAccountErrorModalOpen = true"
             class="
               my-1
@@ -129,17 +129,21 @@
       </transition>
     </Menu>
     <Modal
-      v-if="walletAuth.failed"
+      v-if="!walletAuth.isAccessible"
       :open="isAccountErrorModalOpen"
       @close="isAccountErrorModalOpen = false"
-      title="Account inaccessible"
+      title="Account error"
       prose
     >
       <p>The selected account is inaccessible.</p>
-      <p>Things to try:</p>
       <ul>
-        <li>Sign out and sign back in</li>
-        <li>Change active network</li>
+        <li>
+          Keys may have stopped working. Try signing out and signing back in.
+        </li>
+        <li>
+          The account may be on a different network (e.g. testnet account on
+          mainnet or vice-versa). Try changing the active network.
+        </li>
       </ul>
     </Modal>
   </client-only>
