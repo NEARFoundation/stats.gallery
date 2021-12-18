@@ -155,7 +155,7 @@
           external
         />
         <SectionLink
-          to="https://paras.id/"
+          to="https://www.mintbase.io/"
           :icon="NftIcon"
           name="Buy NFTs"
           external
