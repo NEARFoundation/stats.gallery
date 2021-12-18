@@ -55,7 +55,7 @@
             right-0
             top-full
             mt-2
-            w-48
+            w-56
             flex flex-col
             rounded-sm
             shadow-lg
@@ -68,6 +68,23 @@
             focus:outline-none
           "
         >
+          <div
+            v-if="!walletAuth.isSignedIn"
+            class="
+              self-center
+              m-1
+              mb-3
+              px-1.5
+              py-1
+              text-center
+              bg-pink-700
+              text-white text-sm
+              rounded-sm
+              shadow-sm
+            "
+          >
+            Access contract actions
+          </div>
           <MenuItem
             v-if="!walletAuth.isAccessible"
             @click="isAccountErrorModalOpen = true"
