@@ -143,10 +143,24 @@
             <span>Add Argument</span>&nbsp;
             <PlusIcon class="w-6 h-6" />
           </NormalButton>
+          <div class="ml-auto">
+            <TransitionBob>
+              <CheckIcon
+                v-if="guessMethodUsageState === 'success'"
+                class="w-6 h-6 text-green-600"
+              />
+            </TransitionBob>
+            <TransitionBob>
+              <XIcon
+                v-if="guessMethodUsageState === 'error'"
+                class="w-6 h-6 text-red-600"
+              />
+            </TransitionBob>
+          </div>
           <NormalButton
             class="inline-flex items-center"
             @click="guessMethodUsage"
-            :mode="guessMethodUsageState"
+            :mode="guessMethodUsageState === 'pending' ? 'pending' : 'normal'"
           >
             <span>Auto-detect</span>&nbsp;
             <SearchIcon class="w-6 h-6" />
@@ -164,7 +178,15 @@
             <template #trigger>
               <question-mark-icon class="w-4 h-4" />
             </template>
-            <template #content> content </template>
+            <template #content>
+              <p>
+                Scan the blockchain to find successful method calls and copy the
+                parameter schema.
+              </p>
+              <p>
+                <em>Auto-detect might not work on every method!</em>
+              </p>
+            </template>
           </Tooltip>
         </div>
       </div>
@@ -188,7 +210,10 @@ import {
   PlusIcon,
   SearchIcon,
   XCircleIcon,
+  CheckIcon,
+  XIcon,
 } from 'heroicons-vue3/solid';
+import TransitionBob from '@/components/transitions/TransitionBob.vue';
 import { CodeResult } from 'near-api-js/lib/providers/provider';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
@@ -238,6 +263,9 @@ export default defineComponent({
     SearchIcon,
     NormalButton,
     Tooltip,
+    TransitionBob,
+    CheckIcon,
+    XIcon,
   },
   props: {
     methodName: {

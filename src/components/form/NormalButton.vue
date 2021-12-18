@@ -7,9 +7,6 @@
         mode === 'normal',
       'text-gray-800 border-gray-300 bg-gray-300 animate-pulse cursor-wait':
         mode === 'pending',
-      'text-white border-red-500 bg-red-600 hover:bg-red-800': mode === 'error',
-      'text-white border-green-500 bg-green-600 hover:bg-green-700':
-        mode === 'success',
     }"
     :disabled="mode === 'pending'"
   >
@@ -23,7 +20,7 @@ import { defineComponent, PropType } from 'vue';
 export default defineComponent({
   props: {
     mode: {
-      type: String as PropType<'normal' | 'pending' | 'error' | 'success'>,
+      type: String as PropType<'normal' | 'pending'>,
       default: 'normal',
     },
   },
