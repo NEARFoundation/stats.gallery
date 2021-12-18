@@ -24,7 +24,8 @@ export type Guess =
   | { type: 'json'; value: unknown };
 
 export function getType(x: unknown): GuessableTypeString {
-  return typeofMap[typeof x] ?? 'string';
+  // typeof null === 'object'
+  return x === null ? 'null' : typeofMap[typeof x] ?? 'string';
 }
 
 export function guessType(s: string): Guess {
