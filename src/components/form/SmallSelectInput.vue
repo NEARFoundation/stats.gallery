@@ -20,7 +20,6 @@
           pr-8
           border
           text-left
-          focus:ring-green-500 focus:ring-2 focus:outline-none
         "
         :class="{
           'bg-white hover:bg-gray-100 border-gray-300': theme !== 'dark',

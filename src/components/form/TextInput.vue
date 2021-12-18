@@ -7,9 +7,7 @@
     :class="[modelValue.length ? 'bg-white' : 'bg-gray-100']"
     class="
       text-xl text-black
-      focus:ring-green-500 focus:ring-2
       font-normal
-      focus:bg-white
       block
       w-full
       outline-none

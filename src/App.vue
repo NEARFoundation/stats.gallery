@@ -43,6 +43,11 @@ hr {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(128, 128, 128, 0.6);
 }
+
+* {
+  @apply focus-visible:ring-green-500 focus-visible:ring-2;
+  @apply focus-visible:outline-none !important;
+}
 </style>
 
 <script lang="ts">

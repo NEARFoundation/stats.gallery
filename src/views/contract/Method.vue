@@ -21,15 +21,15 @@
       title="Call Contract"
       @close="isModalOpen = false"
     >
-      <h4 class="text-lg mb-3">
+      <h3 class="text-lg mb-3">
         <code>{{ methodName }}</code>
-      </h4>
+      </h3>
       <Alert v-if="viewError" class="bg-red-50 mb-3">
         <template #icon>
           <XCircleIcon class="w-5 h-5 text-red-600" aria-hidden="true" />
         </template>
         <template #default>
-          <h3 class="text-red-800 font-medium">Transaction Execution Error</h3>
+          <h4 class="text-red-800 font-medium">Transaction Execution Error</h4>
           <p class="text-red-700">Error calling view method</p>
           <p
             class="
@@ -93,7 +93,15 @@
         >
       </div>
       <div class="gap-5 flex flex-col p-2 md:min-w-[600px]">
-        <p v-if="suggestedArguments.length > 0">Suggested Arguments</p>
+        <div
+          v-if="suggestedArguments.length > 0"
+          class="flex gap-3 items-center"
+        >
+          <h4>Suggested Arguments</h4>
+          <HelpTooltip>
+            <p>This schema conforms to {{ label }}.</p>
+          </HelpTooltip>
+        </div>
         <ArgumentRow
           v-for="arg in suggestedArguments"
           :key="arg"
@@ -103,7 +111,12 @@
           v-model:type="argModels.get(arg).type"
           v-model:value="argModels.get(arg).value"
         />
-        <p>Arguments</p>
+        <div class="flex gap-3 items-center">
+          <h4>Arguments</h4>
+          <HelpTooltip>
+            <p>Specify an arguments schema.</p>
+          </HelpTooltip>
+        </div>
         <template v-for="arg in customArguments" :key="arg.uniqueId">
           <ArgumentRow
             v-model:active="arg.model.active"
@@ -143,29 +156,15 @@
             <span>Auto-detect</span>&nbsp;
             <SearchIcon class="w-6 h-6" />
           </PendingButton>
-          <Tooltip
-            class="
-              text-gray-500
-              cursor-pointer
-              hover:text-gray-600
-              p-2
-              rounded-sm
-              hover:bg-gray-50
-            "
-          >
-            <template #trigger>
-              <question-mark-icon class="w-4 h-4" />
-            </template>
-            <template #content>
-              <p>
-                Scan the blockchain to find successful method calls and copy the
-                parameter schema.
-              </p>
-              <p>
-                <em>Auto-detect might not work on every method!</em>
-              </p>
-            </template>
-          </Tooltip>
+          <HelpTooltip>
+            <p>
+              Scan the blockchain to find successful method calls and copy the
+              parameter schema.
+            </p>
+            <p>
+              <em>Auto-detect might not work on every method!</em>
+            </p>
+          </HelpTooltip>
         </div>
       </div>
     </Modal>
@@ -180,7 +179,7 @@ import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
 import SmallSelectInput from '@/components/form/SmallSelectInput.vue';
 import SmallTextInput from '@/components/form/SmallTextInput.vue';
 import Modal from '@/components/Modal.vue';
-import Tooltip from '@/components/Tooltip.vue';
+import HelpTooltip from '@/components/HelpTooltip.vue';
 import TransitionBob from '@/components/transitions/TransitionBob.vue';
 import { useNear } from '@/composables/useNear';
 import { getType, GuessableTypeString, guessType } from '@/utils/guessType';
@@ -241,7 +240,7 @@ export default defineComponent({
     XCircleIcon,
     SearchIcon,
     PendingButton,
-    Tooltip,
+    HelpTooltip,
     TransitionBob,
     CheckIcon,
     XIcon,

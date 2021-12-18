@@ -194,10 +194,6 @@
                 items-center
                 space-x-2
                 hover:bg-gray-400 hover:bg-opacity-10
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-gray-500
               "
             >
               <AnnotationIcon class="w-4 h-4" />
@@ -219,10 +215,6 @@
                 items-center
                 space-x-2
                 hover:bg-gray-400 hover:bg-opacity-10
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-gray-500
               "
             >
               <ContactIcon class="w-4 h-4" />

@@ -7,10 +7,10 @@
       :modelValue="modelValue"
       @update:modelValue="$emit('update:modelValue', $event)"
     >
-      <ListboxButton class="w-full" v-slot="{ open }">
+      <ListboxButton class="w-full rounded-sm" v-slot="{ open }">
         <div
           v-if="label.length > 0"
-          class="text-xs text-gray-500 dark:text-gray-200 text-left pb-1 px-1"
+          class="text-sm text-left text-gray-500 dark:text-gray-200 pb-1 px-1"
         >
           {{ label }}
         </div>
@@ -29,11 +29,7 @@
             font-medium
             py-1
             px-3
-            rounded-md
-            focus:outline-none
-            focus:ring-2
-            focus:ring-offset-2
-            focus:ring-gray-500
+            rounded-sm
             cursor-pointer
           "
         >
@@ -63,7 +59,6 @@
             py-1
             ring-1 ring-black ring-opacity-5
             overflow-auto
-            focus:outline-none
             text-sm
             dark:bg-gray-700
             custom-scrollbar

@@ -4,17 +4,7 @@
     @input="$emit('update:modelValue', $event.target.value)"
     @keydown.enter="$emit('submit', $event.target.value)"
     type="text"
-    class="
-      text-base
-      focus:ring-green-500 focus:ring-2
-      font-normal
-      block
-      outline-none
-      rounded-sm
-      border
-      p-2
-      z-10
-    "
+    class="text-base font-normal block outline-none rounded-sm border p-2 z-10"
     :class="{
       'text-black border-gray-300 disabled:bg-slate-200 disabled:text-gray-600':
         theme !== 'dark',

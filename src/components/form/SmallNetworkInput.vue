@@ -14,7 +14,6 @@
             pl-3
             pr-8
             text-left
-            focus:ring-green-500 focus:ring-2 focus:outline-none
             border border-gray-300
             flex
             items-center

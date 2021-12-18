@@ -15,7 +15,6 @@
             pr-8
             border border-gray-300
             text-left
-            focus:ring-green-500 focus:ring-2 focus:outline-none
             dark:bg-gray-700
             dark:hover:bg-gray-800
             dark:border-gray-600

@@ -19,24 +19,9 @@
         class="py-2 text-lg text-gray-800 dark:text-white font-bold truncate"
         >{{ title }}</span
       >
-      <Tooltip v-if="!!$slots.help && !isEmbedded">
-        <template #trigger>
-          <question-mark-icon
-            class="
-              w-4
-              h-4
-              text-gray-300
-              mx-2
-              mt-1
-              cursor-pointer
-              hover:text-gray-400
-            "
-          />
-        </template>
-        <template #content>
-          <slot name="help" />
-        </template>
-      </Tooltip>
+      <HelpTooltip v-if="!!$slots.help && !isEmbedded" class="ml-1">
+        <slot name="help" />
+      </HelpTooltip>
       <template v-if="!!$slots.action && !isEmbedded">
         <div class="flex-1 self-stretch flex items-center px-1 truncate">
           <div class="flex-1"></div>
@@ -57,6 +42,10 @@
           duration-75
           text-gray-500 text-opacity-30
           hover:text-opacity-60 hover:bg-gray-600 hover:bg-opacity-10
+          focus-visible:text-opacity-60
+          focus-visible:bg-gray-600
+          focus-visible:bg-opacity-10
+          focus-visible:opacity-100
           opacity-0
           group-hover:opacity-100
           z-40
@@ -119,7 +108,7 @@
 
 <script lang="ts">
 import Modal from '@/components/Modal.vue';
-import Tooltip from '@/components/Tooltip.vue';
+import HelpTooltip from '@/components/HelpTooltip.vue';
 import { useNear } from '@/composables/useNear';
 import { CodeIcon, ArrowSmUpIcon } from 'heroicons-vue3/solid';
 import { computed, defineComponent, ref } from 'vue';
@@ -128,7 +117,7 @@ import copy from 'clipboard-copy';
 
 export default defineComponent({
   components: {
-    Tooltip,
+    HelpTooltip,
     Modal,
     CodeIcon,
     ArrowSmUpIcon,

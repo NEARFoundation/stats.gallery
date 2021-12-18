@@ -20,6 +20,7 @@
                   :key="method.name"
                   :methodName="method.name"
                   :suggestedArguments="method.args"
+                  :label="interfaces[interfaceId].name"
                 />
               </div>
             </li>

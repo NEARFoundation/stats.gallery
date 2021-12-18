@@ -74,10 +74,6 @@
                   rounded-md
                   p-3
                   border border-transparent
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-offset-2
-                  focus:ring-gray-500
                 "
               >
                 {{ group.dateText }}
