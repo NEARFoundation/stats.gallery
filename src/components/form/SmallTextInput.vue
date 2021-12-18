@@ -4,14 +4,20 @@
     @input="$emit('update:modelValue', $event.target.value)"
     @keydown.enter="$emit('submit', $event.target.value)"
     type="text"
-    class="text-base font-normal block outline-none rounded-sm border p-2 z-10"
-    :class="{
-      'text-black border-gray-300 disabled:bg-slate-200 disabled:text-gray-600':
-        theme !== 'dark',
-      'dark:bg-gray-700 dark:border-gray-600 dark:text-white':
-        theme !== 'dark' && theme !== 'light',
-      'bg-gray-700 border-gray-600 text-white': theme === 'dark',
-    }"
+    class="
+      text-base
+      font-normal
+      block
+      outline-none
+      rounded-sm
+      border
+      p-2
+      z-10
+      text-black
+      border-gray-300
+      disabled:bg-slate-200 disabled:text-gray-600
+      dark:bg-gray-700 dark:border-gray-600 dark:text-white
+    "
   />
 </template>
 
@@ -23,10 +29,6 @@ export default defineComponent({
     modelValue: {
       type: String,
       required: true,
-    },
-    theme: {
-      type: String as PropType<'dark' | 'light' | 'auto'>,
-      default: 'auto',
     },
   },
   emits: ['update:modelValue', 'submit'],

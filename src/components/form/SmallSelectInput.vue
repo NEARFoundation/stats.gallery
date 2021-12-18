@@ -20,24 +20,18 @@
           pr-8
           border
           text-left
+          bg-white
+          hover:bg-gray-100
+          border-gray-300
+          dark:bg-gray-700
+          dark:hover:bg-gray-800
+          dark:border-gray-600
+          dark:text-white
         "
-        :class="{
-          'bg-white hover:bg-gray-100 border-gray-300': theme !== 'dark',
-          'dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-600 dark:text-white':
-            theme !== 'dark' && theme !== 'light',
-          'bg-gray-700 hover:bg-gray-800 border-gray-600 text-white':
-            theme === 'dark',
-        }"
       >
-        <span
-          class="block truncate text-base"
-          :class="{
-            'text-black': theme !== 'dark',
-            'dark:text-white': theme !== 'dark' && theme !== 'light',
-            'text-white': theme === 'dark',
-          }"
-          >{{ selectedOption.label }}</span
-        >
+        <span class="block truncate text-base text-black dark:text-white">{{
+          selectedOption.label
+        }}</span>
         <span
           class="
             absolute
@@ -89,12 +83,9 @@
                   custom-scrollbar
                   focus:outline-none
                   text-base
+                  bg-white
+                  dark:bg-gray-700
                 "
-                :class="{
-                  'bg-white': theme !== 'dark',
-                  'dark:bg-gray-700': theme !== 'dark' && theme !== 'light',
-                  'bg-gray-700': theme === 'dark',
-                }"
               >
                 <ListboxOption
                   ref="watchRef"
@@ -105,21 +96,16 @@
                   v-slot="{ active }"
                 >
                   <li
-                    :class="[
-                      active && {
-                        'bg-gray-100': theme !== 'dark',
-                        'dark:bg-gray-800':
-                          theme !== 'dark' && theme !== 'light',
-                        'bg-gray-800': theme === 'dark',
-                      },
-                      {
-                        'text-black': theme !== 'dark',
-                        'dark:text-white':
-                          theme !== 'dark' && theme !== 'light',
-                        'text-white': theme === 'dark',
-                      },
-                      'cursor-pointer select-none relative py-2 px-3',
-                    ]"
+                    class="
+                      text-black
+                      dark:text-white
+                      cursor-pointer
+                      select-none
+                      relative
+                      py-2
+                      px-3
+                    "
+                    :class="[active && 'bg-gray-100 dark:bg-gray-800']"
                   >
                     <span class="block truncate">
                       {{ option.label }}
@@ -165,10 +151,6 @@ export default defineComponent({
     options: {
       type: Array as PropType<{ label: string; value: string }[]>,
       required: true,
-    },
-    theme: {
-      type: String as PropType<'light' | 'dark' | 'auto'>,
-      default: 'auto',
     },
   },
   emits: ['update:modelValue'],

@@ -1,12 +1,13 @@
 <template>
-  <AutoTeleportRoot>
-    <router-view></router-view>
-  </AutoTeleportRoot>
+  <router-view></router-view>
 </template>
 
 <style>
 body {
   background-color: #f1f5f9;
+}
+
+#app {
   @apply text-gray-700 dark:text-white;
 }
 
@@ -57,19 +58,36 @@ import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
 import { defineComponent, onMounted, provide, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
-import AutoTeleportRoot from './components/AutoTeleportRoot.vue';
 
 export default defineComponent({
   components: {
     RouterView,
-    AutoTeleportRoot,
   },
   setup() {
     const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
 
-    // Account exists RPC call watcher
+    provide('autoTeleport', '#teleport-root');
+
     onMounted(() => {
+      // Auto dark theme
+      // Using class so that elements can still escape dark theming by
+      // teleporting outside of #theme-sandbox
+      const updateTheme = (dark: boolean) => {
+        document
+          .getElementById('theme-sandbox')
+          ?.classList.toggle('dark', dark);
+      };
+
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      mediaQuery.addEventListener('change', e => {
+        updateTheme(e.matches);
+      });
+
+      updateTheme(mediaQuery.matches);
+
+      // Account exists RPC call watcher
       watch(
         [account, network],
         async ([account]) => {
