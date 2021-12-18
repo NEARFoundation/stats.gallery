@@ -1,28 +1,6 @@
 <template>
   <div class="w-full max-w-sm px-4">
-    <button
-      @click="isModalOpen = true"
-      :class="isModalOpen ? '' : 'text-opacity-90'"
-      class="
-        inline-flex
-        items-center
-        px-3
-        py-2
-        text-base
-        font-medium
-        dark:text-white
-        bg-gray-100
-        dark:bg-gray-700
-        hover:dark:bg-gray-600
-        rounded-sm
-        group
-        hover:text-opacity-100
-        focus:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-white
-        focus-visible:ring-opacity-75
-      "
-    >
+    <NormalButton @click="isModalOpen = true">
       <span>{{ methodName }}</span>
       <ChevronRightIcon
         class="
@@ -36,7 +14,7 @@
         "
         aria-hidden="true"
       />
-    </button>
+    </NormalButton>
 
     <Modal
       :open="isModalOpen"
@@ -136,13 +114,13 @@
           />
         </template>
         <div class="flex items-center gap-3">
-          <NormalButton
+          <PendingButton
             @click="addCustomArgument"
             class="inline-flex items-center"
           >
             <span>Add Argument</span>&nbsp;
             <PlusIcon class="w-6 h-6" />
-          </NormalButton>
+          </PendingButton>
           <div class="ml-auto">
             <TransitionBob>
               <CheckIcon
@@ -157,14 +135,14 @@
               />
             </TransitionBob>
           </div>
-          <NormalButton
+          <PendingButton
             class="inline-flex items-center"
             @click="guessMethodUsage"
             :mode="guessMethodUsageState === 'pending' ? 'pending' : 'normal'"
           >
             <span>Auto-detect</span>&nbsp;
             <SearchIcon class="w-6 h-6" />
-          </NormalButton>
+          </PendingButton>
           <Tooltip
             class="
               text-gray-500
@@ -197,23 +175,24 @@
 <script lang="ts">
 import Alert from '@/components/Alert.vue';
 import NormalButton from '@/components/form/NormalButton.vue';
+import PendingButton from '@/components/form/PendingButton.vue';
 import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
 import SmallSelectInput from '@/components/form/SmallSelectInput.vue';
 import SmallTextInput from '@/components/form/SmallTextInput.vue';
 import Modal from '@/components/Modal.vue';
+import Tooltip from '@/components/Tooltip.vue';
+import TransitionBob from '@/components/transitions/TransitionBob.vue';
 import { useNear } from '@/composables/useNear';
 import { getType, GuessableTypeString, guessType } from '@/utils/guessType';
 import { Buffer } from 'buffer';
-import Tooltip from '@/components/Tooltip.vue';
 import {
+  CheckIcon,
   ChevronRightIcon,
   PlusIcon,
   SearchIcon,
   XCircleIcon,
-  CheckIcon,
   XIcon,
 } from 'heroicons-vue3/solid';
-import TransitionBob from '@/components/transitions/TransitionBob.vue';
 import { CodeResult } from 'near-api-js/lib/providers/provider';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
@@ -261,11 +240,12 @@ export default defineComponent({
     Alert,
     XCircleIcon,
     SearchIcon,
-    NormalButton,
+    PendingButton,
     Tooltip,
     TransitionBob,
     CheckIcon,
     XIcon,
+    NormalButton,
   },
   props: {
     methodName: {

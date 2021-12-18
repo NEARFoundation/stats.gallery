@@ -98,14 +98,18 @@
                 px-2
                 py-1
                 font-medium
-                bg-orange-600
-                text-orange-900
-                dark:text-orange-100
                 rounded-sm
+                bg-opacity-30
+                dark:bg-opacity-40
                 border border-orange-400
+                dark:border-orange-600
                 cursor-pointer
               "
-              :class="[active ? 'bg-opacity-30' : 'bg-opacity-20']"
+              :class="[
+                active
+                  ? 'bg-orange-500 text-orange-900 dark:bg-orange-600 dark:text-white'
+                  : 'bg-orange-200 text-orange-800 dark:bg-orange-800 dark:text-orange-100',
+              ]"
             >
               Account error
             </button>
