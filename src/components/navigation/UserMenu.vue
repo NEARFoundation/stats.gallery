@@ -8,8 +8,11 @@
           md:flex-none
           flex
           items-center
-          bg-gray-700
-          hover:bg-gray-800
+          bg-white
+          border border-gray-300
+          dark:border-transparent
+          hover:bg-gray-100
+          dark:bg-gray-700 dark:hover:bg-gray-800
           py-1
           px-2
         "
@@ -56,34 +59,44 @@
             flex flex-col
             rounded-sm
             shadow-lg
-            bg-gray-700
-            border border-gray-600
+            bg-white
+            dark:bg-gray-700
+            border
+            dark:border-gray-600
             ring-1 ring-black ring-opacity-5
             py-1
             focus:outline-none
           "
         >
-          <button
+          <MenuItem
             v-if="!walletAuth.isAccessible"
             @click="isAccountErrorModalOpen = true"
-            class="
-              my-1
-              mx-4
-              px-2
-              py-1
-              font-medium
-              bg-orange-600 bg-opacity-20
-              hover:bg-opacity-30
-              rounded-sm
-              border border-orange-400
-            "
+            v-slot="{ active }"
           >
-            Account error
-          </button>
-          <MenuItem as="div" v-slot="{ active }">
+            <button
+              class="
+                my-1
+                mx-4
+                text-center
+                px-2
+                py-1
+                font-medium
+                bg-orange-600
+                text-orange-900
+                dark:text-orange-100
+                rounded-sm
+                border border-orange-400
+                cursor-pointer
+              "
+              :class="[active ? 'bg-opacity-30' : 'bg-opacity-20']"
+            >
+              Account error
+            </button>
+          </MenuItem>
+          <MenuItem v-if="walletAuth.isSignedIn" v-slot="{ active }">
             <router-link
               as="a"
-              v-if="walletAuth.isSignedIn"
+              :class="userMenuItemClass(active)"
               :to="{
                 name: 'overview',
                 params: {
@@ -94,36 +107,23 @@
                   t: timeframe,
                 },
               }"
-              :class="[
-                active ? 'bg-gray-800' : '',
-                'block py-2 px-4 text-white',
-              ]"
             >
-              Profile
+              Overview
             </router-link>
           </MenuItem>
-          <MenuItem as="div" v-if="walletAuth.isSignedIn" v-slot="{ active }">
-            <a
-              href="#"
-              :class="[
-                active ? 'bg-gray-800' : '',
-                'block py-2 px-4 text-white',
-              ]"
-              @click="signOut"
-              >Sign out</a
-            >
+          <MenuItem
+            v-if="walletAuth.isSignedIn"
+            @click="signOut"
+            v-slot="{ active }"
+          >
+            <a href="#" :class="userMenuItemClass(active)">Sign out</a>
           </MenuItem>
-          <MenuItem as="div" v-if="!walletAuth.isSignedIn" v-slot="{ active }">
-            <a
-              href="#"
-              :class="[
-                active ? 'bg-gray-800' : '',
-                'block py-2 px-4 text-white',
-              ]"
-              @click="signIn"
-            >
-              Sign in
-            </a>
+          <MenuItem
+            v-if="!walletAuth.isSignedIn"
+            @click="signIn"
+            v-slot="{ active }"
+          >
+            <a href="#" :class="userMenuItemClass(active)">Sign in</a>
           </MenuItem>
         </MenuItems>
       </transition>
@@ -151,7 +151,7 @@
 
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import {
   ChevronDownIcon,
   ExclamationCircleIcon,
@@ -184,6 +184,11 @@ export default defineComponent({
       walletAuth.signOut();
     };
 
+    const userMenuItemClass = (active: boolean) => [
+      active ? 'text-black dark:text-white bg-gray-100 dark:bg-gray-800' : '',
+      'block py-2 px-4',
+    ];
+
     return {
       account,
       network,
@@ -192,6 +197,7 @@ export default defineComponent({
       signIn,
       signOut,
       isAccountErrorModalOpen,
+      userMenuItemClass,
     };
   },
 });

@@ -91,6 +91,7 @@ export function provideNear(): {
       walletAuth.account = null;
       walletAuth.accountId = '';
       walletAuth.isSignedIn = false;
+      walletAuth.isAccessible = true;
 
       wallet.value?.signOut();
     },
