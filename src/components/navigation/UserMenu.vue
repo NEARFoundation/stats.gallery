@@ -144,7 +144,9 @@
             @click="signIn"
             v-slot="{ active }"
           >
-            <a href="#" :class="userMenuItemClass(active)">Sign in</a>
+            <a href="#" :class="userMenuItemClass(active)"
+              >Sign into {{ account }}</a
+            >
           </MenuItem>
         </MenuItems>
       </transition>
@@ -207,7 +209,7 @@ export default defineComponent({
 
     const userMenuItemClass = (active: boolean) => [
       active ? 'text-black dark:text-white bg-gray-100 dark:bg-gray-800' : '',
-      'block py-2 px-4',
+      'block py-2 px-4 truncate',
     ];
 
     return {

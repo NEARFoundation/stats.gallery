@@ -7,22 +7,25 @@
       {{ hash }}
       <external-link-icon class="w-3 h-3 ml-1.5" />
     </external-link>
-    <button
-      class="bg-gray-200 text-black font-mono py-1 px-2 rounded-sm text-sm"
+    <PendingButton
+      class="font-mono"
       @click="log"
+      :mode="status ? 'normal' : 'pending'"
     >
-      console.log
-    </button>
+      log
+    </PendingButton>
   </div>
 </template>
 
 <script lang="ts">
+import PendingButton from '@/components/form/PendingButton.vue';
 import { useNear } from '@/composables/useNear';
 import { networks } from '@/services/near/indexer/networks';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
 import { computed, defineComponent, PropType, ref, toRefs, watch } from 'vue';
 
 export default defineComponent({
+  components: { PendingButton },
   props: {
     hash: {
       type: String as PropType<string>,
@@ -31,7 +34,7 @@ export default defineComponent({
   },
   setup(props) {
     const { connection, walletAuth, network } = useNear();
-    const status = ref<FinalExecutionOutcome | null>();
+    const status = ref<FinalExecutionOutcome | null>(null);
 
     watch(
       [toRefs(props).hash, connection],

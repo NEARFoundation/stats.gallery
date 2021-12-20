@@ -96,7 +96,12 @@ export function provideNear(): {
       wallet.value?.signOut();
     },
     signIn() {
-      wallet.value?.requestSignIn({}, 'stats.gallery');
+      wallet.value?.requestSignIn(
+        {
+          contractId: account.value, // function call key request
+        },
+        'stats.gallery',
+      );
     },
   }) as WalletAuth;
   provide(NEAR_WALLET_AUTH, walletAuth);
@@ -117,21 +122,21 @@ export function provideNear(): {
   });
 
   watch(
-    network,
-    async newNetwork => {
-      indexer.network = newNetwork;
-      rpc.network = newNetwork;
-
+    [network, account],
+    async ([network, account]) => {
       const config = {
         keyStore: new keyStores.BrowserLocalStorageKeyStore(),
         headers: {},
-        ...configs[newNetwork],
+        ...configs[network],
       };
 
       const near = await connect(config);
       connection.value = near;
 
-      const walletConnection = new WalletConnection(near, 'stats-gallery');
+      const walletConnection = new WalletConnection(
+        near,
+        `stats.gallery$${network}$${account}`, // connection (and thus keystore) is network- and account-specific
+      );
       wallet.value = walletConnection;
 
       const isSignedIn = walletConnection.isSignedIn();
@@ -147,7 +152,7 @@ export function provideNear(): {
         } catch (_) {
           // Wallet interactions may fail if:
           // 1. Account does not exist
-          // 2. Wrong network
+          // 2. RPC is inaccessible
           walletAuth.isAccessible = false;
         }
       } else {
@@ -155,8 +160,15 @@ export function provideNear(): {
         walletAuth.account = null;
         walletAuth.accountBalance = emptyAccountBalance();
       }
+    },
+    { immediate: true },
+  );
 
-      console.log(walletAuth);
+  watch(
+    network,
+    async newNetwork => {
+      indexer.network = newNetwork;
+      rpc.network = newNetwork;
     },
     { immediate: true },
   );
