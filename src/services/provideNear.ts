@@ -17,7 +17,7 @@ import {
   WalletConnection,
 } from 'near-api-js';
 import { AccountBalance } from 'near-api-js/lib/account';
-import { provide, reactive, ref, Ref, watch } from 'vue';
+import { onMounted, provide, reactive, ref, Ref, watch } from 'vue';
 
 export const NEAR_ACCOUNT = Symbol('near_account');
 export const NEAR_ACCOUNT_BALANCE = Symbol('near_account_balance');
@@ -121,48 +121,50 @@ export function provideNear(): {
       : emptyAccountBalance();
   });
 
-  watch(
-    [network, account],
-    async ([network, account]) => {
-      const config = {
-        keyStore: new keyStores.BrowserLocalStorageKeyStore(),
-        headers: {},
-        ...configs[network],
-      };
+  onMounted(() => {
+    watch(
+      [network, account],
+      async ([network, account]) => {
+        const config = {
+          keyStore: new keyStores.BrowserLocalStorageKeyStore(),
+          headers: {},
+          ...configs[network],
+        };
 
-      const near = await connect(config);
-      connection.value = near;
+        const near = await connect(config);
+        connection.value = near;
 
-      const walletConnection = new WalletConnection(
-        near,
-        `stats.gallery$${network}$${account}`, // connection (and thus keystore) is network- and account-specific
-      );
-      wallet.value = walletConnection;
+        const walletConnection = new WalletConnection(
+          near,
+          `stats.gallery$${network}$${account}`, // connection (and thus keystore) is network- and account-specific
+        );
+        wallet.value = walletConnection;
 
-      const isSignedIn = walletConnection.isSignedIn();
-      walletAuth.isSignedIn = isSignedIn;
-      walletAuth.isAccessible = true;
-      if (isSignedIn) {
-        try {
-          walletAuth.accountId = walletConnection.getAccountId();
-          LogRocket.identify(walletAuth.accountId);
-          walletAuth.account = walletConnection.account();
-          walletAuth.accountBalance =
-            await walletAuth.account.getAccountBalance();
-        } catch (_) {
-          // Wallet interactions may fail if:
-          // 1. Account does not exist
-          // 2. RPC is inaccessible
-          walletAuth.isAccessible = false;
+        const isSignedIn = walletConnection.isSignedIn();
+        walletAuth.isSignedIn = isSignedIn;
+        walletAuth.isAccessible = true;
+        if (isSignedIn) {
+          try {
+            walletAuth.accountId = walletConnection.getAccountId();
+            LogRocket.identify(walletAuth.accountId);
+            walletAuth.account = walletConnection.account();
+            walletAuth.accountBalance =
+              await walletAuth.account.getAccountBalance();
+          } catch (_) {
+            // Wallet interactions may fail if:
+            // 1. Account does not exist
+            // 2. RPC is inaccessible
+            walletAuth.isAccessible = false;
+          }
+        } else {
+          walletAuth.accountId = '';
+          walletAuth.account = null;
+          walletAuth.accountBalance = emptyAccountBalance();
         }
-      } else {
-        walletAuth.accountId = '';
-        walletAuth.account = null;
-        walletAuth.accountBalance = emptyAccountBalance();
-      }
-    },
-    { immediate: true },
-  );
+      },
+      { immediate: true },
+    );
+  });
 
   watch(
     network,
