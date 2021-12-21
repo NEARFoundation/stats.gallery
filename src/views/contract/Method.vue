@@ -104,12 +104,12 @@
         </div>
         <ArgumentRow
           v-for="arg in suggestedArguments"
-          :key="arg"
+          :key="arg.name"
           locked
-          v-model:active="argModels.get(arg).active"
-          :field="arg"
-          v-model:type="argModels.get(arg).type"
-          v-model:value="argModels.get(arg).value"
+          v-model:active="argModels.get(arg.name).active"
+          :field="arg.name"
+          v-model:type="argModels.get(arg.name).type"
+          v-model:value="argModels.get(arg.name).value"
         />
         <div class="flex gap-3 items-center">
           <h4>Arguments</h4>
@@ -196,6 +196,7 @@ import { CodeResult } from 'near-api-js/lib/providers/provider';
 import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
 import Labeled from './Labeled.vue';
+import { JsonType, StandardInterfaceArgument } from 'near-contract-parser';
 
 interface IArgModel {
   type: GuessableTypeString | 'auto';
@@ -225,6 +226,21 @@ const strToType = (str: string, type: GuessableTypeString): unknown => {
       return str + '';
   }
 };
+
+function jsonTypeToGuessableType(
+  type: JsonType | JsonType[],
+): GuessableTypeString {
+  const best =
+    type instanceof Array ? type.find(x => x !== 'null') ?? type[0] : type;
+
+  switch (best) {
+    case 'object':
+    case 'array':
+      return 'json';
+    default:
+      return best;
+  }
+}
 
 export default defineComponent({
   components: {
@@ -256,7 +272,7 @@ export default defineComponent({
       default: () => '',
     },
     suggestedArguments: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<StandardInterfaceArgument[]>,
       default: () => [],
     },
   },
@@ -292,9 +308,9 @@ export default defineComponent({
       toRefs(props).suggestedArguments,
       suggestedArguments => {
         suggestedArguments.forEach(arg => {
-          if (!argModels.has(arg)) {
-            argModels.set(arg, {
-              type: 'auto',
+          if (!argModels.has(arg.name)) {
+            argModels.set(arg.name, {
+              type: jsonTypeToGuessableType(arg.type),
               value: '',
               active: true,
             });

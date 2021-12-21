@@ -103,13 +103,13 @@
 <script lang="ts">
 import Alert from '@/components/Alert.vue';
 import Modal from '@/components/Modal.vue';
-import { interfaces } from '@/composables/contract/interfaces';
 import { useContract } from '@/composables/contract/useContract';
 import { useNear } from '@/composables/useNear';
 import { useTransactionResultFromUrl } from '@/composables/useTransactionResultFromUrl';
 import { getDeterministicHueColor } from '@/utils/deterministicColor';
 import { isContract } from '@/utils/near';
-import { XCircleIcon, CheckCircleIcon } from 'heroicons-vue3/solid';
+import { CheckCircleIcon, XCircleIcon } from 'heroicons-vue3/solid';
+import { interfaces } from 'near-contract-parser';
 import { computed, defineComponent, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Method from './contract/Method.vue';
