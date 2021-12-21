@@ -1,3 +1,7 @@
+import mainnet from '@/networks/mainnet.json';
+import testnet from '@/networks/testnet.json';
+import { API_ROOT } from '@/constants';
+
 export const enum Network {
   MAINNET = 'mainnet',
   TESTNET = 'testnet',
@@ -17,14 +21,14 @@ export interface INetworkConfiguration {
 export const networks: Record<Network, INetworkConfiguration> = {
   mainnet: {
     name: Network.MAINNET,
-    indexer: process.env['VUE_APP_INDEXER_MAINNET'] ?? '',
-    rpc: process.env['VUE_APP_RPC_MAINNET'] ?? '',
-    explorer: process.env['VUE_APP_EXPLORER_MAINNET'] ?? '',
+    indexer: API_ROOT + '/mainnet',
+    rpc: mainnet.archivalUrl,
+    explorer: mainnet.explorerUrl,
   },
   testnet: {
     name: Network.TESTNET,
-    indexer: process.env['VUE_APP_INDEXER_TESTNET'] ?? '',
-    rpc: process.env['VUE_APP_RPC_TESTNET'] ?? '',
-    explorer: process.env['VUE_APP_EXPLORER_TESTNET'] ?? '',
+    indexer: API_ROOT + '/testnet',
+    rpc: testnet.archivalUrl,
+    explorer: testnet.explorerUrl,
   },
 };

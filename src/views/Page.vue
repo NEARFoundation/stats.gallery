@@ -68,7 +68,7 @@
           "
         >
           <near-symbol class="w-5 h-5" />&nbsp;{{
-            $filters.number.standard(+$filters.toNear(view.amount))
+            $filters.number.standard(+$filters.toNear(accountBalance.total))
           }}
         </div>
       </div>
@@ -127,6 +127,16 @@
           name="Quests"
         />
         <SectionLink
+          v-if="account && network && timeframe"
+          :to="{
+            name: 'contract',
+            params: { account, network },
+            query: { t: timeframe },
+          }"
+          :icon="ContractIcon"
+          name="Contract"
+        />
+        <SectionLink
           to="/leaderboards"
           :icon="LeaderboardsIcon"
           name="Leaderboards"
@@ -145,7 +155,7 @@
           external
         />
         <SectionLink
-          to="https://paras.id/"
+          to="https://www.mintbase.io/"
           :icon="NftIcon"
           name="Buy NFTs"
           external
@@ -184,10 +194,6 @@
                 items-center
                 space-x-2
                 hover:bg-gray-400 hover:bg-opacity-10
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-gray-500
               "
             >
               <AnnotationIcon class="w-4 h-4" />
@@ -209,10 +215,6 @@
                 items-center
                 space-x-2
                 hover:bg-gray-400 hover:bg-opacity-10
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-gray-500
               "
             >
               <ContactIcon class="w-4 h-4" />
@@ -259,6 +261,7 @@ import LeaderboardsIcon from './overview/icons/LeaderboardsIcon.vue';
 import NftIcon from './overview/icons/NftIcon.vue';
 import OverviewIcon from './overview/icons/OverviewIcon.vue';
 import QuestsIcon from './overview/icons/QuestsIcon.vue';
+import ContractIcon from './overview/icons/ContractIcon.vue';
 import StatsIcon from './overview/icons/StatsIcon.vue';
 import TransactionsIcon from './overview/icons/TransactionsIcon.vue';
 import SectionLink from './overview/SectionLink.vue';
@@ -275,12 +278,7 @@ export default defineComponent({
     AnnotationIcon,
   },
   setup() {
-    const { account, network, timeframe } = useNear();
-    const { view } = useAccountView({
-      account,
-      network,
-      finality: 'final',
-    });
+    const { account, accountBalance, network, timeframe } = useNear();
     const {
       score,
       accountLevel,
@@ -363,9 +361,9 @@ export default defineComponent({
 
     return {
       account,
+      accountBalance,
       network,
       timeframe,
-      view,
       score,
       accountLevel,
       badgeGroups,
@@ -373,6 +371,7 @@ export default defineComponent({
       StatsIcon,
       TransactionsIcon,
       QuestsIcon,
+      ContractIcon,
       LeaderboardsIcon,
       NftIcon,
       ClockIcon,

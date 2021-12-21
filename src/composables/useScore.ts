@@ -1,5 +1,5 @@
 import { Network } from '@/services/near/indexer/networks';
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import { OptionalRef } from '@/utils/deref';
 import { AccountLevel, currentLevel } from '@/utils/level';
 import { ref, Ref, watch } from 'vue';

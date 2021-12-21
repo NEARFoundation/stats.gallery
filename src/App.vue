@@ -1,11 +1,13 @@
 <template>
   <router-view></router-view>
-  <div id="tooltips"></div>
 </template>
 
 <style>
 body {
   background-color: #f1f5f9;
+}
+
+#app {
   @apply text-gray-700 dark:text-white;
 }
 
@@ -42,13 +44,19 @@ hr {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(128, 128, 128, 0.6);
 }
+
+* {
+  @apply focus-visible:ring-green-500 focus-visible:ring-2;
+  @apply focus-visible:outline-none !important;
+}
 </style>
 
 <script lang="ts">
 import { useTitle } from '@/composables/useTitle';
+import { TITLE_SUFFIX } from '@/constants';
 import { RouteTitleGenerator } from '@/router';
 import { provideNear } from '@/services/provideNear';
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, onMounted, provide, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -59,8 +67,27 @@ export default defineComponent({
     const { account, network, timeframe, rpc } = provideNear();
     const accountExists = ref(true);
 
-    // Account exists RPC call watcher
+    provide('autoTeleport', '#teleport-root');
+
     onMounted(() => {
+      // Auto dark theme
+      // Using class so that elements can still escape dark theming by
+      // teleporting outside of #theme-sandbox
+      const updateTheme = (dark: boolean) => {
+        document
+          .getElementById('theme-sandbox')
+          ?.classList.toggle('dark', dark);
+      };
+
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      mediaQuery.addEventListener('change', e => {
+        updateTheme(e.matches);
+      });
+
+      updateTheme(mediaQuery.matches);
+
+      // Account exists RPC call watcher
       watch(
         [account, network],
         async ([account]) => {
@@ -84,8 +111,7 @@ export default defineComponent({
       );
     });
 
-    const titleSuffix =
-      process.env['VUE_APP_TITLE_SUFFIX'] ?? ' - stats.gallery';
+    const titleSuffix = TITLE_SUFFIX ?? ' - stats.gallery';
 
     useTitle(route => {
       const suffix = route.meta.noTitleSuffix ? '' : titleSuffix;

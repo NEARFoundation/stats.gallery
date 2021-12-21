@@ -25,7 +25,7 @@ import Chart from '@/components/Chart.vue';
 import { useGaugeChart } from '@/composables/charts/useGaugeChart';
 import { useNear } from '@/composables/useNear';
 import { useTransactionActions } from '@/composables/useTransactionActions';
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import { defineComponent, ref, watch } from 'vue';
 import DashboardCard from '../DashboardCard.vue';
 

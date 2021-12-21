@@ -1,4 +1,4 @@
-import { watch } from '@vue/runtime-dom';
+import { watch } from 'vue';
 import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
 
 export type TitleGenerator = (route: RouteLocationNormalizedLoaded) => string;

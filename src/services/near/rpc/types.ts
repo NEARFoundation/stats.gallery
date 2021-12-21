@@ -15,7 +15,15 @@ export type RpcResponse<T extends RpcResult> = {
     }
 );
 
-export type RpcResult = AccountView;
+export type RpcResult = CodeView | AccountView;
+
+export type CodeView = {
+  block_hash: string;
+  block_height: number;
+  code_base64: string;
+  hash: string;
+};
+
 export type AccountView = {
   amount: string;
   locked: string;

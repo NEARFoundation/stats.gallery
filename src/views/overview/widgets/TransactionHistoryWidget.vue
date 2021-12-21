@@ -105,6 +105,7 @@
                 transform
                 -translate-x-1/2 -translate-y-1/2
                 z-30
+                rounded-full
               "
               :style="{
                 top:

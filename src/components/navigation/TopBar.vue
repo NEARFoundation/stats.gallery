@@ -15,33 +15,42 @@
         max-w-7xl
         xl:mx-auto
         flex flex-wrap
-        lg:flex-nowrap
+        gap-4
         items-center
-        justify-between
       "
     >
       <router-link :to="{ name: 'landing' }" class="flex items-center">
         <StatsGalleryLogo class="p-1 h-9" />
       </router-link>
+      <router-link :to="{ name: 'story' }" v-slot="{ isActive }">
+        <span
+          :class="[
+            isActive
+              ? 'text-gray-700 bg-gray-400 dark:text-gray-50'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-50',
+          ]"
+          class="font-medium rounded px-3 py-1 bg-opacity-20"
+          >story</span
+        >
+      </router-link>
       <div
         v-if="showIntake"
         class="
           flex flex-col
+          grow
           sm:flex-row
           space-y-3
           sm:space-y-0 sm:space-x-3 sm:justify-center
-          lg:justify-end
           items-center
-          mx-3
-          mt-4
-          lg:mt-0 lg:mr-8
+          lg:mt-0
           order-last
           lg:order-none
           w-full
           lg:w-auto
         "
       >
-        <SmallAccountInput
+        <SmallTextInput
+          placeholder="my-account.near"
           class="w-full sm:w-48"
           v-model="displayedAccount"
           @submit="update"
@@ -55,18 +64,7 @@
           >View</SmallPrimaryButton
         >
       </div>
-      <router-link :to="{ name: 'story' }" v-slot="{ isActive }">
-        <span
-          :class="[
-            isActive
-              ? 'text-gray-700 bg-gray-400 dark:text-gray-50'
-              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-50',
-          ]"
-          class="font-medium rounded px-3 py-1 bg-opacity-20"
-          >story</span
-        >
-      </router-link>
-      <!-- <ToggleSwitch v-model="theme" /> -->
+      <UserMenu />
     </div>
   </nav>
 </template>
@@ -75,20 +73,20 @@
 import StatsGalleryLogo from '@/components/icons/StatsGalleryLogo.vue';
 import { useNear } from '@/composables/useNear';
 import { defineComponent, ref, watch } from 'vue';
-import SmallAccountInput from '../form/SmallAccountInput.vue';
 import SmallNetworkInput from '../form/SmallNetworkInput.vue';
 import SmallPrimaryButton from '../form/SmallPrimaryButton.vue';
+import SmallTextInput from '../form/SmallTextInput.vue';
 import SmallTimeframeInput from '../form/SmallTimeframeInput.vue';
-// import ToggleSwitch from '../form/ToggleSwitch.vue';
+import UserMenu from './UserMenu.vue';
 
 export default defineComponent({
   components: {
-    // ToggleSwitch,
-    SmallAccountInput,
+    SmallTextInput,
     SmallNetworkInput,
     SmallTimeframeInput,
     SmallPrimaryButton,
     StatsGalleryLogo,
+    UserMenu,
   },
   props: {
     showIntake: {
@@ -112,7 +110,7 @@ export default defineComponent({
         return;
       }
 
-      account.value = displayedAccount.value;
+      account.value = displayedAccount.value.toLowerCase();
       network.value = selectedNetwork.value;
       timeframe.value = selectedTimeframe.value;
     };

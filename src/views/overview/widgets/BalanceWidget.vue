@@ -65,6 +65,7 @@
         :open="expandModalOpen"
         title="Transfers"
         @close="expandModalOpen = false"
+        prose
       >
         <table>
           <thead>

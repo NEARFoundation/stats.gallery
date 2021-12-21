@@ -1,7 +1,6 @@
 <template>
   <button
     class="
-      w-full
       flex
       items-center
       justify-center
@@ -12,6 +11,7 @@
       text-white
       bg-green-600
       hover:bg-green-700
+      disabled:bg-gray-400
       rounded-sm
       shadow
     "

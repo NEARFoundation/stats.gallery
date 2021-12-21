@@ -12,7 +12,6 @@
             p-3
             pr-10
             text-left
-            focus:ring-green-500 focus:ring-2 focus:outline-none
             sm:text-sm
           "
         >
@@ -97,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import { Timeframe } from '@/services/timeframe';
+import { Timeframe } from '@/utils/timeframe';
 import {
   Listbox,
   ListboxButton,
