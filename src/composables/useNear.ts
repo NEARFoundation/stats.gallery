@@ -3,7 +3,7 @@ import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import {
   NEAR_ACCOUNT,
-  NEAR_ACCOUNT_BALANCE,
+  NEAR_ACCOUNT_VIEW,
   NEAR_CONNECTION,
   NEAR_INDEXER,
   NEAR_NETWORK,
@@ -15,12 +15,12 @@ import {
 } from '@/services/provideNear';
 import { Timeframe } from '@/utils/timeframe';
 import { Near, WalletConnection } from 'near-api-js';
-import { AccountBalance } from 'near-api-js/lib/account';
+import { AccountView } from 'near-api-js/lib/providers/provider';
 import { inject, Ref } from 'vue';
 
 export function useNear(): {
   account: Ref<string>;
-  accountBalance: Ref<AccountBalance>;
+  accountView: Ref<AccountView>;
   network: Ref<Network>;
   timeframe: Ref<Timeframe>;
   indexer: IndexerClient;
@@ -33,7 +33,7 @@ export function useNear(): {
   // eslint-disable-next-line
   const account = inject<Ref<string>>(NEAR_ACCOUNT)!;
   // eslint-disable-next-line
-  const accountBalance = inject<Ref<AccountBalance>>(NEAR_ACCOUNT_BALANCE)!;
+  const accountView = inject<Ref<AccountView>>(NEAR_ACCOUNT_VIEW)!;
   // eslint-disable-next-line
   const network = inject<Ref<Network>>(NEAR_NETWORK)!;
   // eslint-disable-next-line
@@ -51,7 +51,7 @@ export function useNear(): {
 
   return {
     account,
-    accountBalance,
+    accountView,
     network,
     timeframe,
     indexer,

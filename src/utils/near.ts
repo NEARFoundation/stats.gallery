@@ -20,3 +20,7 @@ export function nearTimestampToLocaleString(
 export function nearTimestampToISO(timestamp: number): string {
   return DateTime.fromMillis(timestamp / 1000000).toISO();
 }
+
+export function isContract(codeHash: string): boolean {
+  return codeHash !== '11111111111111111111111111111111';
+}

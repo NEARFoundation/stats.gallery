@@ -55,7 +55,7 @@
             right-0
             top-full
             mt-2
-            w-56
+            w-64
             flex flex-col
             rounded-sm
             shadow-lg
@@ -69,7 +69,25 @@
           "
         >
           <div
-            v-if="!walletAuth.isSignedIn"
+            v-if="!canSignIn"
+            class="
+              self-center
+              m-1
+              px-1.5
+              py-1
+              text-center
+              bg-red-700
+              text-white text-sm
+              rounded-sm
+              shadow-sm
+              truncate
+            "
+          >
+            Cannot log in to {{ account }}<br />
+            Not a contract
+          </div>
+          <div
+            v-if="!walletAuth.isSignedIn && canSignIn"
             class="
               self-center
               m-1
@@ -83,7 +101,7 @@
               shadow-sm
             "
           >
-            Access contract actions
+            Interact with contract
           </div>
           <MenuItem
             v-if="!walletAuth.isAccessible"
@@ -140,13 +158,11 @@
             <a href="#" :class="userMenuItemClass(active)">Sign out</a>
           </MenuItem>
           <MenuItem
-            v-if="!walletAuth.isSignedIn"
+            v-if="!walletAuth.isSignedIn && canSignIn"
             @click="signIn"
             v-slot="{ active }"
           >
-            <a href="#" :class="userMenuItemClass(active)"
-              >Sign into {{ account }}</a
-            >
+            <a href="#" :class="userMenuItemClass(active)">Use {{ account }}</a>
           </MenuItem>
         </MenuItems>
       </transition>
@@ -174,13 +190,14 @@
 
 <script lang="ts">
 import { useNear } from '@/composables/useNear';
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+import { isContract } from '@/utils/near';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import {
   ChevronDownIcon,
   ExclamationCircleIcon,
   UserCircleIcon,
 } from 'heroicons-vue3/outline';
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import Modal from '../Modal.vue';
 
 export default defineComponent({
@@ -195,7 +212,8 @@ export default defineComponent({
     Modal,
   },
   setup() {
-    const { walletAuth, account, timeframe, network } = useNear();
+    const { walletAuth, account, timeframe, network, accountView } = useNear();
+    const canSignIn = computed(() => isContract(accountView.value.code_hash));
 
     const isAccountErrorModalOpen = ref(false);
 
@@ -217,6 +235,7 @@ export default defineComponent({
       network,
       timeframe,
       walletAuth,
+      canSignIn,
       signIn,
       signOut,
       isAccountErrorModalOpen,

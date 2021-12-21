@@ -64,7 +64,7 @@
           >View</SmallPrimaryButton
         >
       </div>
-      <UserMenu />
+      <UserMenu v-if="showIntake" />
     </div>
   </nav>
 </template>

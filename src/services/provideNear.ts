@@ -9,6 +9,7 @@ import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { Timeframe } from '@/utils/timeframe';
 import LogRocket from 'logrocket';
 import {
+  Account,
   connect,
   ConnectConfig,
   ConnectedWalletAccount,
@@ -16,11 +17,11 @@ import {
   Near,
   WalletConnection,
 } from 'near-api-js';
-import { AccountBalance } from 'near-api-js/lib/account';
+import { AccountView } from 'near-api-js/lib/providers/provider';
 import { onMounted, provide, reactive, ref, Ref, watch } from 'vue';
 
 export const NEAR_ACCOUNT = Symbol('near_account');
-export const NEAR_ACCOUNT_BALANCE = Symbol('near_account_balance');
+export const NEAR_ACCOUNT_VIEW = Symbol('near_account_view');
 export const NEAR_NETWORK = Symbol('near_network');
 export const NEAR_INDEXER = Symbol('near_indexer');
 export const NEAR_RPC = Symbol('near_rpc');
@@ -29,20 +30,23 @@ export const NEAR_WALLET = Symbol('near_wallet');
 export const NEAR_WALLET_AUTH = Symbol('near_wallet_auth');
 export const NEAR_CONNECTION = Symbol('near_connection');
 
-const emptyAccountBalance = () =>
+const emptyAccountView = () =>
   ({
-    available: '0',
-    staked: '0',
-    stateStaked: '0',
-    total: '0',
-  } as AccountBalance);
+    amount: '0',
+    block_hash: '',
+    block_height: -1,
+    code_hash: '',
+    locked: '0',
+    storage_paid_at: -1,
+    storage_usage: -1,
+  } as AccountView);
 
 export interface WalletAuth {
   isSignedIn: boolean;
   isAccessible: boolean;
   accountId: string;
   account: ConnectedWalletAccount | null;
-  accountBalance: AccountBalance;
+  accountView: AccountView;
   signOut: () => void;
   signIn: () => void;
 }
@@ -56,7 +60,7 @@ const configs: {
 
 export function provideNear(): {
   account: Ref<string>;
-  accountBalance: Ref<AccountBalance>;
+  accountView: Ref<AccountView>;
   network: Ref<Network>;
   timeframe: Ref<Timeframe>;
   indexer: IndexerClient;
@@ -67,8 +71,8 @@ export function provideNear(): {
 } {
   const account = useAccountFromUrl();
   provide(NEAR_ACCOUNT, account);
-  const accountBalance = ref<AccountBalance>(emptyAccountBalance());
-  provide(NEAR_ACCOUNT_BALANCE, accountBalance);
+  const accountView = ref<AccountView>(emptyAccountView());
+  provide(NEAR_ACCOUNT_VIEW, accountView);
   const network = useNetworkFromUrl();
   provide(NEAR_NETWORK, network);
   const timeframe = useTimeframeFromUrl();
@@ -86,7 +90,7 @@ export function provideNear(): {
     isAccessible: true,
     account: null,
     accountId: '',
-    accountBalance: emptyAccountBalance(),
+    accountView: emptyAccountView(),
     signOut() {
       walletAuth.account = null;
       walletAuth.accountId = '';
@@ -109,16 +113,14 @@ export function provideNear(): {
   provide(NEAR_CONNECTION, connection);
 
   watch([account, connection], async ([account, connection]) => {
-    let a;
+    let a: Account | undefined;
     try {
       a = await connection?.account(account);
     } catch (_) {
       void 0;
     }
 
-    accountBalance.value = a
-      ? await a.getAccountBalance()
-      : emptyAccountBalance();
+    accountView.value = a ? await a.state() : emptyAccountView();
   });
 
   onMounted(() => {
@@ -148,8 +150,7 @@ export function provideNear(): {
             walletAuth.accountId = walletConnection.getAccountId();
             LogRocket.identify(walletAuth.accountId);
             walletAuth.account = walletConnection.account();
-            walletAuth.accountBalance =
-              await walletAuth.account.getAccountBalance();
+            walletAuth.accountView = await walletAuth.account.state();
           } catch (_) {
             // Wallet interactions may fail if:
             // 1. Account does not exist
@@ -159,7 +160,7 @@ export function provideNear(): {
         } else {
           walletAuth.accountId = '';
           walletAuth.account = null;
-          walletAuth.accountBalance = emptyAccountBalance();
+          walletAuth.accountView = emptyAccountView();
         }
       },
       { immediate: true },
@@ -177,7 +178,7 @@ export function provideNear(): {
 
   return {
     account,
-    accountBalance,
+    accountView,
     network,
     timeframe,
     indexer,
