@@ -125,6 +125,19 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
 
+    // When redirected back from wallet, clear query parameters
+    // Otherwise we sometimes end up with duplicate keys
+    router.replace({
+      name: route.name ?? 'overview',
+      params: {
+        network: network.value,
+        account: account.value,
+      },
+      query: {
+        t: timeframe.value,
+      },
+    });
+
     watch([account, network, timeframe], () => {
       router.push({
         name: route.name ?? 'overview',
