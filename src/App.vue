@@ -126,17 +126,25 @@ export default defineComponent({
     const router = useRouter();
 
     // When redirected back from wallet, clear query parameters
-    // Otherwise we sometimes end up with duplicate keys
-    router.replace({
-      name: route.name ?? 'overview',
-      params: {
-        network: network.value,
-        account: account.value,
+    // Otherwise we sometimes end up with duplicate keys because near-api-js is over-ambitious
+    const stop = watch(
+      route,
+      route => {
+        if (route.name) {
+          stop();
+
+          const {
+            query: { account_id, public_key, all_keys, ...filtered },
+          } = route;
+
+          router.replace({
+            name: route.name ?? 'overview',
+            query: filtered,
+          });
+        }
       },
-      query: {
-        t: timeframe.value,
-      },
-    });
+      { immediate: true },
+    );
 
     watch([account, network, timeframe], () => {
       router.push({
