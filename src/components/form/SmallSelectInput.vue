@@ -5,7 +5,13 @@
       v-bind="$attrs"
       class="relative"
       :modelValue="selectedOption"
-      @update:modelValue="$emit('update:modelValue', $event.value)"
+      @update:modelValue="
+        $event => {
+          const oldValue = selectedOption.value;
+          $emit('update:modelValue', $event.value);
+          $emit('change', $event.value, oldValue);
+        }
+      "
     >
       <ListboxButton
         ref="anchorRef"
@@ -153,7 +159,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'change'],
   setup(props) {
     const anchorRef = ref(null);
     const targetRef = ref(null);

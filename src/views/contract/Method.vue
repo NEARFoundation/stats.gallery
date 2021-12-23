@@ -77,6 +77,7 @@
         <Labeled label="Units">
           <SmallSelectInput
             v-model="depositUnits"
+            @change="updateValueWithUnits"
             theme="light"
             class="w-32"
             :options="[
@@ -178,11 +179,12 @@ import PendingButton from '@/components/form/PendingButton.vue';
 import SmallPrimaryButton from '@/components/form/SmallPrimaryButton.vue';
 import SmallSelectInput from '@/components/form/SmallSelectInput.vue';
 import SmallTextInput from '@/components/form/SmallTextInput.vue';
-import Modal from '@/components/Modal.vue';
 import HelpTooltip from '@/components/HelpTooltip.vue';
+import Modal from '@/components/Modal.vue';
 import TransitionBob from '@/components/transitions/TransitionBob.vue';
 import { useNear } from '@/composables/useNear';
 import { getType, GuessableTypeString, guessType } from '@/utils/guessType';
+import Big from 'big.js';
 import { Buffer } from 'buffer';
 import {
   CheckIcon,
@@ -193,10 +195,18 @@ import {
   XIcon,
 } from 'heroicons-vue3/solid';
 import { CodeResult } from 'near-api-js/lib/providers/provider';
-import { defineComponent, PropType, reactive, ref, toRefs, watch } from 'vue';
+import { JsonType, StandardInterfaceArgument } from 'near-contract-parser';
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  Ref,
+  ref,
+  toRefs,
+  watch,
+} from 'vue';
 import ArgumentRow from './ArgumentRow.vue';
 import Labeled from './Labeled.vue';
-import { JsonType, StandardInterfaceArgument } from 'near-contract-parser';
 
 interface IArgModel {
   type: GuessableTypeString | 'auto';
@@ -375,7 +385,11 @@ export default defineComponent({
     };
 
     const call = () => {
-      if (!walletAuth.account) {
+      if (
+        !walletAuth.isSignedIn ||
+        !walletAuth.isAccessible ||
+        !walletAuth.account
+      ) {
         // Should never happen; call button is disabled if not signed in
         alert('You must be signed in to call a function.');
         return;
@@ -383,17 +397,30 @@ export default defineComponent({
 
       const args = compileArguments();
 
-      const tryParseDeposit = Number(depositValue.value);
-      const attachedDeposit =
-        (isNaN(tryParseDeposit) || tryParseDeposit < 0 ? 0 : tryParseDeposit) *
-        (depositUnits.value === 'near' ? 10 ** 24 : 1);
+      const tryParseDeposit = (() => {
+        try {
+          const b = Big(depositValue.value);
+          if (b.s < 0) {
+            return Big(0);
+          } else {
+            return b;
+          }
+        } catch (_) {
+          return Big(0);
+        }
+      })();
+
+      // Scale to units of yoctoNEAR
+      const depositYocto = tryParseDeposit.times(
+        depositUnits.value === 'near' ? Big('1e+24') : 1,
+      );
 
       // Perform function call
       walletAuth.account.functionCall({
         contractId: account.value,
         methodName: props.methodName,
         args,
-        attachedDeposit,
+        attachedDeposit: depositYocto.toFixed(0),
       });
     };
 
@@ -447,6 +474,26 @@ export default defineComponent({
     const depositValue = ref<string>('');
     const depositUnits = ref<'near' | 'yocto'>('near');
 
+    const updateValueWithUnits = (
+      newValue: 'near' | 'yocto',
+      oldValue: 'near' | 'yocto',
+    ) => {
+      if (newValue !== oldValue) {
+        depositValue.value = (() => {
+          try {
+            const b = Big(depositValue.value);
+            if (newValue === 'near') {
+              return b.div('1e+24');
+            } else {
+              return b.mul('1e+24');
+            }
+          } catch (_) {
+            return Big(0);
+          }
+        })().toString();
+      }
+    };
+
     return {
       call,
       view,
@@ -462,6 +509,7 @@ export default defineComponent({
       viewError,
       depositValue,
       depositUnits,
+      updateValueWithUnits,
     };
   },
 });
