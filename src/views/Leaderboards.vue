@@ -2,6 +2,10 @@
   <main class="flex-grow flex flex-col space-y-3">
     <LeaderboardTableCard title="Rich List" :records="balanceLeaderboard" />
     <LeaderboardTableCard title="Top Score" :records="scoreLeaderboard" />
+    <LeaderboardTableCard
+      title="Weekly Top Active"
+      :records="transactionsLeaderBoard"
+    />
   </main>
 </template>
 
@@ -14,7 +18,10 @@
 <script lang="ts">
 import { useMultiple } from '@/composables/useMultiple';
 import { Network } from '@/services/near/indexer/networks';
-import { CachedAccountRecord } from '@/services/near/indexer/types';
+import {
+  CachedAccountRecord,
+  NearWeekCachedStats,
+} from '@/services/near/indexer/types';
 import { Timeframe } from '@/services/timeframe';
 import { defineComponent } from '@vue/runtime-core';
 import LeaderboardTableCard from './leaderboards/LeaderboardTableCard.vue';
@@ -44,9 +51,20 @@ export default defineComponent({
       [],
     );
 
+    const { value: transactionsLeaderBoard } = useMultiple<NearWeekCachedStats>(
+      'leaderboard-transactions-week',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.WEEK,
+      },
+      [],
+    );
+
     return {
       balanceLeaderboard,
       scoreLeaderboard,
+      transactionsLeaderBoard,
     };
   },
 });

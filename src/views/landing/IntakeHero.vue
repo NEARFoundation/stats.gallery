@@ -96,7 +96,10 @@ import { Timeframe } from '@/services/timeframe';
 import { defineComponent, ref, watch } from 'vue';
 import Chart from '@/components/Chart.vue';
 import { useRouter } from 'vue-router';
-import { CachedAccountRecord } from '@/services/near/indexer/types';
+import {
+  CachedAccountRecord,
+  NearWeekCachedStats,
+} from '@/services/near/indexer/types';
 
 export default defineComponent({
   components: {
@@ -164,11 +167,31 @@ export default defineComponent({
       [],
     );
 
+    const { value: transactionsLeaderboard } = useMultiple<NearWeekCachedStats>(
+      'leaderboard-transactions-week',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.WEEK,
+      },
+      [],
+    );
+
     const accountsJumble = ref<string[]>([]);
 
     watch(
-      [newAccounts, scoreLeaderboard, balanceLeaderboard],
-      ([newAccounts, scoreLeaderboard, balanceLeaderboard]) => {
+      [
+        newAccounts,
+        scoreLeaderboard,
+        balanceLeaderboard,
+        transactionsLeaderboard,
+      ],
+      ([
+        newAccounts,
+        scoreLeaderboard,
+        balanceLeaderboard,
+        transactionsLeaderboard,
+      ]) => {
         const a = [];
         for (let i = 0; i < 10; i++) {
           const randomArray = [

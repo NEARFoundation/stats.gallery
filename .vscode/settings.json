@@ -1,5 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "editor.formatOnSave": true,
+  "prettier.configPath": "prettier.config.js"
 }
