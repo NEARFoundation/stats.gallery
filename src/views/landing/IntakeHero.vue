@@ -177,6 +177,16 @@ export default defineComponent({
       [],
     );
 
+    const { value: weeklyDappsLeaderboard } = useMultiple<NearWeekCachedStats>(
+      'leaderboard-dapps-week',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.WEEK,
+      },
+      [],
+    );
+
     const accountsJumble = ref<string[]>([]);
 
     watch(
@@ -185,12 +195,14 @@ export default defineComponent({
         scoreLeaderboard,
         balanceLeaderboard,
         transactionsLeaderboard,
+        weeklyDappsLeaderboard,
       ],
       ([
         newAccounts,
         scoreLeaderboard,
         balanceLeaderboard,
         transactionsLeaderboard,
+        weeklyDappsLeaderboard,
       ]) => {
         const a = [];
         for (let i = 0; i < 10; i++) {

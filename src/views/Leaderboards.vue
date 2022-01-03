@@ -6,6 +6,10 @@
       title="Weekly Top Active"
       :records="transactionsLeaderBoard"
     />
+    <LeaderboardTableCard
+      title="Weekly Top Dapps"
+      :records="weeklyDappsLeaderboard"
+    />
   </main>
 </template>
 
@@ -61,10 +65,21 @@ export default defineComponent({
       [],
     );
 
+    const { value: weeklyDappsLeaderboard } = useMultiple<NearWeekCachedStats>(
+      'leaderboard-dapps-week',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.WEEK,
+      },
+      [],
+    );
+
     return {
       balanceLeaderboard,
       scoreLeaderboard,
       transactionsLeaderBoard,
+      weeklyDappsLeaderboard,
     };
   },
 });
