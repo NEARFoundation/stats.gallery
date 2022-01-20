@@ -185,3 +185,8 @@ export interface CachedAccountRecord {
   balance: string;
   score: number;
 }
+
+export interface NearWeekCachedStats {
+  account_id: string;
+  number_of_transactions: number;
+}

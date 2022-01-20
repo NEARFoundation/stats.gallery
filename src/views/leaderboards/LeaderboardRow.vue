@@ -9,6 +9,7 @@
       <account-link :account="record.account_id" />
     </div>
     <div
+      v-if="record.balance !== undefined"
       class="w-3/12 flex items-center justify-start px-2 font-medium"
       style="min-width: 4em"
     >
@@ -16,8 +17,19 @@
         $filters.number.compact(+$filters.toNear(record.balance))
       }}
     </div>
-    <div class="w-2/12 px-2 font-medium" style="min-width: 4em">
+    <div
+      v-if="record.balance !== undefined"
+      class="w-2/12 px-2 font-medium"
+      style="min-width: 4em"
+    >
       {{ $filters.number.compact(record.score) }}
+    </div>
+    <div
+      v-if="record.number_of_transactions !== undefined"
+      class="w-2/12 px-2 font-medium"
+      style="min-width: 4em"
+    >
+      {{ $filters.number.compact(record.number_of_transactions) }}
     </div>
   </div>
 </template>
