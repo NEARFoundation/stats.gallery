@@ -1,6 +1,14 @@
 <template>
   <div
-    class="py-16 lg:py-64 flex flex-col items-center relative overflow-hidden -mb-16"
+    class="
+      py-16
+      lg:py-64
+      flex flex-col
+      items-center
+      relative
+      overflow-hidden
+      -mb-16
+    "
   >
     <Chart :option="chartOption" class="bg-chart" autoresize />
     <h1 class="font-bold text-white text-4xl lg:text-6xl mb-5 mx-4 text-center">
@@ -11,7 +19,14 @@
       and {{ $filters.number.standard(allAccounts) }} other accounts
     </p>
     <div
-      class="flex flex-col lg:flex-row flex-shrink-0 lg:space-x-4 items-stretch lg:items-start"
+      class="
+        flex flex-col
+        lg:flex-row
+        flex-shrink-0
+        lg:space-x-4
+        items-stretch
+        lg:items-start
+      "
     >
       <div class="flex flex-col flex-shrink-0">
         <TextInput
@@ -173,6 +188,16 @@ export default defineComponent({
       [],
     );
 
+    const { value: weeklyTopLeaderboard } = useMultiple<NearWeekCachedStats>(
+      'leaderboard-nfts-week',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.WEEK,
+      },
+      [],
+    );
+
     const accountsJumble = ref<string[]>([]);
 
     watch(
@@ -182,6 +207,7 @@ export default defineComponent({
         balanceLeaderboard,
         transactionsLeaderboard,
         weeklyDappsLeaderboard,
+        weeklyTopLeaderboard,
       ],
       ([
         newAccounts,
@@ -189,6 +215,7 @@ export default defineComponent({
         balanceLeaderboard,
         transactionsLeaderboard,
         weeklyDappsLeaderboard,
+        weeklyTopLeaderboard,
       ]) => {
         const a = [];
         for (let i = 0; i < 10; i++) {
