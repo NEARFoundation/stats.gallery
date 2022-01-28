@@ -10,6 +10,10 @@
       title="Weekly Top Dapps"
       :records="weeklyDappsLeaderboard"
     />
+    <LeaderboardTableCard
+      title="Weekly Top NFT Projects"
+      :records="weeklyTopNFTLeaderboard"
+    />
   </main>
 </template>
 
@@ -75,11 +79,22 @@ export default defineComponent({
       [],
     );
 
+    const { value: weeklyTopNFTLeaderboard } = useMultiple<NearWeekCachedStats>(
+      'leaderboard-nfts-week',
+      {
+        account: '',
+        network: Network.MAINNET,
+        timeframe: Timeframe.WEEK,
+      },
+      [],
+    );
+
     return {
       balanceLeaderboard,
       scoreLeaderboard,
       transactionsLeaderBoard,
       weeklyDappsLeaderboard,
+      weeklyTopNFTLeaderboard,
     };
   },
 });
