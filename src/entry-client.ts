@@ -1,13 +1,8 @@
 import { Buffer } from 'buffer';
-import LogRocket from 'logrocket';
 import createApp from './app';
 
 // Necessary for @webassemblyjs/wasm-parser to work in browser
 (window as any).Buffer = Buffer;
-
-if (process.env['NODE_ENV'] === 'production') {
-  LogRocket.init('near/statsgallery');
-}
 
 const nearAscii = `
      .,,,.                     .,,.     
