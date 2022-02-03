@@ -7,7 +7,6 @@ import { IndexerClient } from '@/services/near/indexer/IndexerClient';
 import { Network } from '@/services/near/indexer/networks';
 import { RpcClient } from '@/services/near/rpc/RpcClient';
 import { Timeframe } from '@/utils/timeframe';
-import LogRocket from 'logrocket';
 import {
   Account,
   connect,
@@ -148,7 +147,6 @@ export function provideNear(): {
         if (isSignedIn) {
           try {
             walletAuth.accountId = walletConnection.getAccountId();
-            LogRocket.identify(walletAuth.accountId);
             walletAuth.account = walletConnection.account();
             walletAuth.accountView = await walletAuth.account.state();
           } catch (_) {
