@@ -1,6 +1,6 @@
 import { Timeframe } from '@/utils/timeframe';
 import { ref, watch } from 'vue';
-import { useSingle } from '../useSingle';
+import { useMultiple } from '../useMultiple';
 import { BadgeComposable } from './BadgeComposable';
 
 export function createBadgeComposable(
@@ -8,23 +8,23 @@ export function createBadgeComposable(
   level = 1,
 ): BadgeComposable {
   return args => {
-    const achieved = ref(false);
+    const badgeResults = ref([]);
 
-    const { value, isLoading } = useSingle(
+    const { value: badges, isLoading } = useMultiple(
       path,
       {
         ...args,
         timeframe: Timeframe.ALL,
       },
-      0,
+      [],
     );
 
-    watch(value, value => {
-      achieved.value = value >= level;
+    watch(badges, value => {
+      badgeResults.value = value;
     });
 
     return {
-      achieved,
+      badges: badgeResults,
       isLoading,
     };
   };

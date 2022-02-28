@@ -6,6 +6,6 @@ export type BadgeComposable = (args: {
   account: OptionalRef<string>;
   network: OptionalRef<Network>;
 }) => {
-  achieved: Ref<boolean>;
+  badges: Ref<T[]>;
   isLoading: Ref<boolean>;
 };

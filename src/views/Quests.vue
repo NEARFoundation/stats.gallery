@@ -8,10 +8,11 @@
       style="grid-auto-rows: 1fr"
     >
       <BadgeWidget
-        v-for="(badge, i) in badges"
-        :key="i"
-        :badge="badge"
-        :achieved="achievedBadges.has(badge)"
+        v-for="b in achievedBadges"
+        :ref="achievedBadges"
+        :key="b.badge_name"
+        :badge="b"
+        :achieved="b.achieved"
       />
       <div
         class="
@@ -43,10 +44,9 @@
 </style>
 
 <script lang="ts">
-import { badges } from '@/composables/badges/badges';
 import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useNear } from '@/composables/useNear';
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import BadgeWidget from './quests/BadgeWidget.vue';
 
 export default defineComponent({
@@ -61,7 +61,6 @@ export default defineComponent({
     });
 
     return {
-      badges,
       achievedBadges,
       isLoading,
     };

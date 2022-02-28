@@ -1,9 +1,9 @@
 <template>
   <BadgeCard
     :group="badge.group"
-    :name="badge.name"
-    :description="badge.description"
-    :fraction="badge.rarityFraction"
+    :name="badge.badge_name"
+    :description="badge.badge_description"
+    :fraction="badge.rarity_fraction"
     :achieved="achieved"
   />
 </template>
@@ -11,7 +11,7 @@
 <script lang="ts">
 import BadgeCard from '@/components/badges/BadgeCard.vue';
 import { IBadgeDescriptor } from '@/composables/badges/badges';
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   components: {
@@ -19,13 +19,16 @@ export default defineComponent({
   },
   props: {
     badge: {
-      type: Object as () => IBadgeDescriptor,
+      type: Object as PropType<IBadgeDescriptor>,
       required: true,
     },
     achieved: {
       type: Boolean,
       default: false,
     },
+  },
+  setup(props) {
+    console.log('badge widget props', props.badge);
   },
 });
 </script>

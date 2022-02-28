@@ -1,57 +1,19 @@
+import { useMultiple } from '../useMultiple';
 import { BadgeComposable } from './BadgeComposable';
-import { createBadgeComposable } from './createBadgeComposable';
 
 export type BadgeGroup = 'nft' | 'transfer' | 'contract' | 'stake';
 
 export interface IBadgeDescriptor {
-  name: string;
-  description: string;
-  rarityFraction: number;
+  attained_value: number;
+  badge_group_id: string;
+  badge_name: string;
+  badge_description: string;
+  rarity_fraction: number;
+  required_value: number;
   group: BadgeGroup;
-  composable: BadgeComposable;
+  achieved: boolean;
 }
 
-export const badges: IBadgeDescriptor[] = [
-  {
-    name: 'One-of-a-kind',
-    description: 'Receive an NFT',
-    rarityFraction: 0.009637601848473794,
-    group: 'nft',
-    composable: createBadgeComposable('badge-nft'),
-  },
-  {
-    name: 'Join the party!',
-    description: 'Perform a token transfer',
-    rarityFraction: 0.44491,
-    group: 'transfer',
-    composable: createBadgeComposable('badge-transfer', 1),
-  },
-  {
-    name: 'Raining',
-    description: 'Transfer tokens 10 times',
-    rarityFraction: 0.0084142,
-    group: 'transfer',
-    composable: createBadgeComposable('badge-transfer', 10),
-  },
-  {
-    name: 'Powertrain',
-    description: 'Transfer tokens 100 times',
-    rarityFraction: 0.00063829,
-    group: 'transfer',
-    composable: createBadgeComposable('badge-transfer', 100),
-  },
-  {
-    name: 'ca$h flow',
-    description: 'Stake tokens with a validator',
-    rarityFraction: 0.038507,
-    group: 'stake',
-    composable: createBadgeComposable('badge-stake'),
-  },
-  {
-    name: 'I am Web 3',
-    description: 'Deploy a smart contract',
-    rarityFraction: 0.011375,
-    group: 'contract',
-    composable: createBadgeComposable('badge-deploy'),
-  },
-];
+// export const badges: IBadgeDescriptor[] = [
+//   useMultiple<T[]>
+// ];

@@ -28,10 +28,10 @@
       <div class="flex-grow flex items-center space-x-1 mr-5">
         <BadgeTooltip
           v-for="badge in badgeGroups"
-          :key="badge.name"
-          :name="badge.name"
-          :description="badge.description"
-          :fraction="badge.rarityFraction"
+          :key="badge.badge_name"
+          :name="badge.badge_name"
+          :description="badge.badge_description"
+          :fraction="badge.rarity_fraction"
           :group="badge.group"
         />
       </div>
@@ -241,11 +241,7 @@ import TransactionBadge from '@/components/badges/TransactionBadge.vue';
 import Footer from '@/components/Footer.vue';
 import ContactIcon from '@/components/icons/ContactIcon.vue';
 import CombinedTopBar from '@/components/navigation/TopBar.vue';
-import {
-  BadgeGroup,
-  badges,
-  IBadgeDescriptor,
-} from '@/composables/badges/badges';
+import { BadgeGroup, IBadgeDescriptor } from '@/composables/badges/badges';
 import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useAccountView } from '@/composables/useAccountView';
 import { useNear } from '@/composables/useNear';
@@ -292,25 +288,8 @@ export default defineComponent({
     const { achievedBadges } = useAchievedBadges({ account, network });
     const badgeGroups = ref([] as IBadgeDescriptor[]);
 
-    const findBestBadgeInGroup = (
-      group: BadgeGroup,
-      achievedBadges: Set<IBadgeDescriptor>,
-    ) => {
-      for (let i = badges.length - 1; i >= 0; i--) {
-        const b = badges[i];
-        if (b.group === group && achievedBadges.has(b)) {
-          return b;
-        }
-      }
-    };
-
     watch(achievedBadges, achievedBadges => {
-      const nft = findBestBadgeInGroup('nft', achievedBadges) ?? [];
-      const transfer = findBestBadgeInGroup('transfer', achievedBadges) ?? [];
-      const contract = findBestBadgeInGroup('contract', achievedBadges) ?? [];
-      const stake = findBestBadgeInGroup('stake', achievedBadges) ?? [];
-
-      badgeGroups.value = [nft, transfer, stake, contract].flat();
+      badgeGroups.value = achievedBadges;
     });
 
     const getTweetText = (routeName: string) => {

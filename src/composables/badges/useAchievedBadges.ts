@@ -1,6 +1,7 @@
 import { Network } from '@/services/near/indexer/networks';
 import { reactive, ref, Ref, watch } from 'vue';
-import { badges, IBadgeDescriptor } from './badges';
+import { useMultiple } from '../useMultiple';
+import { IBadgeDescriptor } from './badges';
 
 export function useAchievedBadges({
   account,
@@ -9,39 +10,64 @@ export function useAchievedBadges({
   account: Ref<string>;
   network: Ref<Network>;
 }): {
-  achievedBadges: Set<IBadgeDescriptor>;
+  achievedBadges: Ref<IBadgeDescriptor[]>;
   isLoading: Ref<boolean>;
 } {
-  const achievedBadges = reactive(new Set<IBadgeDescriptor>());
+  const achievedBadges: Ref<IBadgeDescriptor[]> = ref([] as IBadgeDescriptor[]);
   const isLoading = ref(true);
 
-  const loading = new Set<IBadgeDescriptor>();
-
-  badges.forEach(badge => {
-    const { achieved, isLoading: isBadgeLoading } = badge.composable({
+  const { value: nft } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-nft',
+    {
       account,
       network,
-    });
+    },
+    [],
+  );
 
-    watch(achieved, achieved => {
-      if (achieved) {
-        achievedBadges.add(badge);
-      } else {
-        achievedBadges.delete(badge);
-      }
-    });
-
-    watch(isBadgeLoading, isBadgeLoading => {
-      if (isBadgeLoading) {
-        loading.add(badge);
-      } else {
-        loading.delete(badge);
-      }
-
-      isLoading.value = loading.size > 0;
-    });
+  watch(nft, value => {
+    // for (const n of nft.value) {
+    achievedBadges.value = value;
+    // }
   });
 
+  console.log('watch nft', achievedBadges);
+
+  // badges.forEach(async badgeGroup => {
+  //   const { badges, isLoading: isBadgeLoading } = badgeGroup.composable({
+  //     account,
+  //     network,
+  //   });
+
+  //   watch(badges, badges => {
+  //     console.log(badges);
+  //     // for (const b of badges) {
+  //     //   if (b.achieved) {
+  //     //     achievedBadges.add(b);
+  //     //   } else {
+  //     //     achievedBadges.delete(b);
+  //     //   }
+  //     // }
+  //   });
+
+  //   // for (const badge of badges.value) {
+  //   //   console.log('useAchievedBadges', badge);
+
+  //   //   watch(isBadgeLoading, isBadgeLoading => {
+  //   //     if (isBadgeLoading) {
+  //   //       loading.add(badge);
+  //   //     } else {
+  //   //       loading.delete(badge);
+  //   //     }
+
+  //   //     isLoading.value = loading.size > 0;
+  //   //   });
+  //   // }
+  // });
+
+  // console.log(badges);
+
+  console.log('went here');
   return {
     achievedBadges,
     isLoading,

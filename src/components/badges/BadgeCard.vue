@@ -138,6 +138,8 @@ export default defineComponent({
     const rarityName = ref('');
     const gildClass = ref('');
 
+    console.log('BadgeCard props', props);
+
     watch(
       props,
       () => {
