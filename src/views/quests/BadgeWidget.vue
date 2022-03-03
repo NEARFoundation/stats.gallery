@@ -1,10 +1,12 @@
 <template>
   <BadgeCard
-    :group="badge.group"
-    :name="badge.badge_name"
-    :description="badge.badge_description"
-    :fraction="badge.rarity_fraction"
-    :achieved="achieved"
+    v-for="(b, i) in badges"
+    :key="i"
+    :group="b[0].group"
+    :name="b[0].badge_name"
+    :description="b[0].badge_description"
+    :fraction="b[0].rarity_fraction"
+    :achieved="b[0].achieved"
   />
 </template>
 
@@ -18,17 +20,10 @@ export default defineComponent({
     BadgeCard,
   },
   props: {
-    badge: {
+    badges: {
       type: Object as PropType<IBadgeDescriptor>,
       required: true,
     },
-    achieved: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup(props) {
-    console.log('badge widget props', props.badge);
   },
 });
 </script>

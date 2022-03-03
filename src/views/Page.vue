@@ -273,6 +273,19 @@ export default defineComponent({
     ContactIcon,
     AnnotationIcon,
   },
+  data() {
+    const { account, network } = useNear();
+    const { achievedBadges } = useAchievedBadges({ account, network });
+    const badgeGroups = ref([] as IBadgeDescriptor[]);
+
+    watch(achievedBadges, achievedBadges => {
+      badgeGroups.value = achievedBadges;
+    });
+
+    return {
+      badgeGroups,
+    };
+  },
   setup() {
     const { account, accountView, network, timeframe } = useNear();
     const {
@@ -283,13 +296,6 @@ export default defineComponent({
       account,
       network,
       timeframe,
-    });
-
-    const { achievedBadges } = useAchievedBadges({ account, network });
-    const badgeGroups = ref([] as IBadgeDescriptor[]);
-
-    watch(achievedBadges, achievedBadges => {
-      badgeGroups.value = achievedBadges;
     });
 
     const getTweetText = (routeName: string) => {
@@ -345,7 +351,6 @@ export default defineComponent({
       timeframe,
       score,
       accountLevel,
-      badgeGroups,
       OverviewIcon,
       StatsIcon,
       TransactionsIcon,

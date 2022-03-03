@@ -1,5 +1,5 @@
 import { Network } from '@/services/near/indexer/networks';
-import { reactive, ref, Ref, watch } from 'vue';
+import { reactive, ref, Ref, watch, toRaw } from 'vue';
 import { useMultiple } from '../useMultiple';
 import { IBadgeDescriptor } from './badges';
 
@@ -13,8 +13,8 @@ export function useAchievedBadges({
   achievedBadges: Ref<IBadgeDescriptor[]>;
   isLoading: Ref<boolean>;
 } {
-  const achievedBadges: Ref<IBadgeDescriptor[]> = ref([] as IBadgeDescriptor[]);
   const isLoading = ref(true);
+  const badges = ref([] as IBadgeDescriptor[]);
 
   const { value: nft } = useMultiple<IBadgeDescriptor>(
     'v2/badge-nft',
@@ -25,51 +25,25 @@ export function useAchievedBadges({
     [],
   );
 
-  watch(nft, value => {
-    // for (const n of nft.value) {
-    achievedBadges.value = value;
-    // }
+  const { value: stake } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-stake',
+    {
+      account,
+      network,
+    },
+    [],
+  );
+
+  watch(stake, stake => {
+    badges.value = badges.value.concat(stake);
   });
 
-  console.log('watch nft', achievedBadges);
+  watch(nft, nft => {
+    badges.value = badges.value.concat(nft);
+  });
 
-  // badges.forEach(async badgeGroup => {
-  //   const { badges, isLoading: isBadgeLoading } = badgeGroup.composable({
-  //     account,
-  //     network,
-  //   });
-
-  //   watch(badges, badges => {
-  //     console.log(badges);
-  //     // for (const b of badges) {
-  //     //   if (b.achieved) {
-  //     //     achievedBadges.add(b);
-  //     //   } else {
-  //     //     achievedBadges.delete(b);
-  //     //   }
-  //     // }
-  //   });
-
-  //   // for (const badge of badges.value) {
-  //   //   console.log('useAchievedBadges', badge);
-
-  //   //   watch(isBadgeLoading, isBadgeLoading => {
-  //   //     if (isBadgeLoading) {
-  //   //       loading.add(badge);
-  //   //     } else {
-  //   //       loading.delete(badge);
-  //   //     }
-
-  //   //     isLoading.value = loading.size > 0;
-  //   //   });
-  //   // }
-  // });
-
-  // console.log(badges);
-
-  console.log('went here');
   return {
-    achievedBadges,
+    achievedBadges: badges,
     isLoading,
   };
 }

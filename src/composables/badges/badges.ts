@@ -1,6 +1,3 @@
-import { useMultiple } from '../useMultiple';
-import { BadgeComposable } from './BadgeComposable';
-
 export type BadgeGroup = 'nft' | 'transfer' | 'contract' | 'stake';
 
 export interface IBadgeDescriptor {
@@ -13,7 +10,3 @@ export interface IBadgeDescriptor {
   group: BadgeGroup;
   achieved: boolean;
 }
-
-// export const badges: IBadgeDescriptor[] = [
-//   useMultiple<T[]>
-// ];
