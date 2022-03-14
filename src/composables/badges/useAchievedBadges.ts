@@ -1,6 +1,7 @@
 import { Network } from '@/services/near/indexer/networks';
-import { reactive, ref, Ref, watch } from 'vue';
-import { badges, IBadgeDescriptor } from './badges';
+import { ref, Ref, watch } from 'vue';
+import { useMultiple } from '../useMultiple';
+import { IBadgeDescriptor } from './badges';
 
 export function useAchievedBadges({
   account,
@@ -9,41 +10,64 @@ export function useAchievedBadges({
   account: Ref<string>;
   network: Ref<Network>;
 }): {
-  achievedBadges: Set<IBadgeDescriptor>;
+  achievedBadges: Ref<IBadgeDescriptor[]>;
   isLoading: Ref<boolean>;
 } {
-  const achievedBadges = reactive(new Set<IBadgeDescriptor>());
   const isLoading = ref(true);
+  const badges = ref([] as IBadgeDescriptor[]);
 
-  const loading = new Set<IBadgeDescriptor>();
-
-  badges.forEach(badge => {
-    const { achieved, isLoading: isBadgeLoading } = badge.composable({
+  const { value: nft } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-nft',
+    {
       account,
       network,
-    });
+    },
+    [],
+  );
 
-    watch(achieved, achieved => {
-      if (achieved) {
-        achievedBadges.add(badge);
-      } else {
-        achievedBadges.delete(badge);
-      }
-    });
+  const { value: stake } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-stake',
+    {
+      account,
+      network,
+    },
+    [],
+  );
 
-    watch(isBadgeLoading, isBadgeLoading => {
-      if (isBadgeLoading) {
-        loading.add(badge);
-      } else {
-        loading.delete(badge);
-      }
+  const { value: transfer } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-transfer',
+    {
+      account,
+      network,
+    },
+    [],
+  );
 
-      isLoading.value = loading.size > 0;
-    });
+  const { value: deploy } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-deploy',
+    {
+      account,
+      network,
+    },
+    [],
+  );
+
+  watch([nft, stake, transfer, deploy], ([nft, stake, transfer, deploy]) => {
+    // considered using toRaw in this but it lacks "traditional" array properties
+    // so this is a very painful experience that makes me averse to use vue again
+    const rawNFTBadges = JSON.parse(JSON.stringify(nft));
+    const rawStakingBadges = JSON.parse(JSON.stringify(stake));
+    const rawTransferBadges = JSON.parse(JSON.stringify(transfer));
+    const rawTransferDeploy = JSON.parse(JSON.stringify(deploy));
+
+    badges.value = rawNFTBadges.result
+      .concat(rawStakingBadges.result)
+      .concat(rawTransferBadges.result)
+      .concat(rawTransferDeploy.result);
   });
 
   return {
-    achievedBadges,
+    achievedBadges: badges,
     isLoading,
   };
 }

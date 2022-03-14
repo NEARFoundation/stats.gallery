@@ -7,12 +7,7 @@
       class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"
       style="grid-auto-rows: 1fr"
     >
-      <BadgeWidget
-        v-for="(badge, i) in badges"
-        :key="i"
-        :badge="badge"
-        :achieved="achievedBadges.has(badge)"
-      />
+      <BadgeWidget v-for="(b, i) in achievedBadges" :key="i" :badge="b" />
       <div
         class="
           flex
@@ -43,7 +38,6 @@
 </style>
 
 <script lang="ts">
-import { badges } from '@/composables/badges/badges';
 import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useNear } from '@/composables/useNear';
 import { defineComponent } from 'vue';
@@ -53,7 +47,7 @@ export default defineComponent({
   components: {
     BadgeWidget,
   },
-  setup() {
+  data() {
     const { account, network } = useNear();
     const { achievedBadges, isLoading } = useAchievedBadges({
       account,
@@ -61,7 +55,6 @@ export default defineComponent({
     });
 
     return {
-      badges,
       achievedBadges,
       isLoading,
     };
