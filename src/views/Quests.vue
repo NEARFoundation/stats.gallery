@@ -7,7 +7,7 @@
       class="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"
       style="grid-auto-rows: 1fr"
     >
-      <BadgeWidget v-for="(b, i) in achievedBadges" :key="i" :badges="b" />
+      <BadgeWidget v-for="(b, i) in achievedBadges" :key="i" :badge="b" />
       <div
         class="
           flex
@@ -40,7 +40,7 @@
 <script lang="ts">
 import { useAchievedBadges } from '@/composables/badges/useAchievedBadges';
 import { useNear } from '@/composables/useNear';
-import { defineComponent, watch } from 'vue';
+import { defineComponent } from 'vue';
 import BadgeWidget from './quests/BadgeWidget.vue';
 
 export default defineComponent({

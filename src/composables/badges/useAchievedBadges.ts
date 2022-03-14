@@ -1,5 +1,5 @@
 import { Network } from '@/services/near/indexer/networks';
-import { reactive, ref, Ref, watch, toRaw } from 'vue';
+import { ref, Ref, watch } from 'vue';
 import { useMultiple } from '../useMultiple';
 import { IBadgeDescriptor } from './badges';
 
@@ -34,12 +34,36 @@ export function useAchievedBadges({
     [],
   );
 
-  watch(stake, stake => {
-    badges.value = badges.value.concat(stake);
-  });
+  const { value: transfer } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-transfer',
+    {
+      account,
+      network,
+    },
+    [],
+  );
 
-  watch(nft, nft => {
-    badges.value = badges.value.concat(nft);
+  const { value: deploy } = useMultiple<IBadgeDescriptor>(
+    'v2/badge-deploy',
+    {
+      account,
+      network,
+    },
+    [],
+  );
+
+  watch([nft, stake, transfer, deploy], ([nft, stake, transfer, deploy]) => {
+    // considered using toRaw in this but it lacks "traditional" array properties
+    // so this is a very painful experience that makes me averse to use vue again
+    const rawNFTBadges = JSON.parse(JSON.stringify(nft));
+    const rawStakingBadges = JSON.parse(JSON.stringify(stake));
+    const rawTransferBadges = JSON.parse(JSON.stringify(transfer));
+    const rawTransferDeploy = JSON.parse(JSON.stringify(deploy));
+
+    badges.value = rawNFTBadges.result
+      .concat(rawStakingBadges.result)
+      .concat(rawTransferBadges.result)
+      .concat(rawTransferDeploy.result);
   });
 
   return {
