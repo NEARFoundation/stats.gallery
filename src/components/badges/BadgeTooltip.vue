@@ -1,5 +1,5 @@
 <template>
-  <Tooltip>
+  <Tooltip v-if="achieved">
     <template #trigger>
       <BadgeIcon :group="group" :gildClass="gildClass" class="w-8 h-8" />
     </template>
@@ -74,6 +74,10 @@ export default defineComponent({
     },
     fraction: {
       type: Number,
+      required: true,
+    },
+    achieved: {
+      type: Boolean,
       required: true,
     },
   },

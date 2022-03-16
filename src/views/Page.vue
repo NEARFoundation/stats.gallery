@@ -33,6 +33,7 @@
           :description="badge.badge_description"
           :fraction="badge.rarity_fraction"
           :group="badge.group"
+          :achieved="badge.achieved"
         />
       </div>
 
