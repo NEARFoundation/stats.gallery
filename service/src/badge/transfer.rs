@@ -2,7 +2,7 @@ use std::{collections::HashSet, pin::Pin, time::Duration};
 
 use crate::badge::BadgeCheckResult;
 
-use super::{Badge, BadgeStruct, BadgeTrait};
+use super::{Badge, BadgeStruct, BadgeTrait, BadgeStartFn};
 use async_trait::async_trait;
 use futures::{future::BoxFuture, Future, FutureExt};
 use near_jsonrpc_client::JsonRpcClient;
@@ -106,6 +106,7 @@ select count(*) as result
         .to_vec();
 
         BadgeCheckResult {
+            account_id: account_id.clone(),
             awarded: awarded.into_iter().collect(),
             checked: BADGE_IDS.to_vec().into_iter().collect(),
         }
@@ -181,6 +182,7 @@ fn test() {
     let y = BadgeStruct {
         checker: Box::new(|_, _, _| async {
             Ok(BadgeCheckResult {
+                account_id: "account".parse().unwrap(),
                 awarded: HashSet::new(),
                 checked: HashSet::new(),
             }) as Result<_, TransferBadgeError>
@@ -193,6 +195,61 @@ fn test() {
     // let x: Vec<Box<dyn BadgeTrait>> = vec![Box::new(x), Box::new(y)];
 }
 
-fn x(y: Box<dyn Future<Output = Result<Option<PgRow>, sqlx::Error>> + Sync>, z: Box<u128>) {
-    let x: Box<dyn Sync> = Box::new(y);
+fn badge_checker_fn(
+    indexer_pool: &PgPool,
+    rpc_client: &JsonRpcClient,
+    input: &mut tokio::sync::watch::Receiver<AccountId>,
+    output: tokio::sync::watch::Sender<BadgeCheckResult>,
+) {
+    #[derive(sqlx::FromRow)]
+    struct WithResult {
+        pub result: i64,
+    }
+
+
+    tokio::spawn(async move {
+        // while let Some(x) = input.changed().await {}
+
+
+    sqlx::query_as::<_, WithResult>(
+        r#"
+            select count(*) as result
+                from action_receipt_actions
+                where action_kind = 'TRANSFER'
+                    and receipt_predecessor_account_id = $1
+              "#,
+    )
+    .bind(account_id.to_string())
+    .fetch_one(indexer_pool)
+    .map(|result| {
+        result
+            .map(|r| {
+                let total = r.result;
+                let awarded = if total >= 100 {
+                    BADGE_IDS
+                } else if total >= 10 {
+                    &BADGE_IDS[..2]
+                } else if total >= 1 {
+                    &BADGE_IDS[..1]
+                } else {
+                    &[]
+                }
+                .to_vec();
+
+                BadgeCheckResult {
+                    account_id,
+                    awarded: awarded.into_iter().collect(),
+                    checked: BADGE_IDS.to_vec().into_iter().collect(),
+                }
+            })
+            .map_err(|e| TransferBadgeError::from(e))
+    });
+    .boxed()
+    .shared()
+    .await
+    });
+}
+
+fn t() {
+    let x: BadgeStartFn = badge_checker_fn;
 }

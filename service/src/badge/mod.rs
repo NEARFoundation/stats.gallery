@@ -4,18 +4,19 @@ use std::{
 };
 
 use async_trait::async_trait;
-use futures::{Future, future::BoxFuture};
-use lazy_static::lazy_static;
+use futures::Future;
+
 use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
 use sqlx::PgPool;
 
-use self::transfer::Transfer;
+use tokio::sync::mpsc::{Receiver, Sender};
 
 pub type BadgeId = &'static str;
 
 #[derive(Clone)]
 pub struct BadgeCheckResult {
+    pub account_id: AccountId,
     pub awarded: HashSet<BadgeId>,
     pub checked: HashSet<BadgeId>,
 }
@@ -26,6 +27,23 @@ pub type BadgeChecker =
         rpc_client: &JsonRpcClient,
         account_id: &AccountId,
     ) -> Pin<Box<dyn Future<Output = Result<BadgeCheckResult, Box<dyn std::error::Error>>>>>;
+
+pub trait BadgeStart {
+    fn run(
+        &self,
+        indexer_pool: &PgPool,
+        rpc_client: &JsonRpcClient,
+        input: tokio::sync::watch::Receiver<AccountId>,
+        output: tokio::sync::watch::Sender<BadgeCheckResult>,
+    );
+}
+
+pub type BadgeStartFn = fn(
+    indexer_pool: &PgPool,
+    rpc_client: &JsonRpcClient,
+    input: tokio::sync::watch::Receiver<AccountId>,
+    output: tokio::sync::watch::Sender<BadgeCheckResult>,
+);
 
 pub struct BadgeRegistry {
     registry: HashMap<BadgeId, BadgeChecker>,
@@ -46,33 +64,33 @@ impl BadgeRegistry {
         self.registry.insert(badge_id, checker);
     }
 
-    pub async fn check_account(
-        &self,
-        account_id: &AccountId,
-        indexer_pool: &PgPool,
-        rpc_client: &JsonRpcClient,
-        ignore_badge_ids: &HashSet<BadgeId>,
-    ) -> BadgeCheckResult {
-        let mut ignore_badge_ids = ignore_badge_ids.clone();
-        let mut awarded = HashSet::<BadgeId>::new();
-        let mut checked = HashSet::<BadgeId>::new();
+    // pub async fn check_account(
+    //     &self,
+    //     account_id: &AccountId,
+    //     indexer_pool: &PgPool,
+    //     rpc_client: &JsonRpcClient,
+    //     ignore_badge_ids: &HashSet<BadgeId>,
+    // ) -> BadgeCheckResult {
+    //     let mut ignore_badge_ids = ignore_badge_ids.clone();
+    //     let mut awarded = HashSet::<BadgeId>::new();
+    //     let mut checked = HashSet::<BadgeId>::new();
 
-        for badge_id in self.registry.keys() {
-            if ignore_badge_ids.contains(badge_id) {
-                continue;
-            }
+    //     for badge_id in self.registry.keys() {
+    //         if ignore_badge_ids.contains(badge_id) {
+    //             continue;
+    //         }
 
-            let checker = self.registry[badge_id];
-            let result = checker(indexer_pool, rpc_client, account_id).await;
-            if let Ok(result) = result {
-                awarded.extend(result.awarded);
-                checked.extend(&result.checked);
-                ignore_badge_ids.extend(result.checked);
-            } // TODO: Err case
-        }
+    //         let checker = self.registry[badge_id];
+    //         let result = checker(indexer_pool, rpc_client, account_id).await;
+    //         if let Ok(result) = result {
+    //             awarded.extend(result.awarded);
+    //             checked.extend(&result.checked);
+    //             ignore_badge_ids.extend(result.checked);
+    //         } // TODO: Err case
+    //     }
 
-        BadgeCheckResult { awarded, checked }
-    }
+    //     BadgeCheckResult { awarded, checked }
+    // }
 }
 
 // pub fn badges() -> Vec<Box<dyn Badge>> {
@@ -95,7 +113,6 @@ where
     E: std::error::Error,
     'b: 'a,
 {
-
     pub badges: HashSet<BadgeId>,
     pub checker:
         Box<dyn 'a + Send + Sync + Fn(&'b PgPool, &'b JsonRpcClient, &'b AccountId) -> Fut>,
