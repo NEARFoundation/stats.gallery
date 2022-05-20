@@ -29,15 +29,38 @@ pub async fn update_account(
         get_account_balance(jsonrpc_client, account_id.clone())
     );
 
+    if score.is_err() || balance.is_err() {
+        println!("Error calculating score or balance for {account_id}: {:?}\n{:?}", &score, &balance);
+        let err_query_result = sqlx::query!(
+            r#"
+INSERT INTO account(id, consecutive_errors)
+    VALUES ($1, 1)
+    ON CONFLICT (id) DO
+        UPDATE SET consecutive_errors = account.consecutive_errors + 1
+        "#,
+            account_id.to_string()
+        )
+        .execute(local_pool)
+        .await;
+
+        match err_query_result {
+            Ok(..) => println!("Successfully updated consecutive_errors"),
+            Err(e) => println!("Failed to update consecutive_errors: {e:?}"),
+        };
+    }
+
     let score = score.map_err(|e| UpdateAccountError::ScoreError(e))?;
     let balance = Decimal::from_u128(balance?);
 
     sqlx::query!(
         "
-INSERT INTO account(id, balance, score)
-    VALUES ($1, $2, $3)
+INSERT INTO account(id, balance, score, consecutive_errors)
+    VALUES ($1, $2, $3, 0)
     ON CONFLICT (id) DO
-        UPDATE SET balance = EXCLUDED.balance, score = EXCLUDED.score
+        UPDATE SET
+            balance = EXCLUDED.balance,
+            score = EXCLUDED.score,
+            consecutive_errors = 0
 ",
         account_id.to_string(),
         balance,

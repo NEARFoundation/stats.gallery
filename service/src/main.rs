@@ -60,6 +60,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await
     .unwrap();
 
+    let accounts = vec![
+        "thorinoracle.near",
+        "igwt5.near",
+        "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near",
+        "onebadman.near",
+        "poshat.near",
+        "shedevr4.near",
+        "kuki.near",
+        "artfrontirdao.near",
+        "0001k.near",
+    ];
+
     println!("Checking {} accounts", accounts.len());
 
     println!("Creating badge registry");
