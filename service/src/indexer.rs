@@ -16,11 +16,13 @@ select distinct predecessor_account_id as account_id
     from receipts
     where included_in_block_timestamp > $1
         and length(predecessor_account_id) != 64
+        and predecessor_account_id like '%.%'
 union
-    select distinct receiver_account_id as account_id
+select distinct receiver_account_id as account_id
     from receipts
     where included_in_block_timestamp > $1
         and length(receiver_account_id) != 64
+        and receiver_account_id like '%.%'
 ",
     )
     .bind(timestamp_nanoseconds as i64) // for some reason Encode is not implemented for u64 on Postgres

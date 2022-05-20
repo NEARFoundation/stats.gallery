@@ -1,10 +1,17 @@
+use std::{collections::HashSet, ops::Sub};
+
+use chrono::Duration;
 use dotenv::dotenv;
 
 use near_jsonrpc_client::JsonRpcClient;
+use near_primitives::types::AccountId;
 use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
 
-use crate::badge::{BadgeRegistry, transfer};
+use crate::{
+    badge::{transfer, BadgeRegistry},
+    indexer::get_recent_actors, updater::update_account,
+};
 
 #[derive(Deserialize)]
 struct Configuration {
@@ -38,32 +45,48 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let jsonrpc_client = JsonRpcClient::connect(&config.rpc_url);
 
-    let mut badge_registry = BadgeRegistry::new();
+    println!("Requesting accounts");
 
-    // for badge_id in transfer::BADGE_IDS {
-    //     badge_registry.register(badge_id, transfer::check_account);
-    // }
+    let accounts = get_recent_actors(
+        &indexer_pool,
+        chrono::Utc::now()
+            .sub(Duration::minutes(5))
+            .timestamp_nanos()
+            .try_into()
+            .unwrap(),
+    ).await.unwrap();
 
+    println!("Checking {} accounts", accounts.len());
 
-    // updater::update_account(
-    //     &local_pool,
-    //     &indexer_pool,
-    //     &jsonrpc_client,
-    //     "hatchet.near".parse().unwrap(),
-    // ).await.unwrap();
+    println!("Creating badge registry");
 
-    // let result = indexer::get_recent_actors(&indexer_pool, 1652741757312000000).await?;
+    let mut badge_registry = BadgeRegistry::new(indexer_pool.clone(), jsonrpc_client.clone());
 
-    // println!("{}", &result.len());
+    let mut r = badge_registry.subscribe();
 
-    // let mut result = sqlx::query("select * from accounts limit 10").fetch(&pool);
+    let target = accounts.len();
 
-    // while let Some(row) = result.try_next().await? {
-    //     let account_id: Result<String, _> = row.try_get("account_id");
-    //     if let Ok(account_id) = account_id {
-    //         println!("Account ID: {account_id}");
-    //     }
-    // }
+    let badge_handle = tokio::spawn(async move {
+        println!("Listening for badge results");
+        let mut done = 0;
+        while let Ok(result) = r.recv().await {
+            done += 1;
+            let account_id = result.account_id;
+            println!("{done} / {target} - {account_id}");
+        }
+    });
+
+    badge_registry.register(transfer::BADGE_IDS, transfer::start);
+
+    for account in accounts {
+        let account_id: AccountId = account.parse().unwrap();
+        badge_registry.queue_account(account_id.clone(), HashSet::new()).await;
+        update_account(&local_pool, &indexer_pool, &jsonrpc_client, account_id).await.unwrap();
+    }
+
+    println!("Waiting.");
+
+    badge_handle.await.unwrap();
 
     Ok(())
 }

@@ -1,68 +1,18 @@
-use std::{collections::HashSet, pin::Pin, time::Duration};
+use std::sync::Arc;
 
 use crate::badge::BadgeCheckResult;
 
-use super::{Badge, BadgeStruct, BadgeTrait, BadgeStartFn};
-use async_trait::async_trait;
-use futures::{future::BoxFuture, Future, FutureExt};
+use super::BadgeStartFn;
+use futures::FutureExt;
 use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
-use sqlx::{postgres::PgRow, PgPool};
+use sqlx::PgPool;
 use thiserror::Error;
-use tokio::time::{sleep_until, Instant};
-
-pub struct Transfer;
 
 pub static TRANSFER_1: &'static str = "b36c3dd2-b8b0-4098-b227-63290f009668";
 pub static TRANSFER_10: &'static str = "609b2017-9534-4737-b86b-6ee4897fc4f9";
 pub static TRANSFER_100: &'static str = "64ce9af9-52ac-49dc-96fd-031b4fa2efad";
 pub static BADGE_IDS: &'static [&'static str] = &[TRANSFER_1, TRANSFER_10, TRANSFER_100];
-
-#[async_trait]
-impl Badge for Transfer {
-    fn badge_ids() -> &'static [&'static str] {
-        BADGE_IDS
-    }
-
-    async fn check_account(
-        indexer_pool: &PgPool,
-        _: &JsonRpcClient,
-        account_id: &AccountId,
-    ) -> Vec<&'static str> {
-        #[derive(sqlx::FromRow)]
-        struct WithResult {
-            pub result: i64,
-        }
-
-        let result = sqlx::query_as::<_, WithResult>(
-            r#"
-select count(*) as result
-    from action_receipt_actions
-    where action_kind = 'TRANSFER'
-        and receipt_predecessor_account_id = $1
-  "#,
-        )
-        .bind(account_id.to_string())
-        .fetch_one(indexer_pool)
-        .await;
-
-        match result {
-            Ok(result) => {
-                let total = result.result;
-                if total >= 100 {
-                    BADGE_IDS.to_vec()
-                } else if total >= 10 {
-                    BADGE_IDS[..2].to_vec()
-                } else if total >= 1 {
-                    BADGE_IDS[..1].to_vec()
-                } else {
-                    vec![]
-                }
-            }
-            _ => vec![],
-        }
-    }
-}
 
 #[derive(Error, Debug)]
 enum TransferBadgeError {
@@ -70,146 +20,14 @@ enum TransferBadgeError {
     QueryFailure(#[from] sqlx::Error),
 }
 
-pub async fn check_account(
-    indexer_pool: &PgPool,
-    _: &JsonRpcClient,
-    account_id: &AccountId,
-) -> Result<BadgeCheckResult, impl std::error::Error> {
+async fn perform_query(
+    indexer_pool: PgPool,
+    account_id: AccountId,
+) -> Result<BadgeCheckResult, TransferBadgeError> {
     #[derive(sqlx::FromRow)]
     struct WithResult {
         pub result: i64,
     }
-
-    let result = sqlx::query_as::<_, WithResult>(
-        r#"
-select count(*) as result
-    from action_receipt_actions
-    where action_kind = 'TRANSFER'
-        and receipt_predecessor_account_id = $1
-  "#,
-    )
-    .bind(account_id.to_string())
-    .fetch_one(indexer_pool)
-    .await;
-
-    result.map(|result| {
-        let total = result.result;
-        let awarded = if total >= 100 {
-            BADGE_IDS
-        } else if total >= 10 {
-            &BADGE_IDS[..2]
-        } else if total >= 1 {
-            &BADGE_IDS[..1]
-        } else {
-            &[]
-        }
-        .to_vec();
-
-        BadgeCheckResult {
-            account_id: account_id.clone(),
-            awarded: awarded.into_iter().collect(),
-            checked: BADGE_IDS.to_vec().into_iter().collect(),
-        }
-    })
-}
-
-fn test() {
-    // let x = BadgeStruct {
-    //     checker: Box::new(|indexer_pool, _, account_id| async move {
-    //         #[derive(sqlx::FromRow)]
-    //         struct WithResult {
-    //             pub result: i64,
-    //         }
-
-    //         sqlx::query_as::<_, WithResult>(
-    //             r#"
-    //         select count(*) as result
-    //             from action_receipt_actions
-    //             where action_kind = 'TRANSFER'
-    //                 and receipt_predecessor_account_id = $1
-    //           "#,
-    //         )
-    //         .bind(account_id.to_string())
-    //         .fetch_one(indexer_pool)
-    //         .map(|result| {
-    //             result
-    //                 .map(|r| {
-    //                     let total = r.result;
-    //                     let awarded = if total >= 100 {
-    //                         BADGE_IDS
-    //                     } else if total >= 10 {
-    //                         &BADGE_IDS[..2]
-    //                     } else if total >= 1 {
-    //                         &BADGE_IDS[..1]
-    //                     } else {
-    //                         &[]
-    //                     }
-    //                     .to_vec();
-
-    //                     BadgeCheckResult {
-    //                         awarded: awarded.into_iter().collect(),
-    //                         checked: BADGE_IDS.to_vec().into_iter().collect(),
-    //                     }
-    //                 })
-    //                 .map_err(|e| TransferBadgeError::from(e))
-    //         })
-    //         .boxed()
-    //         .shared()
-    //         .await
-
-    //         // result.map(|result| {
-    //         //     let total = result.result;
-    //         //     let awarded = if total >= 100 {
-    //         //         BADGE_IDS
-    //         //     } else if total >= 10 {
-    //         //         &BADGE_IDS[..2]
-    //         //     } else if total >= 1 {
-    //         //         &BADGE_IDS[..1]
-    //         //     } else {
-    //         //         &[]
-    //         //     }
-    //         //     .to_vec();
-
-    //         //     BadgeCheckResult {
-    //         //         awarded: awarded.into_iter().collect(),
-    //         //         checked: BADGE_IDS.to_vec().into_iter().collect(),
-    //         //     }
-    //         // })
-    //     }),
-    //     badges: HashSet::new(),
-    // };
-
-    let y = BadgeStruct {
-        checker: Box::new(|_, _, _| async {
-            Ok(BadgeCheckResult {
-                account_id: "account".parse().unwrap(),
-                awarded: HashSet::new(),
-                checked: HashSet::new(),
-            }) as Result<_, TransferBadgeError>
-        }),
-        badges: HashSet::new(),
-    };
-
-    // let t: Box<dyn BadgeTrait> = Box::new(x);
-
-    // let x: Vec<Box<dyn BadgeTrait>> = vec![Box::new(x), Box::new(y)];
-}
-
-fn badge_checker_fn(
-    indexer_pool: &PgPool,
-    rpc_client: &JsonRpcClient,
-    input: &mut tokio::sync::watch::Receiver<AccountId>,
-    output: tokio::sync::watch::Sender<BadgeCheckResult>,
-) {
-    #[derive(sqlx::FromRow)]
-    struct WithResult {
-        pub result: i64,
-    }
-
-
-    tokio::spawn(async move {
-        // while let Some(x) = input.changed().await {}
-
 
     sqlx::query_as::<_, WithResult>(
         r#"
@@ -220,7 +38,7 @@ fn badge_checker_fn(
               "#,
     )
     .bind(account_id.to_string())
-    .fetch_one(indexer_pool)
+    .fetch_one(&indexer_pool)
     .map(|result| {
         result
             .map(|r| {
@@ -243,13 +61,39 @@ fn badge_checker_fn(
                 }
             })
             .map_err(|e| TransferBadgeError::from(e))
-    });
-    .boxed()
-    .shared()
+    })
     .await
-    });
 }
 
-fn t() {
-    let x: BadgeStartFn = badge_checker_fn;
+pub fn start(
+    indexer_pool: &PgPool,
+    _: &JsonRpcClient,
+    mut input: tokio::sync::broadcast::Receiver<AccountId>,
+    output: tokio::sync::broadcast::Sender<BadgeCheckResult>,
+) {
+    let indexer_pool = indexer_pool.clone();
+
+    tokio::spawn(async move {
+        let concurrent = Arc::new(tokio::sync::Semaphore::new(5));
+
+        while let Ok(account_id) = input.recv().await {
+            let indexer_pool = indexer_pool.clone();
+            let output = output.clone();
+            let concurrent = concurrent.clone();
+
+            tokio::spawn(async move {
+                let permit = concurrent.acquire().await.unwrap();
+                println!("Acquired for {account_id}");
+                let result = perform_query(indexer_pool, account_id.clone()).await;
+                println!("Finished {account_id}");
+                drop(permit);
+                match result {
+                    Ok(result) => {
+                        output.send(result).unwrap(); // TODO: Log instead of unwrap
+                    }
+                    Err(e) => println!("{e:?}"),
+                }
+            });
+        }
+    });
 }
