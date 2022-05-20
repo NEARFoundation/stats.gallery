@@ -12,6 +12,10 @@ use sqlx::PgPool;
 
 use tokio::sync::{broadcast, Semaphore};
 
+const RESULT_CHANNEL_SIZE: usize = 32;
+const ACCOUNT_CHANNEL_SIZE: usize = 16;
+const MAX_SIMULTANEOUS_WORKERS: usize = 5;
+
 pub type BadgeId = &'static str;
 pub type BadgeCheckerRegistrationId = usize;
 
@@ -22,16 +26,20 @@ pub struct BadgeCheckResult {
     pub checked: HashSet<BadgeId>,
 }
 
+pub struct Connections {
+    pub indexer_pool: PgPool,
+    pub rpc_client: JsonRpcClient,
+}
+
 pub type BadgeStartFn = fn(
-    indexer_pool: &PgPool,
-    rpc_client: &JsonRpcClient,
-    input: tokio::sync::broadcast::Receiver<AccountId>,
-    output: tokio::sync::broadcast::Sender<BadgeCheckResult>,
+    semaphore: Semaphore,
+    connections: &Connections,
+    input: broadcast::Receiver<AccountId>,
+    output: broadcast::Sender<BadgeCheckResult>,
 );
 
 pub struct BadgeRegistry {
-    indexer_pool: PgPool,
-    rpc_client: JsonRpcClient,
+    connections: Connections,
     result_send: broadcast::Sender<BadgeCheckResult>,
     registration_to_fn:
         HashMap<BadgeCheckerRegistrationId, (Arc<Semaphore>, broadcast::Sender<AccountId>)>,
@@ -39,12 +47,11 @@ pub struct BadgeRegistry {
 }
 
 impl BadgeRegistry {
-    pub fn new(indexer_pool: PgPool, rpc_client: JsonRpcClient) -> Self {
-        let (result_send, _) = tokio::sync::broadcast::channel(32);
+    pub fn new(connections: Connections) -> Self {
+        let (result_send, _) = broadcast::channel(RESULT_CHANNEL_SIZE);
 
         Self {
-            indexer_pool,
-            rpc_client,
+            connections,
             result_send,
             registration_to_fn: HashMap::new(),
             badge_to_registration: HashMap::new(),
@@ -70,7 +77,7 @@ impl BadgeRegistry {
         }
 
         let registration_id = REGISTRATION_ID.fetch_add(1, Ordering::Relaxed);
-        let (account_send, account_recv) = tokio::sync::broadcast::channel(16);
+        let (account_send, account_recv) = broadcast::channel(ACCOUNT_CHANNEL_SIZE);
 
         for badge_id in badge_ids {
             self.badge_to_registration.insert(badge_id, registration_id);
@@ -78,12 +85,12 @@ impl BadgeRegistry {
 
         self.registration_to_fn.insert(
             registration_id,
-            (Arc::new(Semaphore::new(16)), account_send),
+            (Arc::new(Semaphore::new(ACCOUNT_CHANNEL_SIZE)), account_send),
         );
 
         start_checker(
-            &self.indexer_pool,
-            &self.rpc_client,
+            Semaphore::new(MAX_SIMULTANEOUS_WORKERS),
+            &self.connections,
             account_recv,
             self.result_send.clone(),
         );

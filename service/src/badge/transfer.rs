@@ -3,10 +3,12 @@ use std::sync::Arc;
 use crate::badge::BadgeCheckResult;
 
 use futures::FutureExt;
-use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
 use sqlx::PgPool;
 use thiserror::Error;
+use tokio::sync::{broadcast, Semaphore};
+
+use super::Connections;
 
 pub static TRANSFER_1: &'static str = "b36c3dd2-b8b0-4098-b227-63290f009668";
 pub static TRANSFER_10: &'static str = "609b2017-9534-4737-b86b-6ee4897fc4f9";
@@ -65,23 +67,23 @@ async fn perform_query(
 }
 
 pub fn start(
-    indexer_pool: &PgPool,
-    _: &JsonRpcClient,
-    mut input: tokio::sync::broadcast::Receiver<AccountId>,
-    output: tokio::sync::broadcast::Sender<BadgeCheckResult>,
+    semaphore: Semaphore,
+    connections: &Connections,
+    mut input: broadcast::Receiver<AccountId>,
+    output: broadcast::Sender<BadgeCheckResult>,
 ) {
-    let indexer_pool = indexer_pool.clone();
+    let indexer_pool = connections.indexer_pool.clone();
 
     tokio::spawn(async move {
-        let concurrent = Arc::new(tokio::sync::Semaphore::new(5));
+        let semaphore = Arc::new(semaphore);
 
         while let Ok(account_id) = input.recv().await {
             let indexer_pool = indexer_pool.clone();
             let output = output.clone();
-            let concurrent = concurrent.clone();
+            let semaphore = semaphore.clone();
 
             tokio::spawn(async move {
-                let permit = concurrent.acquire().await.unwrap();
+                let permit = semaphore.acquire().await.unwrap();
                 println!("Acquired for {account_id}");
                 let result = perform_query(indexer_pool, account_id.clone()).await;
                 println!("Finished {account_id}");

@@ -9,7 +9,7 @@ use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
 
 use crate::{
-    badge::{transfer, BadgeRegistry},
+    badge::{transfer, BadgeRegistry, Connections},
     indexer::get_recent_actors,
     updater::update_account,
 };
@@ -63,7 +63,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Creating badge registry");
 
-    let mut badge_registry = BadgeRegistry::new(indexer_pool.clone(), jsonrpc_client.clone());
+    let mut badge_registry = BadgeRegistry::new(Connections {
+        indexer_pool: indexer_pool.clone(),
+        rpc_client: jsonrpc_client.clone(),
+    });
 
     let mut r = badge_registry.subscribe();
 
