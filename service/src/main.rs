@@ -7,6 +7,7 @@ use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
 use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
+use tokio::join;
 
 use crate::{
     badge::{transfer, BadgeRegistry, Connections},
@@ -82,16 +83,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     });
 
-    badge_registry.register(transfer::BADGE_IDS, transfer::start);
+    badge_registry.register(transfer::BADGE_IDS, transfer::run);
 
     for account in accounts {
         let account_id: AccountId = account.parse().unwrap();
-        badge_registry
-            .queue_account(account_id.clone(), HashSet::new())
-            .await;
-        update_account(&local_pool, &indexer_pool, &jsonrpc_client, account_id)
-            .await
-            .unwrap();
+        let (_, update) = join!(
+            badge_registry.queue_account(account_id.clone(), HashSet::new()),
+            update_account(
+                &local_pool,
+                &indexer_pool,
+                &jsonrpc_client,
+                account_id.clone()
+            ),
+        );
+
+        if let Err(..) = update {
+            println!("Error updating {}", &account_id);
+        }
     }
 
     println!("Waiting.");

@@ -26,14 +26,15 @@ pub struct BadgeCheckResult {
     pub checked: HashSet<BadgeId>,
 }
 
+#[derive(Clone)]
 pub struct Connections {
     pub indexer_pool: PgPool,
     pub rpc_client: JsonRpcClient,
 }
 
-pub type BadgeStartFn = fn(
+pub type BadgeWorker = fn(
     semaphore: Semaphore,
-    connections: &Connections,
+    connections: Connections,
     input: broadcast::Receiver<AccountId>,
     output: broadcast::Sender<BadgeCheckResult>,
 );
@@ -62,7 +63,7 @@ impl BadgeRegistry {
         self.result_send.subscribe()
     }
 
-    pub fn register(&mut self, badge_ids: &[BadgeId], start_checker: BadgeStartFn) {
+    pub fn register(&mut self, badge_ids: &[BadgeId], start_checker: BadgeWorker) {
         static REGISTRATION_ID: AtomicUsize = AtomicUsize::new(0);
 
         let badge_ids = badge_ids.iter().collect();
@@ -90,7 +91,7 @@ impl BadgeRegistry {
 
         start_checker(
             Semaphore::new(MAX_SIMULTANEOUS_WORKERS),
-            &self.connections,
+            self.connections.clone(),
             account_recv,
             self.result_send.clone(),
         );
@@ -116,6 +117,42 @@ impl BadgeRegistry {
             drop(permit);
         }
     }
+}
+
+#[macro_export]
+macro_rules! create_badge_worker {
+    ($query_fn: ident) => {
+        pub fn run(
+            semaphore: Semaphore,
+            connections: Connections,
+            mut input: broadcast::Receiver<AccountId>,
+            output: broadcast::Sender<BadgeCheckResult>,
+        ) {
+            tokio::spawn(async move {
+                let semaphore = Arc::new(semaphore);
+
+                while let Ok(account_id) = input.recv().await {
+                    let connections = connections.clone();
+                    let output = output.clone();
+                    let semaphore = semaphore.clone();
+
+                    tokio::spawn(async move {
+                        let permit = semaphore.acquire().await.unwrap();
+                        println!("Acquired for {account_id}");
+                        let result = $query_fn(connections, account_id.clone()).await;
+                        println!("Finished {account_id}");
+                        drop(permit);
+                        match result {
+                            Ok(result) => {
+                                output.send(result).unwrap(); // TODO: Log instead of unwrap
+                            }
+                            Err(e) => println!("{e:?}"),
+                        }
+                    });
+                }
+            });
+        }
+    };
 }
 
 pub mod transfer;

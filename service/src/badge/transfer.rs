@@ -4,7 +4,6 @@ use crate::badge::BadgeCheckResult;
 
 use futures::FutureExt;
 use near_primitives::types::AccountId;
-use sqlx::PgPool;
 use thiserror::Error;
 use tokio::sync::{broadcast, Semaphore};
 
@@ -22,7 +21,7 @@ enum TransferBadgeError {
 }
 
 async fn perform_query(
-    indexer_pool: PgPool,
+    connections: Connections,
     account_id: AccountId,
 ) -> Result<BadgeCheckResult, TransferBadgeError> {
     #[derive(sqlx::FromRow)]
@@ -39,7 +38,7 @@ async fn perform_query(
               "#,
     )
     .bind(account_id.to_string())
-    .fetch_one(&indexer_pool)
+    .fetch_one(&connections.indexer_pool)
     .map(|result| {
         result
             .map(|r| {
@@ -66,35 +65,4 @@ async fn perform_query(
     .await
 }
 
-pub fn start(
-    semaphore: Semaphore,
-    connections: &Connections,
-    mut input: broadcast::Receiver<AccountId>,
-    output: broadcast::Sender<BadgeCheckResult>,
-) {
-    let indexer_pool = connections.indexer_pool.clone();
-
-    tokio::spawn(async move {
-        let semaphore = Arc::new(semaphore);
-
-        while let Ok(account_id) = input.recv().await {
-            let indexer_pool = indexer_pool.clone();
-            let output = output.clone();
-            let semaphore = semaphore.clone();
-
-            tokio::spawn(async move {
-                let permit = semaphore.acquire().await.unwrap();
-                println!("Acquired for {account_id}");
-                let result = perform_query(indexer_pool, account_id.clone()).await;
-                println!("Finished {account_id}");
-                drop(permit);
-                match result {
-                    Ok(result) => {
-                        output.send(result).unwrap(); // TODO: Log instead of unwrap
-                    }
-                    Err(e) => println!("{e:?}"),
-                }
-            });
-        }
-    });
-}
+create_badge_worker!(perform_query);
