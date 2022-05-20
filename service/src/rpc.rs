@@ -11,12 +11,14 @@ use near_primitives::{
 
 pub async fn get_account_balance(
     client: &JsonRpcClient,
-    account_id: AccountId,
+    account_id: &AccountId,
 ) -> Result<u128, JsonRpcError<RpcQueryError>> {
     client
         .call(methods::query::RpcQueryRequest {
             block_reference: BlockReference::Finality(Finality::Final),
-            request: QueryRequest::ViewAccount { account_id },
+            request: QueryRequest::ViewAccount {
+                account_id: account_id.clone(),
+            },
         })
         .await
         .map(|r| match r.kind {

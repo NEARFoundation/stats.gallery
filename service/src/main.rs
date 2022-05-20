@@ -12,7 +12,7 @@ use tokio::join;
 use crate::{
     badge::{transfer, BadgeRegistry, Connections},
     indexer::get_recent_actors,
-    local::update_account,
+    local::{query_account, update_account},
 };
 
 #[derive(Deserialize)]
@@ -60,18 +60,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await
     .unwrap();
 
-    let accounts = vec![
-        "thorinoracle.near",
-        "igwt5.near",
-        "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near",
-        "onebadman.near",
-        "poshat.near",
-        "shedevr4.near",
-        "kuki.near",
-        "artfrontirdao.near",
-        "0001k.near",
-    ];
-
     println!("Checking {} accounts", accounts.len());
 
     println!("Creating badge registry");
@@ -97,16 +85,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     badge_registry.register(transfer::BADGE_IDS, transfer::run);
 
+    let now = chrono::Utc::now();
+
     for account in accounts {
         let account_id: AccountId = account.parse().unwrap();
+        let account_record = query_account(&local_pool, &account_id).await;
+        let is_update_allowed = account_record
+            .ok()
+            .and_then(|r| r.next_update_allowed_at())
+            .map(|cutoff| now >= cutoff)
+            .unwrap_or(true);
+
+        if !is_update_allowed {
+            println!("Disallowing update for {account_id}");
+            continue;
+        }
+
         let (_, update) = join!(
             badge_registry.queue_account(account_id.clone(), HashSet::new()),
-            update_account(
-                &local_pool,
-                &indexer_pool,
-                &jsonrpc_client,
-                account_id.clone()
-            ),
+            update_account(&local_pool, &indexer_pool, &jsonrpc_client, &account_id),
         );
 
         if let Err(..) = update {
