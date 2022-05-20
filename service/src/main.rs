@@ -12,7 +12,7 @@ use tokio::join;
 use crate::{
     badge::{transfer, BadgeRegistry, Connections},
     indexer::get_recent_actors,
-    updater::update_account,
+    local::update_account,
 };
 
 #[derive(Deserialize)]
@@ -25,8 +25,8 @@ struct Configuration {
 
 mod badge;
 mod indexer;
+mod local;
 mod rpc;
-mod updater;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
