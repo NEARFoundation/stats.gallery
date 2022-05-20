@@ -32,10 +32,7 @@ select distinct receiver_account_id as account_id
     .await
 }
 
-pub async fn calculate_account_score(
-    pool: &PgPool,
-    account_id: &str,
-) -> Result<u32, sqlx::Error> {
+pub async fn calculate_account_score(pool: &PgPool, account_id: &str) -> Result<u32, sqlx::Error> {
     #[derive(sqlx::FromRow)]
     struct WithResult {
         pub result: i64,

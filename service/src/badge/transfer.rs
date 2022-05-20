@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use crate::badge::BadgeCheckResult;
 
-use super::BadgeStartFn;
 use futures::FutureExt;
 use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;

@@ -10,7 +10,8 @@ use sqlx::{migrate, postgres::PgPoolOptions};
 
 use crate::{
     badge::{transfer, BadgeRegistry},
-    indexer::get_recent_actors, updater::update_account,
+    indexer::get_recent_actors,
+    updater::update_account,
 };
 
 #[derive(Deserialize)]
@@ -54,7 +55,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .timestamp_nanos()
             .try_into()
             .unwrap(),
-    ).await.unwrap();
+    )
+    .await
+    .unwrap();
 
     println!("Checking {} accounts", accounts.len());
 
@@ -80,8 +83,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for account in accounts {
         let account_id: AccountId = account.parse().unwrap();
-        badge_registry.queue_account(account_id.clone(), HashSet::new()).await;
-        update_account(&local_pool, &indexer_pool, &jsonrpc_client, account_id).await.unwrap();
+        badge_registry
+            .queue_account(account_id.clone(), HashSet::new())
+            .await;
+        update_account(&local_pool, &indexer_pool, &jsonrpc_client, account_id)
+            .await
+            .unwrap();
     }
 
     println!("Waiting.");
