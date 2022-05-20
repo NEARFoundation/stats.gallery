@@ -1,19 +1,22 @@
-use std::{ops::Add, str::FromStr};
+use std::{str::FromStr, sync::Arc};
 
 use chrono::{Duration, NaiveDateTime, TimeZone};
 use futures::FutureExt;
-use near_jsonrpc_client::{errors::JsonRpcError, methods::query::RpcQueryError, JsonRpcClient};
+use near_jsonrpc_client::{errors::JsonRpcError, methods::query::RpcQueryError};
 use near_primitives::types::AccountId;
 use num_traits::FromPrimitive;
 use sqlx::{types::Decimal, FromRow, PgPool};
-use tokio::join;
+use tokio::{
+    join,
+    sync::{broadcast, Semaphore},
+};
 
 /// Minimum amount of time between account updates
 const ACCOUNT_UPDATE_COOLDOWN_MINUTES: i64 = 60 * 6;
 /// Doubles every failure
 const ACCOUNT_UPDATE_FAILURE_PENALTY_COEFFICIENT_MINUTES: i64 = 60 * 12;
 
-use crate::{indexer::calculate_account_score, rpc::get_account_balance};
+use crate::{connections::Connections, indexer::calculate_account_score, rpc::get_account_balance};
 
 use thiserror::Error;
 
@@ -88,14 +91,12 @@ select id, balance, score, modified, consecutive_errors from account where id = 
 }
 
 pub async fn update_account(
-    local_pool: &PgPool,
-    indexer_pool: &PgPool,
-    jsonrpc_client: &JsonRpcClient,
+    connections: &Connections,
     account_id: &AccountId,
 ) -> Result<(), UpdateAccountError> {
     let (score, balance) = join!(
-        calculate_account_score(indexer_pool, &account_id),
-        get_account_balance(jsonrpc_client, &account_id)
+        calculate_account_score(&connections.indexer_pool, &account_id),
+        get_account_balance(&connections.rpc_client, &account_id)
     );
 
     if score.is_err() || balance.is_err() {
@@ -112,7 +113,7 @@ INSERT INTO account(id, consecutive_errors)
         "#,
             account_id.to_string()
         )
-        .execute(local_pool)
+        .execute(&connections.local_pool)
         .await;
 
         match err_query_result {
@@ -138,8 +139,35 @@ INSERT INTO account(id, balance, score, consecutive_errors)
         balance,
         score as i64
     )
-    .execute(local_pool)
+    .execute(&connections.local_pool)
     .await?;
 
     Ok(())
+}
+
+pub fn start_local_updater(
+    semaphore: Semaphore,
+    connections: Connections,
+    mut input: broadcast::Receiver<AccountId>,
+) {
+    tokio::spawn(async move {
+        let semaphore = Arc::new(semaphore);
+
+        while let Ok(account_id) = input.recv().await {
+            let connections = connections.clone();
+            let semaphore = semaphore.clone();
+
+            tokio::spawn(async move {
+                let permit = semaphore.acquire().await.unwrap();
+                println!("Acquired for {account_id}");
+                let result = update_account(&connections, &account_id).await;
+                println!("Finished {account_id}");
+                drop(permit);
+
+                if let Err(e) = result {
+                    println!("Error updating account {account_id}: {e:?}");
+                }
+            });
+        }
+    });
 }

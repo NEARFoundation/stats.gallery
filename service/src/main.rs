@@ -7,12 +7,13 @@ use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
 use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
-use tokio::join;
+use tokio::sync::{broadcast, Semaphore};
 
 use crate::{
-    badge::{transfer, BadgeRegistry, Connections},
+    badge::{transfer, BadgeRegistry},
+    connections::Connections,
     indexer::get_recent_actors,
-    local::{query_account, update_account},
+    local::query_account,
 };
 
 #[derive(Deserialize)]
@@ -24,6 +25,7 @@ struct Configuration {
 }
 
 mod badge;
+mod connections;
 mod indexer;
 mod local;
 mod rpc;
@@ -52,7 +54,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let accounts = get_recent_actors(
         &indexer_pool,
         chrono::Utc::now()
-            .sub(Duration::minutes(5))
+            .sub(Duration::minutes(10))
             .timestamp_nanos()
             .try_into()
             .unwrap(),
@@ -64,10 +66,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Creating badge registry");
 
-    let mut badge_registry = BadgeRegistry::new(Connections {
+    let connections = Connections {
+        local_pool: local_pool.clone(),
         indexer_pool: indexer_pool.clone(),
         rpc_client: jsonrpc_client.clone(),
-    });
+    };
+
+    let mut badge_registry = BadgeRegistry::new(connections.clone());
 
     let mut r = badge_registry.subscribe();
 
@@ -80,8 +85,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             done += 1;
             let account_id = result.account_id;
             println!("{done} / {target} - {account_id}");
+            // TODO: write badges back to local db
         }
     });
+
+    let local_semaphore = Semaphore::new(5);
+    let (account_send, account_recv) = broadcast::channel(16);
+    local::start_local_updater(local_semaphore, connections.clone(), account_recv);
 
     badge_registry.register(transfer::BADGE_IDS, transfer::run);
 
@@ -101,14 +111,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             continue;
         }
 
-        let (_, update) = join!(
-            badge_registry.queue_account(account_id.clone(), HashSet::new()),
-            update_account(&local_pool, &indexer_pool, &jsonrpc_client, &account_id),
-        );
-
-        if let Err(..) = update {
-            println!("Error updating {}", &account_id);
+        if let Err(e) = account_send.send(account_id.clone()) {
+            println!("Error sending to local updater: {e:?}");
         }
+
+        badge_registry
+            .queue_account(account_id.clone(), HashSet::new())
+            .await;
     }
 
     println!("Waiting.");

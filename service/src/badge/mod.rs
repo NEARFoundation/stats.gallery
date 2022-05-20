@@ -6,11 +6,11 @@ use std::{
     },
 };
 
-use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
-use sqlx::PgPool;
 
 use tokio::sync::{broadcast, Semaphore};
+
+use crate::connections::Connections;
 
 const RESULT_CHANNEL_SIZE: usize = 32;
 const ACCOUNT_CHANNEL_SIZE: usize = 16;
@@ -24,12 +24,6 @@ pub struct BadgeCheckResult {
     pub account_id: AccountId,
     pub awarded: HashSet<BadgeId>,
     pub checked: HashSet<BadgeId>,
-}
-
-#[derive(Clone)]
-pub struct Connections {
-    pub indexer_pool: PgPool,
-    pub rpc_client: JsonRpcClient,
 }
 
 pub type BadgeWorker = fn(
