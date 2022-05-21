@@ -30,12 +30,12 @@ async fn perform_query(
     }
 
     sqlx::query_as::<_, WithResult>(
-        r#"
-            select count(*) as result
-                from action_receipt_actions
-                where action_kind = 'TRANSFER'
-                    and receipt_predecessor_account_id = $1
-              "#,
+        r#"--sql
+select count(*) as result
+    from action_receipt_actions
+    where action_kind = 'TRANSFER'
+        and receipt_predecessor_account_id = $1
+"#,
     )
     .bind(account_id.to_string())
     .fetch_one(&connections.indexer_pool)

@@ -11,7 +11,7 @@ pub async fn get_recent_actors(
     }
 
     sqlx::query_as::<_, AccountId>(
-        "
+        r#"--sql
 select distinct predecessor_account_id as account_id
     from receipts
     where included_in_block_timestamp > $1
@@ -23,7 +23,7 @@ select distinct receiver_account_id as account_id
     where included_in_block_timestamp > $1
         and length(receiver_account_id) != 64
         and receiver_account_id like '%.%'
-",
+"#,
     )
     .bind(timestamp_nanoseconds as i64) // for some reason Encode is not implemented for u64 on Postgres
     .fetch(pool)
@@ -39,7 +39,7 @@ pub async fn calculate_account_score(pool: &PgPool, account_id: &str) -> Result<
     }
 
     sqlx::query_as::<_, WithResult>(
-        r#"
+        r#"--sql
 select coalesce(sum(
     case
     when action_kind = 'TRANSFER'
@@ -65,7 +65,6 @@ from (
     from transactions
     where (transactions.signer_account_id = $1
     or transactions.receiver_account_id = $1)
-    order by block_timestamp desc
 ) tx
 inner join receipts on tx.converted_into_receipt_id = receipts.receipt_id
 left outer join transaction_actions on tx.transaction_hash = transaction_actions.transaction_hash

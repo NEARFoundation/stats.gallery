@@ -80,8 +80,10 @@ pub async fn query_account(
 ) -> Result<AccountRecord, sqlx::Error> {
     sqlx::query_as!(
         AccountRecordDb,
-        r#"
-select id, balance, score, modified, consecutive_errors from account where id = $1
+        r#"--sql
+select id, balance, score, modified, consecutive_errors
+    from account
+    where id = $1
     "#,
         account_id.to_string()
     )
@@ -105,7 +107,7 @@ pub async fn update_account(
             &score, &balance
         );
         let err_query_result = sqlx::query!(
-            r#"
+            r#"--sql
 INSERT INTO account(id, consecutive_errors)
     VALUES ($1, 1)
     ON CONFLICT (id) DO
@@ -126,7 +128,7 @@ INSERT INTO account(id, consecutive_errors)
     let balance = Decimal::from_u128(balance?);
 
     sqlx::query!(
-        "
+        "--sql
 INSERT INTO account(id, balance, score, consecutive_errors)
     VALUES ($1, $2, $3, 0)
     ON CONFLICT (id) DO
