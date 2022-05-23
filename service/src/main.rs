@@ -16,7 +16,7 @@ use crate::{
     badge::{transfer, BadgeRegistry},
     connections::Connections,
     indexer::get_recent_actors,
-    local::{get_badges_for_account, query_account},
+    local::{add_badge_for_account, get_badges_for_account, query_account},
 };
 
 #[derive(Deserialize)]
@@ -77,21 +77,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut badge_registry = BadgeRegistry::new(connections.clone());
 
-    let mut r = badge_registry.subscribe();
-
-    let target = accounts.len();
-
-    let badge_handle = tokio::spawn(async move {
-        println!("Listening for badge results");
-        let mut done = 0;
-        while let Ok(result) = r.recv().await {
-            done += 1;
-            let account_id = result.account_id;
-            println!("{done} / {target} - {account_id}");
-            // TODO: write badges back to local db
-        }
-    });
-
     let local_semaphore = Semaphore::new(5);
     let (account_send, account_recv) = broadcast::channel(16);
     local::start_local_updater(local_semaphore, connections.clone(), account_recv);
@@ -122,17 +107,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("Error sending to local updater: {e:?}");
         }
 
-        badge_registry
+        let awarded_badges = badge_registry
             .queue_account(
                 account_id.clone(),
                 existing_badges.unwrap_or_else(|_| HashSet::new()),
             )
             .await;
+
+        for badge_id in awarded_badges {
+            match add_badge_for_account(&local_pool, &account_id, &badge_id).await {
+                Ok(_) => println!("Added badge {badge_id} to {account_id}"),
+                Err(e) => println!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
+            }
+        }
     }
-
-    println!("Waiting.");
-
-    badge_handle.await.unwrap();
 
     Ok(())
 }

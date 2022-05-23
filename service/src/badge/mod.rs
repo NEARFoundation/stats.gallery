@@ -9,11 +9,10 @@ use std::{
 use near_primitives::types::AccountId;
 
 use sqlx::types::Uuid;
-use tokio::sync::{broadcast, Semaphore};
+use tokio::sync::{broadcast, mpsc, Semaphore};
 
 use crate::connections::Connections;
 
-const RESULT_CHANNEL_SIZE: usize = 32;
 const ACCOUNT_CHANNEL_SIZE: usize = 16;
 const MAX_SIMULTANEOUS_WORKERS: usize = 5;
 
@@ -30,32 +29,28 @@ pub struct BadgeCheckResult {
 pub type BadgeWorker = fn(
     semaphore: Semaphore,
     connections: Connections,
-    input: broadcast::Receiver<AccountId>,
-    output: broadcast::Sender<BadgeCheckResult>,
+    input: broadcast::Receiver<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
 );
 
 pub struct BadgeRegistry {
     connections: Connections,
-    result_send: broadcast::Sender<BadgeCheckResult>,
-    registration_to_fn:
-        HashMap<BadgeCheckerRegistrationId, (Arc<Semaphore>, broadcast::Sender<AccountId>)>,
+    registration_to_fn: HashMap<
+        BadgeCheckerRegistrationId,
+        (
+            Arc<Semaphore>,
+            broadcast::Sender<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
+        ),
+    >,
     badge_to_registration: HashMap<BadgeId, BadgeCheckerRegistrationId>,
 }
 
 impl BadgeRegistry {
     pub fn new(connections: Connections) -> Self {
-        let (result_send, _) = broadcast::channel(RESULT_CHANNEL_SIZE);
-
         Self {
             connections,
-            result_send,
             registration_to_fn: HashMap::new(),
             badge_to_registration: HashMap::new(),
         }
-    }
-
-    pub fn subscribe(&self) -> broadcast::Receiver<BadgeCheckResult> {
-        self.result_send.subscribe()
     }
 
     pub fn register<'a, T>(&mut self, badge_ids: T, start_checker: BadgeWorker)
@@ -92,11 +87,14 @@ impl BadgeRegistry {
             Semaphore::new(MAX_SIMULTANEOUS_WORKERS),
             self.connections.clone(),
             account_recv,
-            self.result_send.clone(),
         );
     }
 
-    pub async fn queue_account(&self, account_id: AccountId, ignore_badge_ids: HashSet<BadgeId>) {
+    pub async fn queue_account(
+        &self,
+        account_id: AccountId,
+        ignore_badge_ids: HashSet<BadgeId>,
+    ) -> HashSet<BadgeId> {
         let registration_ids = self
             .badge_to_registration
             .iter()
@@ -109,12 +107,26 @@ impl BadgeRegistry {
             })
             .collect::<HashSet<_>>();
 
+        let (result_send, mut result_recv) = mpsc::channel(registration_ids.len());
+
         for registration_id in registration_ids {
             let (ref semaphore, ref sender) = self.registration_to_fn[registration_id];
             let permit = semaphore.acquire().await.unwrap();
-            sender.send(account_id.clone()).unwrap(); // TODO: Remove unwrap()
+            sender
+                .send((account_id.clone(), result_send.clone()))
+                .unwrap(); // TODO: Remove unwrap()
             drop(permit);
         }
+
+        drop(result_send);
+
+        let mut result = HashSet::new();
+
+        while let Some(part) = result_recv.recv().await {
+            result.extend(part.awarded);
+        }
+
+        result
     }
 }
 
@@ -122,17 +134,18 @@ impl BadgeRegistry {
 macro_rules! create_badge_worker {
     ($query_fn: ident) => {
         pub fn run(
-            semaphore: Semaphore,
-            connections: Connections,
-            mut input: broadcast::Receiver<AccountId>,
-            output: broadcast::Sender<BadgeCheckResult>,
+            semaphore: tokio::sync::Semaphore,
+            connections: $crate::connections::Connections,
+            mut input: tokio::sync::broadcast::Receiver<(
+                near_primitives::types::AccountId,
+                tokio::sync::mpsc::Sender<$crate::badge::BadgeCheckResult>,
+            )>,
         ) {
             tokio::spawn(async move {
-                let semaphore = Arc::new(semaphore);
+                let semaphore = std::sync::Arc::new(semaphore);
 
-                while let Ok(account_id) = input.recv().await {
+                while let Ok((account_id, output)) = input.recv().await {
                     let connections = connections.clone();
-                    let output = output.clone();
                     let semaphore = semaphore.clone();
 
                     tokio::spawn(async move {
@@ -143,7 +156,7 @@ macro_rules! create_badge_worker {
                         drop(permit);
                         match result {
                             Ok(result) => {
-                                output.send(result).unwrap(); // TODO: Log instead of unwrap
+                                output.send(result).await.unwrap(); // TODO: Log instead of unwrap
                             }
                             Err(e) => println!("{e:?}"),
                         }

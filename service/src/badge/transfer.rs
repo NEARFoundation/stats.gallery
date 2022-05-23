@@ -1,4 +1,4 @@
-use std::{collections::HashSet, str::FromStr, sync::Arc};
+use std::{collections::HashSet, str::FromStr};
 
 use crate::badge::BadgeCheckResult;
 
@@ -7,7 +7,6 @@ use lazy_static::lazy_static;
 use near_primitives::types::AccountId;
 use sqlx::types::Uuid;
 use thiserror::Error;
-use tokio::sync::{broadcast, Semaphore};
 
 use super::Connections;
 
@@ -20,11 +19,8 @@ lazy_static! {
         Uuid::from_str("609b2017-9534-4737-b86b-6ee4897fc4f9").unwrap();
     pub static ref TRANSFER_100: Uuid =
         Uuid::from_str("64ce9af9-52ac-49dc-96fd-031b4fa2efad").unwrap();
-    pub static ref BADGE_IDS: HashSet<Uuid> = HashSet::from([
-        *TRANSFER_1,
-        *TRANSFER_10,
-        *TRANSFER_100,
-    ]);
+    pub static ref BADGE_IDS: HashSet<Uuid> =
+        HashSet::from([*TRANSFER_1, *TRANSFER_10, *TRANSFER_100,]);
 }
 
 #[derive(Error, Debug)]
