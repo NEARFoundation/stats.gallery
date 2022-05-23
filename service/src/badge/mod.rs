@@ -8,6 +8,7 @@ use std::{
 
 use near_primitives::types::AccountId;
 
+use sqlx::types::Uuid;
 use tokio::sync::{broadcast, Semaphore};
 
 use crate::connections::Connections;
@@ -16,14 +17,14 @@ const RESULT_CHANNEL_SIZE: usize = 32;
 const ACCOUNT_CHANNEL_SIZE: usize = 16;
 const MAX_SIMULTANEOUS_WORKERS: usize = 5;
 
-pub type BadgeId = &'static str;
+pub type BadgeId = sqlx::types::Uuid;
 pub type BadgeCheckerRegistrationId = usize;
 
 #[derive(Clone, Debug)]
 pub struct BadgeCheckResult {
     pub account_id: AccountId,
     pub awarded: HashSet<BadgeId>,
-    pub checked: HashSet<BadgeId>,
+    pub checked: &'static HashSet<BadgeId>,
 }
 
 pub type BadgeWorker = fn(
@@ -57,10 +58,13 @@ impl BadgeRegistry {
         self.result_send.subscribe()
     }
 
-    pub fn register(&mut self, badge_ids: &[BadgeId], start_checker: BadgeWorker) {
+    pub fn register<'a, T>(&mut self, badge_ids: T, start_checker: BadgeWorker)
+    where
+        T: IntoIterator<Item = &'a Uuid>,
+    {
         static REGISTRATION_ID: AtomicUsize = AtomicUsize::new(0);
 
-        let badge_ids = badge_ids.iter().collect();
+        let badge_ids: HashSet<_> = badge_ids.into_iter().collect();
 
         if !self
             .badge_to_registration
@@ -75,7 +79,8 @@ impl BadgeRegistry {
         let (account_send, account_recv) = broadcast::channel(ACCOUNT_CHANNEL_SIZE);
 
         for badge_id in badge_ids {
-            self.badge_to_registration.insert(badge_id, registration_id);
+            self.badge_to_registration
+                .insert(*badge_id, registration_id);
         }
 
         self.registration_to_fn.insert(

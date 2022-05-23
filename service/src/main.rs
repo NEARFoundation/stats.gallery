@@ -10,7 +10,10 @@ use sqlx::{migrate, postgres::PgPoolOptions};
 use tokio::sync::{broadcast, Semaphore};
 
 use crate::{
-    badge::{transfer, BadgeRegistry},
+    badge::{
+        transfer::{self, TRANSFER_1},
+        BadgeRegistry,
+    },
     connections::Connections,
     indexer::get_recent_actors,
     local::query_account,
@@ -93,7 +96,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (account_send, account_recv) = broadcast::channel(16);
     local::start_local_updater(local_semaphore, connections.clone(), account_recv);
 
-    badge_registry.register(transfer::BADGE_IDS, transfer::run);
+    badge_registry.register(&*transfer::BADGE_IDS, transfer::run);
 
     let now = chrono::Utc::now();
 
