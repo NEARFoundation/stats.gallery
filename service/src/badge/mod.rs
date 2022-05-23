@@ -1,9 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc,
-    },
+    sync::atomic::{AtomicUsize, Ordering},
 };
 
 use near_primitives::types::AccountId;
@@ -11,10 +8,9 @@ use near_primitives::types::AccountId;
 use sqlx::types::Uuid;
 use tokio::sync::{broadcast, mpsc, Semaphore};
 
-use crate::connections::Connections;
-
-const ACCOUNT_CHANNEL_SIZE: usize = 16;
-const MAX_SIMULTANEOUS_WORKERS: usize = 5;
+use crate::{
+    connections::Connections, MAX_SIMULTANEOUS_ACCOUNTS, MAX_SIMULTANEOUS_WORKERS_PER_BADGE,
+};
 
 pub type BadgeId = sqlx::types::Uuid;
 pub type BadgeCheckerRegistrationId = usize;
@@ -36,10 +32,7 @@ pub struct BadgeRegistry {
     connections: Connections,
     registration_to_fn: HashMap<
         BadgeCheckerRegistrationId,
-        (
-            Arc<Semaphore>,
-            broadcast::Sender<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
-        ),
+        broadcast::Sender<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
     >,
     badge_to_registration: HashMap<BadgeId, BadgeCheckerRegistrationId>,
 }
@@ -71,20 +64,18 @@ impl BadgeRegistry {
         }
 
         let registration_id = REGISTRATION_ID.fetch_add(1, Ordering::Relaxed);
-        let (account_send, account_recv) = broadcast::channel(ACCOUNT_CHANNEL_SIZE);
+        let (account_send, account_recv) = broadcast::channel(MAX_SIMULTANEOUS_ACCOUNTS);
 
         for badge_id in badge_ids {
             self.badge_to_registration
                 .insert(*badge_id, registration_id);
         }
 
-        self.registration_to_fn.insert(
-            registration_id,
-            (Arc::new(Semaphore::new(ACCOUNT_CHANNEL_SIZE)), account_send),
-        );
+        self.registration_to_fn
+            .insert(registration_id, account_send);
 
         start_checker(
-            Semaphore::new(MAX_SIMULTANEOUS_WORKERS),
+            Semaphore::new(MAX_SIMULTANEOUS_WORKERS_PER_BADGE),
             self.connections.clone(),
             account_recv,
         );
@@ -110,12 +101,10 @@ impl BadgeRegistry {
         let (result_send, mut result_recv) = mpsc::channel(registration_ids.len());
 
         for registration_id in registration_ids {
-            let (ref semaphore, ref sender) = self.registration_to_fn[registration_id];
-            let permit = semaphore.acquire().await.unwrap();
+            let sender = &self.registration_to_fn[registration_id];
             sender
                 .send((account_id.clone(), result_send.clone()))
                 .unwrap(); // TODO: Remove unwrap()
-            drop(permit);
         }
 
         drop(result_send);
@@ -134,7 +123,7 @@ impl BadgeRegistry {
 macro_rules! create_badge_worker {
     ($query_fn: ident) => {
         pub fn run(
-            semaphore: tokio::sync::Semaphore,
+            simultaneous_workers: tokio::sync::Semaphore,
             connections: $crate::connections::Connections,
             mut input: tokio::sync::broadcast::Receiver<(
                 near_primitives::types::AccountId,
@@ -142,14 +131,14 @@ macro_rules! create_badge_worker {
             )>,
         ) {
             tokio::spawn(async move {
-                let semaphore = std::sync::Arc::new(semaphore);
+                let simultaneous_workers = std::sync::Arc::new(simultaneous_workers);
 
                 while let Ok((account_id, output)) = input.recv().await {
                     let connections = connections.clone();
-                    let semaphore = semaphore.clone();
+                    let simultaneous_workers = simultaneous_workers.clone();
 
                     tokio::spawn(async move {
-                        let permit = semaphore.acquire().await.unwrap();
+                        let permit = simultaneous_workers.acquire().await.unwrap();
                         println!("Acquired for {account_id}");
                         let result = $query_fn(connections, account_id.clone()).await;
                         println!("Finished {account_id}");

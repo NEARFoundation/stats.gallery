@@ -19,6 +19,9 @@ use crate::{
     local::{add_badge_for_account, get_badges_for_account, query_account},
 };
 
+pub const MAX_SIMULTANEOUS_ACCOUNTS: usize = 16;
+pub const MAX_SIMULTANEOUS_WORKERS_PER_BADGE: usize = 5;
+
 #[derive(Deserialize)]
 struct Configuration {
     #[allow(unused)] // env var read by default by sqlx
@@ -85,7 +88,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let now = chrono::Utc::now();
 
+    let simultaneous_accounts = Semaphore::new(MAX_SIMULTANEOUS_ACCOUNTS);
+
     for account in accounts {
+        let permit = simultaneous_accounts.acquire().await;
+        let local_pool = local_pool.clone();
+        // tokio::spawn(async move {
         let account_id: AccountId = account.parse().unwrap();
         let (account_record, existing_badges) = join!(
             query_account(&local_pool, &account_id),
@@ -120,6 +128,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Err(e) => println!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
             }
         }
+        // });
     }
 
     Ok(())
