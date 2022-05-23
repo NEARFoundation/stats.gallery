@@ -7,16 +7,16 @@ use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
 use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
-use tokio::sync::{broadcast, Semaphore};
+use tokio::{
+    join,
+    sync::{broadcast, Semaphore},
+};
 
 use crate::{
-    badge::{
-        transfer::{self, TRANSFER_1},
-        BadgeRegistry,
-    },
+    badge::{transfer, BadgeRegistry},
     connections::Connections,
     indexer::get_recent_actors,
-    local::query_account,
+    local::{get_badges_for_account, query_account},
 };
 
 #[derive(Deserialize)]
@@ -102,7 +102,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for account in accounts {
         let account_id: AccountId = account.parse().unwrap();
-        let account_record = query_account(&local_pool, &account_id).await;
+        let (account_record, existing_badges) = join!(
+            query_account(&local_pool, &account_id),
+            get_badges_for_account(&local_pool, &account_id),
+        );
+
         let is_update_allowed = account_record
             .ok()
             .and_then(|r| r.next_update_allowed_at())
@@ -119,7 +123,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         badge_registry
-            .queue_account(account_id.clone(), HashSet::new())
+            .queue_account(
+                account_id.clone(),
+                existing_badges.unwrap_or_else(|_| HashSet::new()),
+            )
             .await;
     }
 
