@@ -31,6 +31,11 @@ const fn default_pool_connections() -> u32 {
     5
 }
 
+#[inline]
+const fn default_update_size() -> i64 {
+    10 // minutes
+}
+
 #[derive(Deserialize)]
 struct Configuration {
     pub database_url: String,
@@ -42,6 +47,8 @@ struct Configuration {
     pub local_pool_connections: u32,
     #[serde(default = "default_pool_connections")]
     pub indexer_pool_connections: u32,
+    #[serde(default = "default_update_size")]
+    pub update_chunk_size_minutes: i64,
 }
 
 mod badge;
@@ -83,7 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let accounts = get_recent_actors(
         &connections.indexer_pool,
         chrono::Utc::now()
-            .sub(Duration::minutes(10))
+            .sub(Duration::minutes(config.update_chunk_size_minutes))
             .timestamp_nanos()
             .try_into()
             .unwrap(),
