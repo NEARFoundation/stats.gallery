@@ -44,22 +44,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let config = envy::from_env::<Configuration>().expect("Missing environment variables");
 
-    let local_pool = (PgPoolOptions::new()
+    let local_pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&config.database_url)
-        .await?);
+        .await?;
 
-    let indexer_pool = (PgPoolOptions::new()
+    let indexer_pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&config.indexer_url)
-        .await?);
+        .await?;
 
-    let jsonrpc_client = (JsonRpcClient::connect(&config.rpc_url));
+    let rpc_client = JsonRpcClient::connect(&config.rpc_url);
+
+    let connections = Arc::new(Connections {
+        local_pool,
+        indexer_pool,
+        rpc_client,
+    });
 
     println!("Requesting accounts");
 
     let accounts = get_recent_actors(
-        &indexer_pool,
+        &connections.indexer_pool,
         chrono::Utc::now()
             .sub(Duration::minutes(10))
             .timestamp_nanos()
@@ -73,27 +79,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Creating badge registry");
 
-    let connections = Arc::new(Connections {
-        local_pool: (local_pool),
-        indexer_pool: (indexer_pool),
-        rpc_client: jsonrpc_client,
-    });
-
-    let mut badge_registry = BadgeRegistry::new(connections.clone());
-
     let local_semaphore = Arc::new(Semaphore::new(5));
     let (account_send, account_recv) = broadcast::channel(16);
     local::start_local_updater(local_semaphore, connections.clone(), account_recv);
 
+    let mut badge_registry = BadgeRegistry::new(connections.clone());
     badge_registry.register(&*transfer::BADGE_IDS, transfer::run);
+    let badge_registry = Arc::new(badge_registry);
 
     let simultaneous_accounts = Arc::new(Semaphore::new(MAX_SIMULTANEOUS_ACCOUNTS));
-
-    let badge_registry = Arc::new(badge_registry);
 
     let mut join_handles = Vec::new();
 
     for account in accounts {
+        let account_id: AccountId = account.parse().unwrap();
         let simultaneous_accounts = Arc::clone(&simultaneous_accounts);
         let permit = simultaneous_accounts.acquire_owned().await;
         let account_send = account_send.clone();
@@ -101,18 +100,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let badge_registry = Arc::clone(&badge_registry);
 
         let join_handle = tokio::spawn(async move {
-            let account_id: AccountId = account.parse().unwrap();
             let (account_record, existing_badges) = join!(
                 query_account(&connections.local_pool, &account_id),
                 get_badges_for_account(&connections.local_pool, &account_id),
             );
 
-            let now = chrono::Utc::now();
-
             let is_update_allowed = account_record
                 .ok()
                 .and_then(|r| r.next_update_allowed_at())
-                .map(|cutoff| now >= cutoff)
+                .map(|cutoff| chrono::Utc::now() >= cutoff)
                 .unwrap_or(true);
 
             if !is_update_allowed {
