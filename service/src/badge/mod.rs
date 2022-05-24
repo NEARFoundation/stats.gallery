@@ -9,11 +9,9 @@ use std::{
 use near_primitives::types::AccountId;
 
 use sqlx::types::Uuid;
-use tokio::sync::{broadcast, mpsc, Semaphore};
+use tokio::sync::{broadcast, mpsc};
 
-use crate::{
-    connections::Connections, MAX_SIMULTANEOUS_ACCOUNTS, MAX_SIMULTANEOUS_WORKERS_PER_BADGE,
-};
+use crate::connections::Connections;
 
 pub type BadgeId = sqlx::types::Uuid;
 pub type BadgeCheckerRegistrationId = usize;
@@ -26,12 +24,12 @@ pub struct BadgeCheckResult {
 }
 
 pub type BadgeWorker = fn(
-    semaphore: Arc<Semaphore>,
     connections: Arc<Connections>,
     input: broadcast::Receiver<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
 );
 
 pub struct BadgeRegistry {
+    account_threads: usize,
     connections: Arc<Connections>,
     registration_to_fn: HashMap<
         BadgeCheckerRegistrationId,
@@ -41,8 +39,9 @@ pub struct BadgeRegistry {
 }
 
 impl BadgeRegistry {
-    pub fn new(connections: Arc<Connections>) -> Self {
+    pub fn new(connections: Arc<Connections>, account_threads: usize) -> Self {
         Self {
+            account_threads,
             connections,
             registration_to_fn: HashMap::new(),
             badge_to_registration: HashMap::new(),
@@ -67,7 +66,7 @@ impl BadgeRegistry {
         }
 
         let registration_id = REGISTRATION_ID.fetch_add(1, Ordering::Relaxed);
-        let (account_send, account_recv) = broadcast::channel(MAX_SIMULTANEOUS_ACCOUNTS);
+        let (account_send, account_recv) = broadcast::channel(self.account_threads);
 
         for badge_id in badge_ids {
             self.badge_to_registration
@@ -77,11 +76,7 @@ impl BadgeRegistry {
         self.registration_to_fn
             .insert(registration_id, account_send);
 
-        start_checker(
-            Arc::new(Semaphore::new(MAX_SIMULTANEOUS_WORKERS_PER_BADGE)),
-            self.connections.clone(),
-            account_recv,
-        );
+        start_checker(self.connections.clone(), account_recv);
     }
 
     pub async fn queue_account(
@@ -126,7 +121,6 @@ impl BadgeRegistry {
 macro_rules! create_badge_worker {
     ($query_fn: ident) => {
         pub fn run(
-            simultaneous_workers: std::sync::Arc<tokio::sync::Semaphore>,
             connections: std::sync::Arc<$crate::connections::Connections>,
             mut input: tokio::sync::broadcast::Receiver<(
                 near_primitives::types::AccountId,
@@ -136,14 +130,9 @@ macro_rules! create_badge_worker {
             tokio::spawn(async move {
                 while let Ok((account_id, output)) = input.recv().await {
                     let connections = connections.clone();
-                    let simultaneous_workers = simultaneous_workers.clone();
 
                     tokio::spawn(async move {
-                        let permit = simultaneous_workers.acquire().await.unwrap();
-                        println!("Acquired for {account_id}");
                         let result = $query_fn(connections, account_id.clone()).await;
-                        println!("Finished {account_id}");
-                        drop(permit);
                         match result {
                             Ok(result) => {
                                 output.send(result).await.unwrap(); // TODO: Log instead of unwrap

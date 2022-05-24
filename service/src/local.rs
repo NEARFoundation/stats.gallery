@@ -9,10 +9,7 @@ use sqlx::{
     types::{Decimal, Uuid},
     FromRow, PgPool,
 };
-use tokio::{
-    join,
-    sync::{broadcast, Semaphore},
-};
+use tokio::{join, sync::broadcast};
 
 /// Minimum amount of time between account updates
 const ACCOUNT_UPDATE_COOLDOWN_MINUTES: i64 = 60 * 6;
@@ -194,21 +191,15 @@ INSERT INTO account(id, balance, score, consecutive_errors)
 }
 
 pub fn start_local_updater(
-    semaphore: Arc<Semaphore>,
     connections: Arc<Connections>,
     mut input: broadcast::Receiver<AccountId>,
 ) {
     tokio::spawn(async move {
         while let Ok(account_id) = input.recv().await {
             let connections = connections.clone();
-            let semaphore = semaphore.clone();
 
             tokio::spawn(async move {
-                let permit = semaphore.acquire().await.unwrap();
-                println!("Acquired for {account_id}");
                 let result = update_account(&connections, &account_id).await;
-                println!("Finished {account_id}");
-                drop(permit);
 
                 if let Err(e) = result {
                     println!("Error updating account {account_id}: {e:?}");
