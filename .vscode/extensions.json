@@ -3,10 +3,10 @@
     "qufiwefefwoyn.inline-sql-syntax",
     "mikestead.dotenv",
     "esbenp.prettier-vscode",
-    "matklad.rust-analyzer",
     "bradlc.vscode-tailwindcss",
     "netcorext.uuid-generator",
     "octref.vetur",
-    "bungcip.better-toml"
+    "bungcip.better-toml",
+    "rust-lang.rust-analyzer"
   ]
 }
