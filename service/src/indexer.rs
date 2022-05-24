@@ -2,7 +2,7 @@ use futures::{StreamExt, TryFutureExt, TryStreamExt};
 use sqlx::PgPool;
 
 pub async fn get_recent_actors(
-    pool: &PgPool,
+    indexer_pool: &PgPool,
     timestamp_nanoseconds: u64,
 ) -> Result<Vec<String>, sqlx::Error> {
     #[derive(sqlx::FromRow)]
@@ -26,13 +26,16 @@ select distinct receiver_account_id as account_id
 "#,
     )
     .bind(timestamp_nanoseconds as i64) // for some reason Encode is not implemented for u64 on Postgres
-    .fetch(pool)
+    .fetch(indexer_pool)
     .map(|i| i.map(|a| a.account_id))
     .try_collect::<Vec<_>>()
     .await
 }
 
-pub async fn calculate_account_score(pool: &PgPool, account_id: &str) -> Result<u32, sqlx::Error> {
+pub async fn calculate_account_score(
+    indexer_pool: &PgPool,
+    account_id: &str,
+) -> Result<u32, sqlx::Error> {
     #[derive(sqlx::FromRow)]
     struct WithResult {
         pub result: i64,
@@ -71,7 +74,7 @@ left outer join transaction_actions on tx.transaction_hash = transaction_actions
 "#,
     )
     .bind(account_id)
-    .fetch_one(pool)
+    .fetch_one(indexer_pool)
     .map_ok(|a| a.result as u32)
     .await
 }

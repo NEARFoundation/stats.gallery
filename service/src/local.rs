@@ -1,15 +1,15 @@
-use std::{str::FromStr, sync::Arc};
+use std::{collections::HashSet, str::FromStr, sync::Arc};
 
 use chrono::{Duration, NaiveDateTime, TimeZone};
-use futures::FutureExt;
+use futures::{FutureExt, StreamExt, TryFutureExt, TryStreamExt};
 use near_jsonrpc_client::{errors::JsonRpcError, methods::query::RpcQueryError};
 use near_primitives::types::AccountId;
 use num_traits::FromPrimitive;
-use sqlx::{types::Decimal, FromRow, PgPool};
-use tokio::{
-    join,
-    sync::{broadcast, Semaphore},
+use sqlx::{
+    types::{Decimal, Uuid},
+    FromRow, PgPool,
 };
+use tokio::{join, sync::broadcast};
 
 /// Minimum amount of time between account updates
 const ACCOUNT_UPDATE_COOLDOWN_MINUTES: i64 = 60 * 6;
@@ -92,6 +92,49 @@ select id, balance, score, modified, consecutive_errors
     .await
 }
 
+#[derive(FromRow)]
+pub struct AccountBadgeRecordDb {
+    pub badge_id: Uuid,
+}
+
+pub async fn add_badge_for_account(
+    local_pool: &PgPool,
+    account_id: &AccountId,
+    badge_id: &Uuid,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        r#"--sql
+insert into account_badge(account_id, badge_id)
+    values ($1, $2)
+    on conflict (account_id, badge_id) do nothing
+"#,
+        account_id.to_string(),
+        &badge_id
+    )
+    .execute(local_pool)
+    .map_ok(|_| ())
+    .await
+}
+
+pub async fn get_badges_for_account(
+    local_pool: &PgPool,
+    account_id: &AccountId,
+) -> Result<HashSet<Uuid>, sqlx::Error> {
+    sqlx::query_as!(
+        AccountBadgeRecordDb,
+        r#"--sql
+select badge_id
+    from account_badge
+    where account_id = $1
+"#,
+        account_id.to_string()
+    )
+    .fetch(local_pool)
+    .map(|b| b.map(|a| a.badge_id))
+    .try_collect::<HashSet<Uuid>>()
+    .await
+}
+
 pub async fn update_account(
     connections: &Connections,
     account_id: &AccountId,
@@ -148,23 +191,15 @@ INSERT INTO account(id, balance, score, consecutive_errors)
 }
 
 pub fn start_local_updater(
-    semaphore: Semaphore,
-    connections: Connections,
+    connections: Arc<Connections>,
     mut input: broadcast::Receiver<AccountId>,
 ) {
     tokio::spawn(async move {
-        let semaphore = Arc::new(semaphore);
-
         while let Ok(account_id) = input.recv().await {
             let connections = connections.clone();
-            let semaphore = semaphore.clone();
 
             tokio::spawn(async move {
-                let permit = semaphore.acquire().await.unwrap();
-                println!("Acquired for {account_id}");
                 let result = update_account(&connections, &account_id).await;
-                println!("Finished {account_id}");
-                drop(permit);
 
                 if let Err(e) = result {
                     println!("Error updating account {account_id}: {e:?}");

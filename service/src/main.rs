@@ -1,27 +1,46 @@
-use std::{collections::HashSet, ops::Sub};
+use std::{collections::HashSet, ops::Sub, sync::Arc};
 
 use chrono::Duration;
 use dotenv::dotenv;
 
+use futures::future::join_all;
 use near_jsonrpc_client::JsonRpcClient;
 use near_primitives::types::AccountId;
 use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
-use tokio::sync::{broadcast, Semaphore};
+use tokio::{
+    join,
+    sync::{broadcast, Mutex, Semaphore},
+};
 
 use crate::{
     badge::{transfer, BadgeRegistry},
     connections::Connections,
     indexer::get_recent_actors,
-    local::query_account,
+    local::{add_badge_for_account, get_badges_for_account, query_account},
 };
+
+#[inline]
+const fn default_account_threads() -> usize {
+    16
+}
+
+#[inline]
+const fn default_pool_connections() -> u32 {
+    5
+}
 
 #[derive(Deserialize)]
 struct Configuration {
-    #[allow(unused)] // env var read by default by sqlx
     pub database_url: String,
     pub indexer_url: String,
     pub rpc_url: String,
+    #[serde(default = "default_account_threads")]
+    pub account_threads: usize,
+    #[serde(default = "default_pool_connections")]
+    pub local_pool_connections: u32,
+    #[serde(default = "default_pool_connections")]
+    pub indexer_pool_connections: u32,
 }
 
 mod badge;
@@ -38,21 +57,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = envy::from_env::<Configuration>().expect("Missing environment variables");
 
     let local_pool = PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(config.local_pool_connections)
         .connect(&config.database_url)
         .await?;
 
     let indexer_pool = PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(config.indexer_pool_connections)
         .connect(&config.indexer_url)
         .await?;
 
-    let jsonrpc_client = JsonRpcClient::connect(&config.rpc_url);
+    let rpc_client = JsonRpcClient::connect(&config.rpc_url);
+
+    let connections = Arc::new(Connections {
+        local_pool,
+        indexer_pool,
+        rpc_client,
+    });
 
     println!("Requesting accounts");
 
     let accounts = get_recent_actors(
-        &indexer_pool,
+        &connections.indexer_pool,
         chrono::Utc::now()
             .sub(Duration::minutes(10))
             .timestamp_nanos()
@@ -64,65 +89,78 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Checking {} accounts", accounts.len());
 
-    println!("Creating badge registry");
+    let (account_send, account_recv) = broadcast::channel(config.account_threads);
+    local::start_local_updater(connections.clone(), account_recv);
 
-    let connections = Connections {
-        local_pool: local_pool.clone(),
-        indexer_pool: indexer_pool.clone(),
-        rpc_client: jsonrpc_client.clone(),
-    };
+    let mut badge_registry = BadgeRegistry::new(connections.clone(), config.account_threads);
+    badge_registry.register(&*transfer::BADGE_IDS, transfer::run);
+    let badge_registry = Arc::new(badge_registry);
 
-    let mut badge_registry = BadgeRegistry::new(connections.clone());
+    let simultaneous_accounts = Arc::new(Semaphore::new(config.account_threads));
 
-    let mut r = badge_registry.subscribe();
+    let mut join_handles = Vec::new();
 
-    let target = accounts.len();
-
-    let badge_handle = tokio::spawn(async move {
-        println!("Listening for badge results");
-        let mut done = 0;
-        while let Ok(result) = r.recv().await {
-            done += 1;
-            let account_id = result.account_id;
-            println!("{done} / {target} - {account_id}");
-            // TODO: write badges back to local db
-        }
-    });
-
-    let local_semaphore = Semaphore::new(5);
-    let (account_send, account_recv) = broadcast::channel(16);
-    local::start_local_updater(local_semaphore, connections.clone(), account_recv);
-
-    badge_registry.register(transfer::BADGE_IDS, transfer::run);
-
-    let now = chrono::Utc::now();
+    let num_completed = Arc::new(Mutex::new(0));
+    let total = accounts.len();
 
     for account in accounts {
+        // Acquire semaphore first to reduce Future state overhead
+        let simultaneous_accounts = Arc::clone(&simultaneous_accounts);
+        let permit = simultaneous_accounts.acquire_owned().await;
+
         let account_id: AccountId = account.parse().unwrap();
-        let account_record = query_account(&local_pool, &account_id).await;
-        let is_update_allowed = account_record
-            .ok()
-            .and_then(|r| r.next_update_allowed_at())
-            .map(|cutoff| now >= cutoff)
-            .unwrap_or(true);
+        let account_send = account_send.clone();
+        let connections = Arc::clone(&connections);
+        let badge_registry = Arc::clone(&badge_registry);
+        let num_completed = num_completed.clone();
 
-        if !is_update_allowed {
-            println!("Disallowing update for {account_id}");
-            continue;
-        }
+        let join_handle = tokio::spawn(async move {
+            let (account_record, existing_badges) = join!(
+                query_account(&connections.local_pool, &account_id),
+                get_badges_for_account(&connections.local_pool, &account_id),
+            );
 
-        if let Err(e) = account_send.send(account_id.clone()) {
-            println!("Error sending to local updater: {e:?}");
-        }
+            let is_update_allowed = account_record
+                .ok()
+                .and_then(|r| r.next_update_allowed_at())
+                .map(|cutoff| chrono::Utc::now() >= cutoff)
+                .unwrap_or(true);
 
-        badge_registry
-            .queue_account(account_id.clone(), HashSet::new())
-            .await;
+            if !is_update_allowed {
+                println!("Disallowing update for {account_id}");
+            } else {
+                if let Err(e) = account_send.send(account_id.clone()) {
+                    println!("Error sending to local updater: {e:?}");
+                }
+
+                let awarded_badges = badge_registry
+                    .queue_account(
+                        account_id.clone(),
+                        existing_badges.unwrap_or_else(|_| HashSet::new()),
+                    )
+                    .await;
+
+                for badge_id in awarded_badges {
+                    match add_badge_for_account(&connections.local_pool, &account_id, &badge_id)
+                        .await
+                    {
+                        Ok(_) => println!("Added badge {badge_id} to {account_id}"),
+                        Err(e) => println!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
+                    }
+                }
+            }
+
+            let mut num_completed = num_completed.lock().await;
+            *num_completed += 1;
+            println!("{num_completed} / {total}\t{account_id}");
+
+            drop(permit);
+        });
+
+        join_handles.push(join_handle);
     }
 
-    println!("Waiting.");
-
-    badge_handle.await.unwrap();
+    join_all(join_handles).await;
 
     Ok(())
 }

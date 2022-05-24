@@ -1,18 +1,27 @@
-use std::sync::Arc;
+use std::{collections::HashSet, str::FromStr, sync::Arc};
 
 use crate::badge::BadgeCheckResult;
 
 use futures::FutureExt;
+use lazy_static::lazy_static;
 use near_primitives::types::AccountId;
+use sqlx::types::Uuid;
 use thiserror::Error;
-use tokio::sync::{broadcast, Semaphore};
 
 use super::Connections;
 
-pub static TRANSFER_1: &'static str = "b36c3dd2-b8b0-4098-b227-63290f009668";
-pub static TRANSFER_10: &'static str = "609b2017-9534-4737-b86b-6ee4897fc4f9";
-pub static TRANSFER_100: &'static str = "64ce9af9-52ac-49dc-96fd-031b4fa2efad";
-pub static BADGE_IDS: &'static [&'static str] = &[TRANSFER_1, TRANSFER_10, TRANSFER_100];
+// Badge UUIDs must correlate with badge renderers on the frontend
+
+lazy_static! {
+    pub static ref TRANSFER_1: Uuid =
+        Uuid::from_str("b36c3dd2-b8b0-4098-b227-63290f009668").unwrap();
+    pub static ref TRANSFER_10: Uuid =
+        Uuid::from_str("609b2017-9534-4737-b86b-6ee4897fc4f9").unwrap();
+    pub static ref TRANSFER_100: Uuid =
+        Uuid::from_str("64ce9af9-52ac-49dc-96fd-031b4fa2efad").unwrap();
+    pub static ref BADGE_IDS: HashSet<Uuid> =
+        HashSet::from([*TRANSFER_1, *TRANSFER_10, *TRANSFER_100,]);
+}
 
 #[derive(Error, Debug)]
 enum TransferBadgeError {
@@ -21,7 +30,7 @@ enum TransferBadgeError {
 }
 
 async fn perform_query(
-    connections: Connections,
+    connections: Arc<Connections>,
     account_id: AccountId,
 ) -> Result<BadgeCheckResult, TransferBadgeError> {
     #[derive(sqlx::FromRow)]
@@ -43,21 +52,22 @@ select count(*) as result
         result
             .map(|r| {
                 let total = r.result;
-                let awarded = if total >= 100 {
-                    BADGE_IDS
-                } else if total >= 10 {
-                    &BADGE_IDS[..2]
-                } else if total >= 1 {
-                    &BADGE_IDS[..1]
-                } else {
-                    &[]
+                let mut awarded = HashSet::new();
+
+                if total >= 100 {
+                    awarded.insert(TRANSFER_100.to_owned());
                 }
-                .to_vec();
+                if total >= 10 {
+                    awarded.insert(TRANSFER_10.to_owned());
+                }
+                if total >= 1 {
+                    awarded.insert(TRANSFER_1.to_owned());
+                }
 
                 BadgeCheckResult {
                     account_id,
-                    awarded: awarded.into_iter().collect(),
-                    checked: BADGE_IDS.to_vec().into_iter().collect(),
+                    awarded: awarded,
+                    checked: &BADGE_IDS,
                 }
             })
             .map_err(|e| TransferBadgeError::from(e))
