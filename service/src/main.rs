@@ -108,11 +108,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let total = accounts.len();
 
     for account in accounts {
-        // Acquire semaphore first to reduce Future state overhead
         let simultaneous_accounts = Arc::clone(&simultaneous_accounts);
         let permit = simultaneous_accounts.acquire_owned().await;
 
-        let account_id: AccountId = account.parse().unwrap();
+        let account_id: AccountId = match account.parse() {
+            Ok(a) => a,
+            Err(..) => continue,
+        };
         let account_send = account_send.clone();
         let connections = Arc::clone(&connections);
         let badge_registry = Arc::clone(&badge_registry);
@@ -154,11 +156,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
+            drop(permit);
+
             let mut num_completed = num_completed.lock().await;
             *num_completed += 1;
             info!("Completed {num_completed} / {total}\t{account_id}");
-
-            drop(permit);
         });
 
         join_handles.push(join_handle);

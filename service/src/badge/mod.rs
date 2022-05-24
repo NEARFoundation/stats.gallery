@@ -10,6 +10,7 @@ use near_primitives::types::AccountId;
 
 use sqlx::types::Uuid;
 use tokio::sync::{broadcast, mpsc};
+use tracing::error;
 
 use crate::connections::Connections;
 
@@ -103,9 +104,10 @@ impl BadgeRegistry {
 
         for registration_id in registration_ids {
             let sender = &self.registration_to_fn[registration_id];
-            sender
-                .send((account_id.clone(), result_send.clone()))
-                .unwrap(); // TODO: Remove unwrap()
+            let send_result = sender.send((account_id.clone(), result_send.clone()));
+            if let Err(error) = send_result {
+                error!("Error sending {account_id} to channel: {error:?}");
+            }
         }
 
         drop(result_send);
@@ -139,7 +141,10 @@ macro_rules! create_badge_worker {
                         let result = $query_fn(connections, account_id.clone()).await;
                         match result {
                             Ok(result) => {
-                                output.send(result).await.unwrap(); // TODO: Log instead of unwrap
+                                let send_result = output.send(result).await;
+                                if let Err(e) = send_result {
+                                    tracing::error!("Error sending badge result: {e:?}");
+                                }
                             }
                             Err(e) => tracing::error!("Error in badge worker result: {e:?}"),
                         }
