@@ -28,6 +28,7 @@ pub type BadgeWorker = fn(
     input: broadcast::Receiver<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
 );
 
+#[derive(Debug)]
 pub struct BadgeRegistry {
     account_threads: usize,
     connections: Arc<Connections>,
@@ -48,9 +49,10 @@ impl BadgeRegistry {
         }
     }
 
+    #[tracing::instrument(skip(self))]
     pub fn register<'a, T>(&mut self, badge_ids: T, start_checker: BadgeWorker)
     where
-        T: IntoIterator<Item = &'a Uuid>,
+        T: IntoIterator<Item = &'a Uuid> + std::fmt::Debug,
     {
         static REGISTRATION_ID: AtomicUsize = AtomicUsize::new(0);
 
@@ -79,6 +81,7 @@ impl BadgeRegistry {
         start_checker(self.connections.clone(), account_recv);
     }
 
+    #[tracing::instrument(skip(self))]
     pub async fn queue_account(
         &self,
         account_id: AccountId,
@@ -120,6 +123,7 @@ impl BadgeRegistry {
 #[macro_export]
 macro_rules! create_badge_worker {
     ($query_fn: ident) => {
+        #[tracing::instrument(skip_all)]
         pub fn run(
             connections: std::sync::Arc<$crate::connections::Connections>,
             mut input: tokio::sync::broadcast::Receiver<(
@@ -137,7 +141,7 @@ macro_rules! create_badge_worker {
                             Ok(result) => {
                                 output.send(result).await.unwrap(); // TODO: Log instead of unwrap
                             }
-                            Err(e) => println!("{e:?}"),
+                            Err(e) => tracing::error!("Error in badge worker result: {e:?}"),
                         }
                     });
                 }

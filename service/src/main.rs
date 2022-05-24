@@ -12,6 +12,7 @@ use tokio::{
     join,
     sync::{broadcast, Mutex, Semaphore},
 };
+use tracing::{error, info};
 
 use crate::{
     badge::{transfer, BadgeRegistry},
@@ -54,6 +55,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
     migrate!();
 
+    let subscriber = tracing_subscriber::fmt().finish();
+    tracing::subscriber::set_global_default(subscriber)?;
+
     let config = envy::from_env::<Configuration>().expect("Missing environment variables");
 
     let local_pool = PgPoolOptions::new()
@@ -74,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         rpc_client,
     });
 
-    println!("Requesting accounts");
+    info!("Requesting accounts");
 
     let accounts = get_recent_actors(
         &connections.indexer_pool,
@@ -87,7 +91,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await
     .unwrap();
 
-    println!("Checking {} accounts", accounts.len());
+    info!("Checking {} accounts", accounts.len());
 
     let (account_send, account_recv) = broadcast::channel(config.account_threads);
     local::start_local_updater(connections.clone(), account_recv);
@@ -127,10 +131,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .unwrap_or(true);
 
             if !is_update_allowed {
-                println!("Disallowing update for {account_id}");
+                info!("Disallowing update for {account_id}");
             } else {
                 if let Err(e) = account_send.send(account_id.clone()) {
-                    println!("Error sending to local updater: {e:?}");
+                    error!("Error sending to local updater: {e:?}");
                 }
 
                 let awarded_badges = badge_registry
@@ -144,15 +148,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     match add_badge_for_account(&connections.local_pool, &account_id, &badge_id)
                         .await
                     {
-                        Ok(_) => println!("Added badge {badge_id} to {account_id}"),
-                        Err(e) => println!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
+                        Ok(_) => info!("Added badge {badge_id} to {account_id}"),
+                        Err(e) => error!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
                     }
                 }
             }
 
             let mut num_completed = num_completed.lock().await;
             *num_completed += 1;
-            println!("{num_completed} / {total}\t{account_id}");
+            info!("Completed {num_completed} / {total}\t{account_id}");
 
             drop(permit);
         });

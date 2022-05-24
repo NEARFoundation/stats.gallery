@@ -9,6 +9,7 @@ use near_primitives::{
     views::QueryRequest,
 };
 
+#[tracing::instrument(skip(client))]
 pub async fn get_account_balance(
     client: &JsonRpcClient,
     account_id: &AccountId,

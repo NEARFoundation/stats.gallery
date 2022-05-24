@@ -10,6 +10,7 @@ use sqlx::{
     FromRow, PgPool,
 };
 use tokio::{join, sync::broadcast};
+use tracing::{error, info, warn};
 
 /// Minimum amount of time between account updates
 const ACCOUNT_UPDATE_COOLDOWN_MINUTES: i64 = 60 * 6;
@@ -74,6 +75,7 @@ impl From<AccountRecordDb> for AccountRecord {
     }
 }
 
+#[tracing::instrument(skip(local_pool))]
 pub async fn query_account(
     local_pool: &PgPool,
     account_id: &AccountId,
@@ -97,6 +99,7 @@ pub struct AccountBadgeRecordDb {
     pub badge_id: Uuid,
 }
 
+#[tracing::instrument(skip(local_pool))]
 pub async fn add_badge_for_account(
     local_pool: &PgPool,
     account_id: &AccountId,
@@ -116,6 +119,7 @@ insert into account_badge(account_id, badge_id)
     .await
 }
 
+#[tracing::instrument(skip(local_pool))]
 pub async fn get_badges_for_account(
     local_pool: &PgPool,
     account_id: &AccountId,
@@ -135,6 +139,7 @@ select badge_id
     .await
 }
 
+#[tracing::instrument(skip(connections))]
 pub async fn update_account(
     connections: &Connections,
     account_id: &AccountId,
@@ -145,10 +150,13 @@ pub async fn update_account(
     );
 
     if score.is_err() || balance.is_err() {
-        println!(
-            "Error calculating score or balance for {account_id}: {:?}\n{:?}",
-            &score, &balance
-        );
+        if let Err(ref error) = score {
+            warn!("Failed to calculate score for {account_id}: {error:?}");
+        }
+        if let Err(ref error) = balance {
+            warn!("Failed to retrieve balance for {account_id}: {error:?}");
+        }
+
         let err_query_result = sqlx::query!(
             r#"--sql
 INSERT INTO account(id, consecutive_errors)
@@ -162,8 +170,8 @@ INSERT INTO account(id, consecutive_errors)
         .await;
 
         match err_query_result {
-            Ok(..) => println!("Successfully updated consecutive_errors"),
-            Err(e) => println!("Failed to update consecutive_errors: {e:?}"),
+            Ok(..) => info!("Successfully updated consecutive_errors"),
+            Err(e) => error!("Failed to update consecutive_errors: {e:?}"),
         };
     }
 
@@ -190,6 +198,7 @@ INSERT INTO account(id, balance, score, consecutive_errors)
     Ok(())
 }
 
+#[tracing::instrument(skip_all)]
 pub fn start_local_updater(
     connections: Arc<Connections>,
     mut input: broadcast::Receiver<AccountId>,
@@ -202,7 +211,7 @@ pub fn start_local_updater(
                 let result = update_account(&connections, &account_id).await;
 
                 if let Err(e) = result {
-                    println!("Error updating account {account_id}: {e:?}");
+                    warn!("Error updating account {account_id}: {e:?}");
                 }
             });
         }

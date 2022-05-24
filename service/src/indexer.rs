@@ -1,6 +1,7 @@
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
 use sqlx::PgPool;
 
+#[tracing::instrument(skip(indexer_pool))]
 pub async fn get_recent_actors(
     indexer_pool: &PgPool,
     timestamp_nanoseconds: u64,
@@ -32,6 +33,7 @@ select distinct receiver_account_id as account_id
     .await
 }
 
+#[tracing::instrument(skip(indexer_pool))]
 pub async fn calculate_account_score(
     indexer_pool: &PgPool,
     account_id: &str,
