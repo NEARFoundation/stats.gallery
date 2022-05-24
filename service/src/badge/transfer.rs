@@ -1,4 +1,4 @@
-use std::{collections::HashSet, str::FromStr};
+use std::{collections::HashSet, str::FromStr, sync::Arc};
 
 use crate::badge::BadgeCheckResult;
 
@@ -30,7 +30,7 @@ enum TransferBadgeError {
 }
 
 async fn perform_query(
-    connections: Connections,
+    connections: Arc<Connections>,
     account_id: AccountId,
 ) -> Result<BadgeCheckResult, TransferBadgeError> {
     #[derive(sqlx::FromRow)]

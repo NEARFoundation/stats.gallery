@@ -1,6 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
-    sync::atomic::{AtomicUsize, Ordering},
+    sync::{atomic::{AtomicUsize, Ordering}, Arc},
 };
 
 use near_primitives::types::AccountId;
@@ -23,13 +23,13 @@ pub struct BadgeCheckResult {
 }
 
 pub type BadgeWorker = fn(
-    semaphore: Semaphore,
-    connections: Connections,
+    semaphore: Arc<Semaphore>,
+    connections: Arc<Connections>,
     input: broadcast::Receiver<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
 );
 
 pub struct BadgeRegistry {
-    connections: Connections,
+    connections: Arc<Connections>,
     registration_to_fn: HashMap<
         BadgeCheckerRegistrationId,
         broadcast::Sender<(AccountId, mpsc::Sender<BadgeCheckResult>)>,
@@ -38,7 +38,7 @@ pub struct BadgeRegistry {
 }
 
 impl BadgeRegistry {
-    pub fn new(connections: Connections) -> Self {
+    pub fn new(connections: Arc<Connections>) -> Self {
         Self {
             connections,
             registration_to_fn: HashMap::new(),
@@ -75,7 +75,7 @@ impl BadgeRegistry {
             .insert(registration_id, account_send);
 
         start_checker(
-            Semaphore::new(MAX_SIMULTANEOUS_WORKERS_PER_BADGE),
+            Arc::new(Semaphore::new(MAX_SIMULTANEOUS_WORKERS_PER_BADGE)),
             self.connections.clone(),
             account_recv,
         );
@@ -123,16 +123,14 @@ impl BadgeRegistry {
 macro_rules! create_badge_worker {
     ($query_fn: ident) => {
         pub fn run(
-            simultaneous_workers: tokio::sync::Semaphore,
-            connections: $crate::connections::Connections,
+            simultaneous_workers: std::sync::Arc<tokio::sync::Semaphore>,
+            connections: std::sync::Arc<$crate::connections::Connections>,
             mut input: tokio::sync::broadcast::Receiver<(
                 near_primitives::types::AccountId,
                 tokio::sync::mpsc::Sender<$crate::badge::BadgeCheckResult>,
             )>,
         ) {
             tokio::spawn(async move {
-                let simultaneous_workers = std::sync::Arc::new(simultaneous_workers);
-
                 while let Ok((account_id, output)) = input.recv().await {
                     let connections = connections.clone();
                     let simultaneous_workers = simultaneous_workers.clone();

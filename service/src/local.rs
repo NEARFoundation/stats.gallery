@@ -194,13 +194,11 @@ INSERT INTO account(id, balance, score, consecutive_errors)
 }
 
 pub fn start_local_updater(
-    semaphore: Semaphore,
-    connections: Connections,
+    semaphore: Arc<Semaphore>,
+    connections: Arc<Connections>,
     mut input: broadcast::Receiver<AccountId>,
 ) {
     tokio::spawn(async move {
-        let semaphore = Arc::new(semaphore);
-
         while let Ok(account_id) = input.recv().await {
             let connections = connections.clone();
             let semaphore = semaphore.clone();
