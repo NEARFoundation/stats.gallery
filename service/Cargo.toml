@@ -4,6 +4,7 @@ name = "service"
 version = "0.1.0"
 
 [dependencies]
+async-recursion = "1.0.0"
 async-trait = "0.1.53"
 chrono = "0.4.19"
 dotenv = "0.15.0"

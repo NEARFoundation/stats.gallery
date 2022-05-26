@@ -10,9 +10,9 @@ use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
 use tokio::{
     join,
-    sync::{broadcast, Mutex, Semaphore},
+    sync::{broadcast, mpsc, oneshot, Mutex, Semaphore},
 };
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 use crate::{
     badge::{transfer, BadgeRegistry},
@@ -87,20 +87,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Requesting accounts");
 
-    let accounts = get_recent_actors(
-        &connections.indexer_pool,
-        chrono::Utc::now()
-            .sub(Duration::minutes(config.update_chunk_size_minutes))
-            .timestamp_nanos()
-            .try_into()
-            .unwrap(),
-    )
-    .await
-    .unwrap();
+    let accounts = vec!["x.paras.near"];
+
+    // let accounts = get_recent_actors(
+    //     &connections.indexer_pool,
+    //     chrono::Utc::now()
+    //         .sub(Duration::minutes(config.update_chunk_size_minutes))
+    //         .timestamp_nanos()
+    //         .try_into()
+    //         .unwrap(),
+    // )
+    // .await
+    // .unwrap();
 
     info!("Checking {} accounts", accounts.len());
 
-    let (account_send, account_recv) = broadcast::channel(config.account_threads);
+    let (account_send, account_recv) = mpsc::channel(config.account_threads);
     local::start_local_updater(connections.clone(), account_recv);
 
     let mut badge_registry = BadgeRegistry::new(connections.clone(), config.account_threads);
@@ -134,33 +136,57 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
 
             let is_update_allowed = account_record
+                .as_ref()
                 .ok()
                 .and_then(|r| r.next_update_allowed_at())
                 .map(|cutoff| chrono::Utc::now() >= cutoff)
                 .unwrap_or(true);
 
+            let is_update_allowed = true;
+
             if !is_update_allowed {
                 info!("Disallowing update for {account_id}");
             } else {
-                if let Err(e) = account_send.send(account_id.clone()) {
+                let (send, recv) = oneshot::channel();
+
+                if let Err(e) = account_send
+                    .send((
+                        account_id.clone(),
+                        account_record.as_ref().ok().and_then(|r| {
+                            if r.consecutive_errors == 0 {
+                                r.modified.map(|t| t.timestamp_nanos())
+                            } else {
+                                None
+                            }
+                        }),
+                        send,
+                    ))
+                    .await
+                {
                     error!("Error sending to local updater: {e:?}");
                 }
 
-                let awarded_badges = badge_registry
-                    .queue_account(
-                        account_id.clone(),
-                        existing_badges.unwrap_or_else(|_| HashSet::new()),
-                    )
-                    .await;
+                match recv.await {
+                    Ok(Err(e)) => warn!("Failed to update account: {e:?}"),
+                    Err(e) => error!("Error receiving update result from account updater: {e:?}"),
+                    _ => {} // Success
+                };
 
-                for badge_id in awarded_badges {
-                    match add_badge_for_account(&connections.local_pool, &account_id, &badge_id)
-                        .await
-                    {
-                        Ok(_) => info!("Added badge {badge_id} to {account_id}"),
-                        Err(e) => error!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
-                    }
-                }
+                // let awarded_badges = badge_registry
+                //     .queue_account(
+                //         account_id.clone(),
+                //         existing_badges.unwrap_or_else(|_| HashSet::new()),
+                //     )
+                //     .await;
+
+                // for badge_id in awarded_badges {
+                //     match add_badge_for_account(&connections.local_pool, &account_id, &badge_id)
+                //         .await
+                //     {
+                //         Ok(_) => info!("Added badge {badge_id} to {account_id}"),
+                //         Err(e) => error!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
+                //     }
+                // }
             }
 
             drop(permit);

@@ -10,7 +10,10 @@ use sqlx::{
     types::{Decimal, Uuid},
     FromRow, PgPool,
 };
-use tokio::{join, sync::broadcast};
+use tokio::{
+    join,
+    sync::{broadcast, mpsc, oneshot},
+};
 use tracing::{error, info, warn};
 
 /// Minimum amount of time between account updates
@@ -22,14 +25,18 @@ lazy_static! {
     static ref NULL_ACCOUNT: AccountId = AccountId::from_str(&"0".repeat(64)).unwrap();
 }
 
-use crate::{connections::Connections, indexer::calculate_account_score, rpc::get_account_balance};
+use crate::{
+    connections::Connections,
+    indexer::{calculate_account_score, ScoreCalculationError},
+    rpc::get_account_balance,
+};
 
 use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum UpdateAccountError {
     #[error("Error calculating score: {0}")]
-    Score(sqlx::Error),
+    Score(#[from] ScoreCalculationError),
     #[error("Error retrieving balance: {0}")]
     Balance(#[from] JsonRpcError<RpcQueryError>),
     #[error("Error running account update query: {0}")]
@@ -66,7 +73,10 @@ impl AccountRecord {
 impl From<AccountRecordDb> for AccountRecord {
     fn from(record: AccountRecordDb) -> Self {
         Self {
-            id: record.id.parse().unwrap_or_else(|_| NULL_ACCOUNT.to_owned()),
+            id: record
+                .id
+                .parse()
+                .unwrap_or_else(|_| NULL_ACCOUNT.to_owned()),
             balance: record.balance.and_then(|b| u128::try_from(b).ok()),
             score: record.score.map(|s| s as u32),
             modified: record.modified.map(|m| chrono::Utc.from_utc_datetime(&m)),
@@ -143,9 +153,14 @@ select badge_id
 pub async fn update_account(
     connections: &Connections,
     account_id: &AccountId,
+    last_successful_update_nanos: Option<i64>,
 ) -> Result<(), UpdateAccountError> {
     let (score, balance) = join!(
-        calculate_account_score(&connections.indexer_pool, account_id),
+        calculate_account_score(
+            &connections.indexer_pool,
+            account_id,
+            last_successful_update_nanos
+        ),
         get_account_balance(&connections.rpc_client, account_id)
     );
 
@@ -201,17 +216,22 @@ INSERT INTO account(id, balance, score, consecutive_errors)
 #[tracing::instrument(skip_all)]
 pub fn start_local_updater(
     connections: Arc<Connections>,
-    mut input: broadcast::Receiver<AccountId>,
+    mut input: mpsc::Receiver<(
+        AccountId,
+        Option<i64>,
+        oneshot::Sender<Result<(), UpdateAccountError>>,
+    )>,
 ) {
     tokio::spawn(async move {
-        while let Ok(account_id) = input.recv().await {
+        while let Some((account_id, last_successful_update_nanos, output)) = input.recv().await {
             let connections = connections.clone();
 
             tokio::spawn(async move {
-                let result = update_account(&connections, &account_id).await;
+                let result =
+                    update_account(&connections, &account_id, last_successful_update_nanos).await;
 
-                if let Err(e) = result {
-                    warn!("Error updating account {account_id}: {e:?}");
+                if let Err(e) = output.send(result) {
+                    error!("Error sending output oneshot channel");
                 }
             });
         }

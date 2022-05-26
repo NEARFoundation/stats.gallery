@@ -1,5 +1,15 @@
+use async_recursion::async_recursion;
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
+use near_primitives::types::AccountId;
 use sqlx::PgPool;
+use thiserror::Error;
+use tokio::join;
+use tracing::info;
+
+const FIRST_BLOCK_TIMESTAMP: i64 = 1595368210762782796;
+// const FIRST_BLOCK_HEIGHT: i32 = 9820214;
+const ONE_DAY_NANOS: i64 = 1000000000 * 60 * 60 * 24;
+const MINIMUM_CHECKABLE_DURATION_NANOS: i64 = ONE_DAY_NANOS * 7;
 
 #[tracing::instrument(skip(indexer_pool))]
 pub async fn get_recent_actors(
@@ -33,17 +43,47 @@ select distinct receiver_account_id as account_id
     .await
 }
 
+#[derive(Error, Debug)]
+pub enum ScoreCalculationError {
+    #[error("Query error in calculating score: {0:?}")]
+    SqlError(#[from] sqlx::Error),
+    #[error("Over-recursion in calculating score")]
+    OverRecursionError,
+}
+
 #[tracing::instrument(skip(indexer_pool))]
 pub async fn calculate_account_score(
     indexer_pool: &PgPool,
-    account_id: &str,
-) -> Result<u32, sqlx::Error> {
+    account_id: &AccountId,
+    from_timestamp: Option<i64>,
+) -> Result<u32, ScoreCalculationError> {
+    calculate_account_score_rec(
+        indexer_pool,
+        account_id,
+        from_timestamp.unwrap_or(FIRST_BLOCK_TIMESTAMP),
+        chrono::Utc::now().timestamp_nanos(),
+    )
+    .await
+}
+
+#[async_recursion]
+pub async fn calculate_account_score_rec(
+    indexer_pool: &PgPool,
+    account_id: &AccountId,
+    min_timestamp: i64,
+    max_timestamp: i64,
+) -> Result<u32, ScoreCalculationError> {
+    info!("calculate_account_score_rec");
+    if max_timestamp - min_timestamp < MINIMUM_CHECKABLE_DURATION_NANOS {
+        return Err(ScoreCalculationError::OverRecursionError);
+    }
+
     #[derive(sqlx::FromRow)]
     struct WithResult {
         pub result: i64,
     }
 
-    sqlx::query_as::<_, WithResult>(
+    Ok(sqlx::query_as::<_, WithResult>(
         r#"--sql
 select coalesce(sum(
     case
@@ -69,14 +109,30 @@ from (
     select *
     from transactions
     where (transactions.signer_account_id = $1
-    or transactions.receiver_account_id = $1)
+        or transactions.receiver_account_id = $1)
+    and transactions.block_timestamp >= $2
+    and transactions.block_timestamp < $3
 ) tx
-inner join receipts on tx.converted_into_receipt_id = receipts.receipt_id
 left outer join transaction_actions on tx.transaction_hash = transaction_actions.transaction_hash
 "#,
     )
-    .bind(account_id)
+    .bind(account_id.to_string())
+    .bind(min_timestamp)
+    .bind(max_timestamp)
     .fetch_one(indexer_pool)
     .map_ok(|a| a.result as u32)
-    .await
+    .or_else(|_| async move {
+        let midpoint = (max_timestamp + min_timestamp) / 2;
+        info!("Score split for {account_id}: {min_timestamp} | {max_timestamp}");
+        let (first, second) = join!(
+            calculate_account_score_rec(indexer_pool, account_id, min_timestamp, midpoint),
+            calculate_account_score_rec(indexer_pool, account_id, midpoint, max_timestamp),
+        );
+
+        match (first, second) {
+            (Ok(a), Ok(b)) => Ok(a + b),
+            (Err(e), _) | (_, Err(e)) => Err(e),
+        }
+    })
+    .await?)
 }
