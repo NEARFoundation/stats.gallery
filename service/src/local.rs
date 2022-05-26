@@ -2,6 +2,7 @@ use std::{collections::HashSet, str::FromStr, sync::Arc};
 
 use chrono::{Duration, NaiveDateTime, TimeZone};
 use futures::{FutureExt, StreamExt, TryFutureExt, TryStreamExt};
+use lazy_static::lazy_static;
 use near_jsonrpc_client::{errors::JsonRpcError, methods::query::RpcQueryError};
 use near_primitives::types::AccountId;
 use num_traits::FromPrimitive;
@@ -17,6 +18,10 @@ const ACCOUNT_UPDATE_COOLDOWN_MINUTES: i64 = 60 * 6;
 /// Doubles every failure
 const ACCOUNT_UPDATE_FAILURE_PENALTY_COEFFICIENT_MINUTES: i64 = 60 * 12;
 
+lazy_static! {
+    static ref NULL_ACCOUNT: AccountId = AccountId::from_str(&"0".repeat(64)).unwrap();
+}
+
 use crate::{connections::Connections, indexer::calculate_account_score, rpc::get_account_balance};
 
 use thiserror::Error;
@@ -24,11 +29,11 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum UpdateAccountError {
     #[error("Error calculating score: {0}")]
-    ScoreError(sqlx::Error),
+    Score(sqlx::Error),
     #[error("Error retrieving balance: {0}")]
-    BalanceError(#[from] JsonRpcError<RpcQueryError>),
+    Balance(#[from] JsonRpcError<RpcQueryError>),
     #[error("Error running account update query: {0}")]
-    InsertQueryError(#[from] sqlx::Error),
+    InsertQuery(#[from] sqlx::Error),
 }
 
 #[derive(FromRow)]
@@ -61,12 +66,7 @@ impl AccountRecord {
 impl From<AccountRecordDb> for AccountRecord {
     fn from(record: AccountRecordDb) -> Self {
         Self {
-            id: record.id.parse().unwrap_or(
-                AccountId::from_str(
-                    "0000000000000000000000000000000000000000000000000000000000000000",
-                )
-                .unwrap(),
-            ),
+            id: record.id.parse().unwrap_or_else(|_| NULL_ACCOUNT.to_owned()),
             balance: record.balance.and_then(|b| u128::try_from(b).ok()),
             score: record.score.map(|s| s as u32),
             modified: record.modified.map(|m| chrono::Utc.from_utc_datetime(&m)),
@@ -145,8 +145,8 @@ pub async fn update_account(
     account_id: &AccountId,
 ) -> Result<(), UpdateAccountError> {
     let (score, balance) = join!(
-        calculate_account_score(&connections.indexer_pool, &account_id),
-        get_account_balance(&connections.rpc_client, &account_id)
+        calculate_account_score(&connections.indexer_pool, account_id),
+        get_account_balance(&connections.rpc_client, account_id)
     );
 
     if score.is_err() || balance.is_err() {
@@ -175,7 +175,7 @@ INSERT INTO account(id, consecutive_errors)
         };
     }
 
-    let score = score.map_err(|e| UpdateAccountError::ScoreError(e))?;
+    let score = score.map_err(UpdateAccountError::Score)?;
     let balance = Decimal::from_u128(balance?);
 
     sqlx::query!(

@@ -26,7 +26,7 @@ lazy_static! {
 #[derive(Error, Debug)]
 enum TransferBadgeError {
     #[error("Query failure: {0}")]
-    QueryFailure(#[from] sqlx::Error),
+    Query(#[from] sqlx::Error),
 }
 
 async fn perform_query(
@@ -66,11 +66,11 @@ select count(*) as result
 
                 BadgeCheckResult {
                     account_id,
-                    awarded: awarded,
+                    awarded,
                     checked: &BADGE_IDS,
                 }
             })
-            .map_err(|e| TransferBadgeError::from(e))
+            .map_err(TransferBadgeError::from)
     })
     .await
 }
