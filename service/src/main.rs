@@ -10,7 +10,7 @@ use serde::Deserialize;
 use sqlx::{migrate, postgres::PgPoolOptions};
 use tokio::{
     join,
-    sync::{broadcast, mpsc, oneshot, Mutex, Semaphore},
+    sync::{mpsc, oneshot, Mutex, Semaphore},
 };
 use tracing::{error, info, warn};
 

@@ -1,7 +1,4 @@
-use std::str::FromStr;
-
 use sqlx::FromRow;
-use thiserror::Error;
 
 #[derive(Debug, sqlx::Type)]
 #[sqlx(type_name = "action_kind")]

@@ -12,7 +12,7 @@ use sqlx::{
 };
 use tokio::{
     join,
-    sync::{broadcast, mpsc, oneshot},
+    sync::{mpsc, oneshot},
 };
 use tracing::{error, info, warn};
 
@@ -230,7 +230,7 @@ pub fn start_local_updater(
                 let result =
                     update_account(&connections, &account_id, last_successful_update_nanos).await;
 
-                if let Err(e) = output.send(result) {
+                if let Err(_e) = output.send(result) {
                     error!("Error sending output oneshot channel");
                 }
             });
