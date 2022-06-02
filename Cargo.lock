@@ -2025,6 +2025,7 @@ dependencies = [
  "num-traits",
  "serde",
  "sqlx",
+ "tap",
  "thiserror",
  "tokio",
  "tracing",

@@ -1,15 +1,21 @@
 use async_recursion::async_recursion;
+use chrono::TimeZone;
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
 use near_primitives::types::AccountId;
 use sqlx::PgPool;
+use tap::Tap;
 use thiserror::Error;
 use tokio::join;
-use tracing::info;
+use tracing::{debug, error, info};
+
+use crate::indexer::score::ActionCountRow;
+
+mod score;
 
 const FIRST_BLOCK_TIMESTAMP: i64 = 1595368210762782796;
 // const FIRST_BLOCK_HEIGHT: i32 = 9820214;
 const ONE_DAY_NANOS: i64 = 1000000000 * 60 * 60 * 24;
-const MINIMUM_CHECKABLE_DURATION_NANOS: i64 = ONE_DAY_NANOS * 7;
+const MINIMUM_CHECKABLE_DURATION_NANOS: i64 = ONE_DAY_NANOS / 2;
 
 #[tracing::instrument(skip(indexer_pool))]
 pub async fn get_recent_actors(
@@ -66,6 +72,7 @@ pub async fn calculate_account_score(
     .await
 }
 
+#[tracing::instrument(skip(indexer_pool))]
 #[async_recursion]
 pub async fn calculate_account_score_rec(
     indexer_pool: &PgPool,
@@ -73,57 +80,36 @@ pub async fn calculate_account_score_rec(
     min_timestamp: i64,
     max_timestamp: i64,
 ) -> Result<u32, ScoreCalculationError> {
-    info!("calculate_account_score_rec");
     if max_timestamp - min_timestamp < MINIMUM_CHECKABLE_DURATION_NANOS {
+        let min = chrono::Utc.timestamp_nanos(min_timestamp);
+        let max = chrono::Utc.timestamp_nanos(max_timestamp);
+        debug!("Over-recursion: {min} <> {max}");
         return Err(ScoreCalculationError::OverRecursionError);
     }
 
-    #[derive(sqlx::FromRow)]
-    struct WithResult {
-        pub result: i64,
-    }
-
-    Ok(sqlx::query_as::<_, WithResult>(
+    Ok(sqlx::query_as::<_, ActionCountRow>(
         r#"--sql
-select coalesce(sum(
-    case
-    when action_kind = 'TRANSFER'
-        and signer_account_id = $1
-        then 10
-    when action_kind = 'TRANSFER'
-        and tx.receiver_account_id = $1
-        then 2
-    when action_kind = 'CREATE_ACCOUNT'
-        and signer_account_id = $1
-        then 50
-    when action_kind = 'FUNCTION_CALL'
-        and signer_account_id = $1
-        then 10
-    when action_kind = 'DEPLOY_CONTRACT'
-        and signer_account_id = $1
-        then 100
-    else 0
-    end
-), 0) as result
-from (
-    select *
-    from transactions
-    where (transactions.signer_account_id = $1
-        or transactions.receiver_account_id = $1)
+select action_kind,
+    count(*) as transaction_count
+from transactions
+left outer join transaction_actions on transactions.transaction_hash = transaction_actions.transaction_hash
+where transactions.signer_account_id = $1
     and transactions.block_timestamp >= $2
     and transactions.block_timestamp < $3
-) tx
-left outer join transaction_actions on tx.transaction_hash = transaction_actions.transaction_hash
+group by action_kind
 "#,
     )
     .bind(account_id.to_string())
     .bind(min_timestamp)
     .bind(max_timestamp)
-    .fetch_one(indexer_pool)
-    .map_ok(|a| a.result as u32)
-    .or_else(|_| async move {
+    .fetch_all(indexer_pool)
+    .map_ok(|v| v.iter().map(|r| r.score_value()).sum())
+    .or_else(|e| async move {
+        error!("Splitting because of error: {e:?}");
         let midpoint = (max_timestamp + min_timestamp) / 2;
         info!("Score split for {account_id}: {min_timestamp} | {max_timestamp}");
+        // let first = calculate_account_score_rec(indexer_pool, account_id, min_timestamp, midpoint).await;
+        // let second = calculate_account_score_rec(indexer_pool, account_id, midpoint, max_timestamp).await;
         let (first, second) = join!(
             calculate_account_score_rec(indexer_pool, account_id, min_timestamp, midpoint),
             calculate_account_score_rec(indexer_pool, account_id, midpoint, max_timestamp),
@@ -135,4 +121,5 @@ left outer join transaction_actions on tx.transaction_hash = transaction_actions
         }
     })
     .await?)
+    .tap(|r| info!("Score result: {r:?}"))
 }

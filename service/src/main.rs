@@ -74,6 +74,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let indexer_pool = PgPoolOptions::new()
         .max_connections(config.indexer_pool_connections)
+        .connect_timeout(std::time::Duration::from_secs(120))
         .connect(&config.indexer_url)
         .await?;
 
@@ -87,18 +88,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Requesting accounts");
 
-    let accounts = vec!["x.paras.near"];
+    // let accounts = vec!["x.paras.near"];
 
-    // let accounts = get_recent_actors(
-    //     &connections.indexer_pool,
-    //     chrono::Utc::now()
-    //         .sub(Duration::minutes(config.update_chunk_size_minutes))
-    //         .timestamp_nanos()
-    //         .try_into()
-    //         .unwrap(),
-    // )
-    // .await
-    // .unwrap();
+    let accounts = get_recent_actors(
+        &connections.indexer_pool,
+        chrono::Utc::now()
+            .sub(Duration::minutes(config.update_chunk_size_minutes))
+            .timestamp_nanos()
+            .try_into()
+            .unwrap(),
+    )
+    .await
+    .unwrap();
 
     info!("Checking {} accounts", accounts.len());
 
@@ -142,8 +143,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .map(|cutoff| chrono::Utc::now() >= cutoff)
                 .unwrap_or(true);
 
-            let is_update_allowed = true;
-
             if !is_update_allowed {
                 info!("Disallowing update for {account_id}");
             } else {
@@ -172,21 +171,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     _ => {} // Success
                 };
 
-                // let awarded_badges = badge_registry
-                //     .queue_account(
-                //         account_id.clone(),
-                //         existing_badges.unwrap_or_else(|_| HashSet::new()),
-                //     )
-                //     .await;
+                let awarded_badges = badge_registry
+                    .award_badges(
+                        account_id.clone(),
+                        existing_badges.unwrap_or_else(|_| HashSet::new()),
+                    )
+                    .await;
 
-                // for badge_id in awarded_badges {
-                //     match add_badge_for_account(&connections.local_pool, &account_id, &badge_id)
-                //         .await
-                //     {
-                //         Ok(_) => info!("Added badge {badge_id} to {account_id}"),
-                //         Err(e) => error!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
-                //     }
-                // }
+                for badge_id in awarded_badges {
+                    match add_badge_for_account(&connections.local_pool, &account_id, &badge_id)
+                        .await
+                    {
+                        Ok(_) => info!("Added badge {badge_id} to {account_id}"),
+                        Err(e) => error!("Failed to add badge {badge_id} to {account_id}: {e:?}"),
+                    }
+                }
             }
 
             drop(permit);

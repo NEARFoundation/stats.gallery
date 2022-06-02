@@ -83,7 +83,7 @@ impl BadgeRegistry {
     }
 
     #[tracing::instrument(skip(self))]
-    pub async fn queue_account(
+    pub async fn award_badges(
         &self,
         account_id: AccountId,
         ignore_badge_ids: HashSet<BadgeId>,
@@ -99,6 +99,10 @@ impl BadgeRegistry {
                 }
             })
             .collect::<HashSet<_>>();
+
+        if registration_ids.is_empty() {
+            return HashSet::new();
+        }
 
         let (result_send, mut result_recv) = mpsc::channel(registration_ids.len());
 
