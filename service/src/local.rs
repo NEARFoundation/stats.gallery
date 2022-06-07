@@ -1,6 +1,6 @@
 use std::{collections::HashSet, str::FromStr, sync::Arc};
 
-use chrono::{Duration, NaiveDateTime, TimeZone};
+use chrono::Duration;
 use futures::{FutureExt, StreamExt, TryFutureExt, TryStreamExt};
 use lazy_static::lazy_static;
 use near_jsonrpc_client::{errors::JsonRpcError, methods::query::RpcQueryError};
@@ -48,7 +48,7 @@ pub struct AccountRecordDb {
     pub id: String,
     pub balance: Option<Decimal>,
     pub score: Option<i32>,
-    pub modified: Option<NaiveDateTime>,
+    pub modified: Option<chrono::DateTime<chrono::Utc>>,
     pub consecutive_errors: Option<i16>,
 }
 
@@ -79,7 +79,7 @@ impl From<AccountRecordDb> for AccountRecord {
                 .unwrap_or_else(|_| NULL_ACCOUNT.to_owned()),
             balance: record.balance.and_then(|b| u128::try_from(b).ok()),
             score: record.score.map(|s| s as u32),
-            modified: record.modified.map(|m| chrono::Utc.from_utc_datetime(&m)),
+            modified: record.modified,
             consecutive_errors: record.consecutive_errors.unwrap_or(0) as u16,
         }
     }

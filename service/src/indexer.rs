@@ -72,7 +72,6 @@ pub async fn calculate_account_score(
     .await
 }
 
-#[tracing::instrument(skip(indexer_pool))]
 #[async_recursion]
 pub async fn calculate_account_score_rec(
     indexer_pool: &PgPool,
@@ -108,8 +107,6 @@ group by action_kind
         error!("Splitting because of error: {e:?}");
         let midpoint = (max_timestamp + min_timestamp) / 2;
         info!("Score split for {account_id}: {min_timestamp} | {max_timestamp}");
-        // let first = calculate_account_score_rec(indexer_pool, account_id, min_timestamp, midpoint).await;
-        // let second = calculate_account_score_rec(indexer_pool, account_id, midpoint, max_timestamp).await;
         let (first, second) = join!(
             calculate_account_score_rec(indexer_pool, account_id, min_timestamp, midpoint),
             calculate_account_score_rec(indexer_pool, account_id, midpoint, max_timestamp),
