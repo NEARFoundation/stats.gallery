@@ -7,11 +7,15 @@ use dotenv::dotenv;
 use indexer::prelude::*;
 use local::prelude::*;
 use sea_orm::{
-    ColumnTrait, Condition, Database, DatabaseConnection, EntityTrait, JoinType, QueryFilter,
-    QueryOrder, QuerySelect, FromQueryResult,
+    prelude::{Decimal, Uuid},
+    sea_query::{Alias, Expr, IntoColumnRef, SimpleExpr},
+    ColumnTrait, Condition, Database, DatabaseConnection, EntityTrait, FromQueryResult, JoinType,
+    QueryFilter, QueryOrder, QuerySelect,
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
+
+use crate::indexer::sea_orm_active_enums::ReceiptKind;
 
 mod indexer;
 mod local;
@@ -93,6 +97,79 @@ struct TimestampRange {
     pub before_block_timestamp: Option<u64>,
 }
 
+/// For some reason enums don't work in SeaORM selects unless they're explicitly cast to text.
+///
+/// This took forever to figure out.
+///
+/// References:
+///  - https://github.com/SeaQL/sea-orm/discussions/843
+///  - https://github.com/SeaQL/sea-orm/blob/4301383b409737f85378a1da8a4c122478248ba0/src/query/select.rs#L124-L134
+///  - https://www.sea-ql.org/SeaORM/docs/advanced-query/custom-select/#select-custom-expressions
+pub fn col_enum<T>(column: T) -> SimpleExpr
+where
+    T: IntoColumnRef,
+{
+    Expr::col(column).as_enum(Alias::new("text"))
+}
+
+#[get("account/{account_id}/info")]
+async fn account_info(
+    state: web::Data<AppState>,
+    account_id: web::Path<String>,
+) -> Result<impl Responder, AppError> {
+    use local::*;
+
+    #[derive(FromQueryResult, Serialize, Debug)]
+    struct BadgeIdQuery {
+        pub badge_id: Uuid,
+    }
+
+    let account_id = account_id.into_inner();
+    let res = account_badge::Entity::find()
+        .column(account_badge::Column::BadgeId)
+        .filter(account_badge::Column::AccountId.eq(account_id))
+        .into_model::<BadgeIdQuery>()
+        .all(&*state.local_pool)
+        .await;
+
+    if let Err(ref e) = res {
+        println!("{e:?}");
+    }
+
+    let res = res?.into_iter().map(|b| b.badge_id).collect::<Vec<_>>();
+
+    Ok(web::Json(res))
+}
+
+#[get("account/{account_id}/badges")]
+async fn account_badges(
+    state: web::Data<AppState>,
+    account_id: web::Path<String>,
+) -> Result<impl Responder, AppError> {
+    use local::*;
+
+    #[derive(FromQueryResult, Serialize, Debug)]
+    struct BadgeIdQuery {
+        pub badge_id: Uuid,
+    }
+
+    let account_id = account_id.into_inner();
+    let res = account_badge::Entity::find()
+        .column(account_badge::Column::BadgeId)
+        .filter(account_badge::Column::AccountId.eq(account_id))
+        .into_model::<BadgeIdQuery>()
+        .all(&*state.local_pool)
+        .await;
+
+    if let Err(ref e) = res {
+        println!("{e:?}");
+    }
+
+    let res = res?.into_iter().map(|b| b.badge_id).collect::<Vec<_>>();
+
+    Ok(web::Json(res))
+}
+
 #[get("account/{account_id}/actions")]
 async fn account_actions(
     state: web::Data<AppState>,
@@ -103,38 +180,36 @@ async fn account_actions(
 
     #[derive(FromQueryResult, Serialize, Debug)]
     struct AccountAction {
-      pub receipt_id: String,
-      pub index_in_action_receipt: i32,
-      pub transaction_hash: String,
-      pub action_kind: String, // TODO: Enum?
-      pub block_hash: String,
-      pub block_timestamp: u64,
-      pub predecessor_account_id: String,
-      pub receiver_account_id: String,
+        pub receipt_id: String,
+        pub index_in_action_receipt: i32,
+        pub transaction_hash: String,
+        pub action_kind: String,
+        pub block_hash: String,
+        pub block_timestamp: Decimal,
+        pub predecessor_account_id: String,
+        pub receiver_account_id: String,
     }
 
     let account_id = account_id.into_inner();
     let range = web::Query::<TimestampRange>::from_query(req.query_string()).unwrap(); // Should always be safe because req.query_string() should never return an invalid query string
 
-    let condition = {
-        let mut condition = Condition::all()
-            .add(receipts::Column::ReceiptKind.eq("ACTION"))
-            .add(
-                Condition::any()
-                    .add(receipts::Column::PredecessorAccountId.eq(account_id.clone()))
-                    .add(receipts::Column::ReceiverAccountId.eq(account_id.clone())),
-            );
-
-        if let Some(after) = range.after_block_timestamp {
-            condition = condition.add(receipts::Column::IncludedInBlockTimestamp.gte(after));
-        }
-
-        if let Some(before) = range.before_block_timestamp {
-            condition = condition.add(receipts::Column::IncludedInBlockTimestamp.lt(before));
-        }
-
-        condition
-    };
+    let condition = Condition::all()
+        .add(receipts::Column::ReceiptKind.eq(ReceiptKind::Action))
+        .add(
+            Condition::any()
+                .add(receipts::Column::PredecessorAccountId.eq(account_id.clone()))
+                .add(receipts::Column::ReceiverAccountId.eq(account_id.clone())),
+        )
+        .add_option(
+            range
+                .after_block_timestamp
+                .map(|after| receipts::Column::IncludedInBlockTimestamp.gte(after)),
+        )
+        .add_option(
+            range
+                .before_block_timestamp
+                .map(|before| receipts::Column::IncludedInBlockTimestamp.lt(before)),
+        );
 
     let res = Receipts::find()
         .column_as(
@@ -147,7 +222,10 @@ async fn account_actions(
             "block_timestamp",
         )
         .column(action_receipt_actions::Column::IndexInActionReceipt)
-        .column(action_receipt_actions::Column::ActionKind)
+        .column_as(
+            col_enum(action_receipt_actions::Column::ActionKind),
+            "action_kind",
+        )
         .filter(condition)
         .join_rev(
             JoinType::LeftJoin,
@@ -165,7 +243,7 @@ async fn account_actions(
     if let Err(ref e) = res {
         println!("{e:?}");
     }
-    
+
     let res = res?;
 
     Ok(web::Json(res))
@@ -208,6 +286,7 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
             .service(status)
             .service(account_score)
             .service(account_actions)
+            .service(account_badges)
     })
     .bind(("127.0.0.1", config.port))?
     .run()
