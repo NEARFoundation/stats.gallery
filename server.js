@@ -1,3 +1,4 @@
+const Mustache = require('mustache');
 const Koa = require('koa');
 const fs = require('fs');
 const path = require('path');
@@ -38,11 +39,13 @@ function getTitle(route) {
     encoding: 'utf-8',
   });
 
-  const metaPath = path.join(__dirname, './ssr-meta.html');
+  const metaPath = path.join(__dirname, './ssr-meta.mustache');
 
   const metaHtml = fs.readFileSync(metaPath, {
     encoding: 'utf-8',
   });
+
+  Mustache.parse(metaHtml);
 
   server.use(async (ctx, next) => {
     console.log(ctx.path);
@@ -69,20 +72,18 @@ function getTitle(route) {
 
       if (account && network && network === 'mainnet') {
         const title = getTitle(route);
-        const meta = metaHtml
-          .replace(/\{url\}/g, appRoot + route.fullPath)
-          .replace(/\{title\}/g, title)
-          .replace(/\{image\}/g, apiRoot + '/card/' + account + '/card.png');
+        const values = {
+          url: appRoot + route.fullPath,
+          title,
+          image: apiRoot + '/card/' + account + '/card.png',
+        };
+        const meta = Mustache.render(metaHtml, values);
 
-        // https://stackoverflow.com/a/1732454
-        // Replacing HTML with regex, it's great, I know
-        // This is:
-        //  1. Fast. I'm not spinning up a whole XML parser.
-        //  2. Easy. It's obvious what's going on.
-        //  3. Relatively unlikely to break, given the absolute control we have
-        //     over the source HTML, so if it fails, it should fail in testing.
         injected = injected.replace('</head>', meta + '</head>');
-        injected = injected.replace(/<title>.*<\/title>/, `<title>${title}</title>`);
+        injected = injected.replace(
+          /<title>.*<\/title>/,
+          Mustache.render('<title>{{title}}</title>', { title }),
+        );
       }
 
       injected = injected.replace(

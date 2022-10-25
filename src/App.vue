@@ -131,16 +131,18 @@ export default defineComponent({
       route,
       route => {
         if (route.name) {
-          stop();
-
           const {
             query: { account_id, public_key, all_keys, ...filtered },
           } = route;
 
-          router.replace({
-            name: route.name ?? 'overview',
-            query: filtered,
-          });
+          if (account_id && public_key && all_keys) {
+            stop();
+
+            router.replace({
+              name: route.name ?? 'overview',
+              query: filtered,
+            });
+          }
         }
       },
       { immediate: true },
