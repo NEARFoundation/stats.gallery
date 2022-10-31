@@ -105,6 +105,10 @@
     "*.{js,jsx,vue,ts,tsx}": [
       "vue-cli-service lint",
       "git add"
+    ],
+    "*.{rs}": [
+      "cargo fmt",
+      "git add"
     ]
   }
 }

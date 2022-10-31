@@ -2,9 +2,11 @@ target
 .DS_Store
 node_modules
 /dist
+target
 
 
 # local env files
+.env
 .env.local
 .env.*.local
 
